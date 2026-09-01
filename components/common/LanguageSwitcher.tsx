@@ -19,7 +19,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
       value={locale}
       onChange={handleChange}
       aria-label="Select language"
-      className="rounded-md border border-border bg-background px-2 py-1 text-sm"
+      className="rounded-md text-sm"
     >
       {locales.map((l) => (
         <option key={l} value={l}>

@@ -6,6 +6,13 @@ export const global = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "siteName",
+      title: "Site Name",
+      type: "string",
+      validation: (rule) => rule.required(),
+      description: "The name of the site as it appears in the browser tab and navigation.",
+    }),
+    defineField({
       name: "theme",
       title: "Theme",
       type: "reference",

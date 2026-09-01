@@ -40,6 +40,12 @@ async function sanityFetch<T>(
   }
 }
 
+export async function getGlobalSiteName(): Promise<string | null> {
+  return sanityFetch<string>(
+    `*[_type == "global"][0].siteName`,
+  );
+}
+
 export async function getGlobalNav(): Promise<NavLink[]> {
   const links = await sanityFetch<NavLink[]>(
     `*[_type == "global"][0].navLinks[]{
@@ -66,6 +72,7 @@ export interface ThemeColors {
   frontColor?: string;
   buttonColor?: string;
   secondaryButtonColor?: string;
+  navbarColor?: string;
 }
 
 export async function getGlobalTheme(): Promise<ThemeColors | null> {
@@ -74,7 +81,8 @@ export async function getGlobalTheme(): Promise<ThemeColors | null> {
       "backgroundColor": backgroundColor->value.hex,
       "frontColor": frontColor->value.hex,
       "buttonColor": buttonColor->value.hex,
-      "secondaryButtonColor": secondaryButtonColor->value.hex
+      "secondaryButtonColor": secondaryButtonColor->value.hex,
+      "navbarColor": navbarColor->value.hex
     }`,
   );
 }

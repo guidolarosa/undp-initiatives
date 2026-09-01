@@ -41,6 +41,13 @@ export const theme = defineType({
       to: [{ type: "colorToken" }],
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "navbarColor",
+      title: "Navbar color",
+      type: "reference",
+      to: [{ type: "colorToken" }],
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "name" },

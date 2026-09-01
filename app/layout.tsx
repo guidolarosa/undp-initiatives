@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Mulish } from "next/font/google";
 import "./globals.css";
+import { getGlobalSiteName } from "@/lib/sanity/queries";
+
+const siteName = await getGlobalSiteName();
 
 const mulish = Mulish({
   variable: "--font-mulish",
@@ -13,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FAROL — UNDP Initiatives",
+  title: `${siteName?.toUpperCase()} — UNDP Initiatives`,
   description: "Showcasing initiatives for the UN UNDP programme.",
 };
 
