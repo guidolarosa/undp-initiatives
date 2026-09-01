@@ -6,6 +6,12 @@ export const global = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "theme",
+      title: "Theme",
+      type: "reference",
+      to: [{ type: "theme" }],
+    }),
+    defineField({
       name: "navLinks",
       title: "Navigation links",
       type: "array",

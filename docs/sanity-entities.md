@@ -48,8 +48,8 @@ When adding a new entity: copy this shape —
 
 | Field | Type | Notes |
 |---|---|---|
-| theme | -> Theme | Not yet built — Theme/ColorToken deferred until something needs them. |
-| navLinks | Array<-> PageData \| -> Link> | Polymorphic reference (2026-09-01): each item is either a Page (linked by its `urlSlug`) or a Link (custom/external URL). Order controls navbar order. Implemented — Global is the only entity built so far, without `theme`. |
+| theme | -> Theme | Implemented (2026-09-01). Optional (not required) — if unset, the site falls back to Tailwind's default palette in `app/globals.css`. |
+| navLinks | Array<-> PageData \| -> Link> | Polymorphic reference (2026-09-01): each item is either a Page (linked by its `urlSlug`) or a Link (custom/external URL). Order controls navbar order. |
 
 ## PageData
 
@@ -159,29 +159,39 @@ numericValue, text`). Same name, incompatible shape, so treated as a distinct ne
 
 ### Theme
 
-**Kind:** Document
+**Kind:** Document — **Implemented** (2026-09-01)
 
 Per sketch annotation: theme color values compile into CSS variables at build time, so changing them
 requires a redeploy; resolving them dynamically via JS client-side was explicitly ruled out as untidy.
+`app/[locale]/layout.tsx` fetches `Global.theme` server-side and sets the four fields below as CSS
+custom properties (`--background`, `--foreground`, `--primary`, `--secondary`) on the page root, which
+is resolved once per static build/request — not client-side JS.
 
 | Field | Type | Notes |
 |---|---|---|
-| backgroundColor | -> ColorToken | |
-| frontColor | -> ColorToken | |
-| buttonColor | -> ColorToken | |
-| secondaryButtonColor | -> ColorToken | Renamed from `secondaryButtonToken` in the original text draft for naming consistency with the other Color* fields. |
+| name | string | Not in the original spec — added since Theme is a Document (multiple instances allowed) and needs a human-readable label in Studio lists / when picking one from `Global.theme`. |
+| backgroundColor | -> ColorToken | Maps to CSS var `--background`. |
+| frontColor | -> ColorToken | Maps to CSS var `--foreground`. |
+| buttonColor | -> ColorToken | Maps to CSS var `--primary` (shadcn's primary-button token). |
+| secondaryButtonColor | -> ColorToken | Renamed from `secondaryButtonToken` in the original text draft for naming consistency with the other Color* fields. Maps to CSS var `--secondary`. |
 
 **Notes:**
 - Original text draft listed `backgroundColor` twice; the duplicate was removed (confirmed).
+- Only these 4 vars are overridden — `--*-foreground` counterparts (e.g. `--primary-foreground`, the
+  text color drawn on top of a button) are NOT part of this schema and stay at their Tailwind defaults.
+  A Theme with a light `buttonColor` could end up with low-contrast button text. Not fixed here since
+  it's outside the 4 documented fields — flag if you want a 5th field added for this.
 
 ### ColorToken
 
-**Kind:** Document
+**Kind:** Document — **Implemented** (2026-09-01)
+
+`value` uses Sanity's `color` type, from the `@sanity/color-input` plugin (not built into core Sanity).
 
 | Field | Type | Notes |
 |---|---|---|
 | name | string | |
-| value | color | |
+| value | color | Stored as `{hex, alpha, hsl, hsv, rgb}`; only `.hex` is read by the frontend today. |
 
 ### Link
 

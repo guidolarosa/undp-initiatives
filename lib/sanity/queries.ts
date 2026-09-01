@@ -61,6 +61,24 @@ export async function getGlobalNav(): Promise<NavLink[]> {
   return links ?? [];
 }
 
+export interface ThemeColors {
+  backgroundColor?: string;
+  frontColor?: string;
+  buttonColor?: string;
+  secondaryButtonColor?: string;
+}
+
+export async function getGlobalTheme(): Promise<ThemeColors | null> {
+  return sanityFetch<ThemeColors>(
+    `*[_type == "global"][0].theme->{
+      "backgroundColor": backgroundColor->value.hex,
+      "frontColor": frontColor->value.hex,
+      "buttonColor": buttonColor->value.hex,
+      "secondaryButtonColor": secondaryButtonColor->value.hex
+    }`,
+  );
+}
+
 export async function getAllPageSlugs(): Promise<{ slug: string }[]> {
   const slugs = await sanityFetch<{ slug: string }[]>(
     `*[_type == "pageData" && defined(urlSlug.current)] {
