@@ -2,9 +2,11 @@ import type { QueryParams } from "next-sanity";
 
 import { client } from "./client";
 
-export interface NavPage {
-  name: string;
-  slug: string;
+export interface NavLink {
+  _key: string;
+  label: string;
+  url: string;
+  type: "external" | "internal";
 }
 
 export interface PageSection {
@@ -38,14 +40,25 @@ async function sanityFetch<T>(
   }
 }
 
-export async function getNavPages(): Promise<NavPage[]> {
-  const pages = await sanityFetch<NavPage[]>(
-    `*[_type == "pageData" && showNavbar == true] | order(name asc) {
-      name,
-      "slug": urlSlug.current
+export async function getGlobalNav(): Promise<NavLink[]> {
+  const links = await sanityFetch<NavLink[]>(
+    `*[_type == "global"][0].navLinks[]{
+      _key,
+      "label": select(
+        @->_type == "pageData" => @->name,
+        @->_type == "link" => @->label
+      ),
+      "url": select(
+        @->_type == "pageData" => "/" + @->urlSlug.current,
+        @->_type == "link" => @->url
+      ),
+      "type": select(
+        @->_type == "pageData" => "internal",
+        @->_type == "link" => @->type
+      )
     }`,
   );
-  return pages ?? [];
+  return links ?? [];
 }
 
 export async function getAllPageSlugs(): Promise<{ slug: string }[]> {

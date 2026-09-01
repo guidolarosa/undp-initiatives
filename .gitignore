@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# sanity (local dev runtime cache for the embedded studio)
+/.sanity
+
 # production
 /build
 

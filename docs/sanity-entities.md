@@ -48,8 +48,8 @@ When adding a new entity: copy this shape —
 
 | Field | Type | Notes |
 |---|---|---|
-| theme | -> Theme | |
-| navLinks | Array<-> Link> | |
+| theme | -> Theme | Not yet built — Theme/ColorToken deferred until something needs them. |
+| navLinks | Array<-> PageData \| -> Link> | Polymorphic reference (2026-09-01): each item is either a Page (linked by its `urlSlug`) or a Link (custom/external URL). Order controls navbar order. Implemented — Global is the only entity built so far, without `theme`. |
 
 ## PageData
 
