@@ -1,0 +1,13 @@
+{
+  "nav": {
+    "tagline": "Inteligencia de Políticas",
+    "emptyLinks": "No se han configurado enlaces de navegación"
+  },
+  "languageSwitcher": {
+    "label": "Seleccionar idioma"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "body": "Esta página no existe o aún no se ha publicado en Sanity."
+  }
+}

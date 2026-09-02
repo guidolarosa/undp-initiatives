@@ -1,5 +1,7 @@
 import type { QueryParams } from "next-sanity";
 
+import { defaultLocale, type Locale } from "@/lib/i18n";
+
 import { client } from "./client";
 
 export interface NavLink {
@@ -42,12 +44,13 @@ export interface PlaceholderSection {
   body?: string;
 }
 
-export type PageSection = HeroSection | PlaceholderSection;
+export type PageSection = HeroSection | BannerSection | PlaceholderSection;
 
 export interface PageData {
   _id: string;
   name: string;
   slug: string;
+  language: string;
   showNavbar: boolean;
   sections: PageSection[];
 }
@@ -68,31 +71,92 @@ async function sanityFetch<T>(
   }
 }
 
-export async function getGlobalSiteName(): Promise<string | null> {
+export async function getGlobalSiteName(
+  locale: Locale = defaultLocale,
+): Promise<string | null> {
   return sanityFetch<string>(
-    `*[_type == "global"][0].siteName`,
+    `*[_type == "global"][0]{
+      "value": coalesce(
+        siteName[_key == $locale][0].value,
+        siteName[_key == $fallback][0].value,
+        siteName[0].value
+      )
+    }.value`,
+    { locale, fallback: defaultLocale },
   );
 }
 
-export async function getGlobalNav(): Promise<NavLink[]> {
-  const links = await sanityFetch<NavLink[]>(
-    `*[_type == "global"][0].navLinks[]{
-      _key,
-      "label": select(
-        @->_type == "pageData" => @->name,
-        @->_type == "link" => @->label
-      ),
-      "url": select(
-        @->_type == "pageData" => "/" + @->urlSlug.current,
-        @->_type == "link" => @->url
-      ),
-      "type": select(
-        @->_type == "pageData" => "internal",
-        @->_type == "link" => @->type
-      )
-    }`,
-  );
-  return links ?? [];
+interface RawNavItem {
+  _key: string;
+  kind?: "pageData" | "link";
+  slug?: string;
+  url?: string;
+  linkType?: "external" | "internal";
+  label?: string;
+}
+
+export async function getGlobalNav(
+  locale: Locale = defaultLocale,
+): Promise<NavLink[]> {
+  const raw =
+    (await sanityFetch<RawNavItem[]>(
+      `*[_type == "global"][0].navLinks[]{
+        _key,
+        "kind": @->_type,
+        @->_type == "pageData" => { "slug": @->urlSlug.current },
+        @->_type == "link" => {
+          "url": @->url,
+          "linkType": @->type,
+          "label": coalesce(
+            @->label[_key == $locale][0].value,
+            @->label[_key == $fallback][0].value,
+            @->label[0].value
+          )
+        }
+      }`,
+      { locale, fallback: defaultLocale },
+    )) ?? [];
+
+  // Internal links point at one locale's page document; resolve the label from
+  // the current locale's translation, matched by the (shared) slug.
+  const internalSlugs = raw
+    .filter((item) => item.kind === "pageData" && item.slug)
+    .map((item) => item.slug as string);
+
+  const localizedNames = internalSlugs.length
+    ? ((await sanityFetch<{ slug: string; name: string }[]>(
+        `*[_type == "pageData" && language == $locale && urlSlug.current in $slugs]{
+          "slug": urlSlug.current,
+          name
+        }`,
+        { locale, slugs: internalSlugs },
+      )) ?? [])
+    : [];
+  const nameBySlug = new Map(localizedNames.map((n) => [n.slug, n.name]));
+
+  return raw.flatMap((item): NavLink[] => {
+    if (item.kind === "pageData" && item.slug) {
+      return [
+        {
+          _key: item._key,
+          label: nameBySlug.get(item.slug) ?? item.slug,
+          url: `/${item.slug}`,
+          type: "internal",
+        },
+      ];
+    }
+    if (item.kind === "link" && item.url) {
+      return [
+        {
+          _key: item._key,
+          label: item.label ?? item.url,
+          url: item.url,
+          type: item.linkType === "external" ? "external" : "internal",
+        },
+      ];
+    }
+    return [];
+  });
 }
 
 export interface ThemeColors {
@@ -115,20 +179,27 @@ export async function getGlobalTheme(): Promise<ThemeColors | null> {
   );
 }
 
-export async function getAllPageSlugs(): Promise<{ slug: string }[]> {
-  const slugs = await sanityFetch<{ slug: string }[]>(
-    `*[_type == "pageData" && defined(urlSlug.current)] {
-      "slug": urlSlug.current
+export async function getAllPageSlugs(): Promise<
+  { slug: string; language: string }[]
+> {
+  const slugs = await sanityFetch<{ slug: string; language: string }[]>(
+    `*[_type == "pageData" && defined(urlSlug.current) && defined(language)] {
+      "slug": urlSlug.current,
+      language
     }`,
   );
   return slugs ?? [];
 }
 
-export async function getPageBySlug(slug: string): Promise<PageData | null> {
+export async function getPageBySlug(
+  slug: string,
+  locale: Locale = defaultLocale,
+): Promise<PageData | null> {
   return sanityFetch<PageData>(
-    `*[_type == "pageData" && urlSlug.current == $slug][0] {
+    `*[_type == "pageData" && language == $locale && urlSlug.current == $slug][0] {
       _id,
       name,
+      language,
       "slug": urlSlug.current,
       showNavbar,
       sections[]{
@@ -156,6 +227,6 @@ export async function getPageBySlug(slug: string): Promise<PageData | null> {
         }
       }
     }`,
-    { slug },
+    { slug, locale },
   );
 }

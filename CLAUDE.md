@@ -11,7 +11,7 @@ TypeScript, Next.js (App Router), Tailwind, shadcn/ui, Sanity (Studio embedded a
 - **Pages are block-based**: page content is an array of typed Sanity blocks rendered via a `_type` → component registry in `components/blocks/`. Don't hardcode page layout — add a block type + component instead. Details: [`docs/architecture.md`](docs/architecture.md#content-model-block-based-page-builder).
 - **Component folders**: `components/ui/` (shadcn primitives), `components/common/` (shared components like Hero, Navbar, Footer, LinkCard), `components/blocks/` (CMS block registry). Organized by role, not by page.
 - **Rendering**: static generation at build time. Server Components by default; only use Client Components when something genuinely needs client-side data/state.
-- **Routing**: locale-prefixed (`/en/...`) even though English is the only locale today. Don't add flat (non-prefixed) routes.
+- **Routing**: locale-prefixed (`/en/...`, `/es/...`, `/pt/...`). Don't add flat (non-prefixed) routes. Locale list lives in `lib/i18n.ts`; content is translated per-locale in Sanity (document-level i18n). See [`docs/architecture.md`](docs/architecture.md#internationalization).
 - **Pages are CMS-created, not hardcoded routes**: a single dynamic route (`app/[locale]/[[...slug]]`) resolves any Sanity `page` document by slug; `generateStaticParams` enumerates them at build time. `/studio` is reserved and lives outside this tree. Initial content: Home, Initiatives, Results, Collaborate. Details: [`docs/architecture.md`](docs/architecture.md#routing-pages-are-created-from-the-cms).
 - **SEO**: every page has a shared `seo` object (title, description, OG image) mapped via `generateMetadata`. Details: [`docs/architecture.md`](docs/architecture.md#seo-metadata).
 

@@ -50,7 +50,7 @@ export function Hero({
               height={image.height}
               placeholder={image.blurDataURL ? "blur" : undefined}
               blurDataURL={image.blurDataURL}
-              className="h-full w-full rounded-lg object-cover"
+              className="h-full w-full rounded-2xl object-cover"
             />
           </div>
         )}

@@ -9,16 +9,18 @@ import type { NavLink } from "@/lib/sanity/queries";
 export function NavLinks({
   links,
   locale,
+  emptyLabel,
 }: {
   links: NavLink[];
   locale: Locale;
+  emptyLabel: string;
 }) {
   const pathname = usePathname();
 
   return (
     <ul className="flex items-center gap-4 text-sm ml-auto flex-1 justify-end">
       {links.length === 0 && (
-        <li className="text-muted-foreground">No navigation links set</li>
+        <li className="text-muted-foreground">{emptyLabel}</li>
       )}
       {links.map((link) => {
         if (link.type === "external") {

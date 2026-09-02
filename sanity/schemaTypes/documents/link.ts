@@ -8,8 +8,9 @@ export const link = defineType({
     defineField({
       name: "label",
       title: "Label",
-      type: "string",
+      type: "internationalizedArrayString",
       validation: (rule) => rule.required(),
+      description: "Link text shown in the navbar. One entry per language.",
     }),
     defineField({
       name: "url",
@@ -29,6 +30,12 @@ export const link = defineType({
     }),
   ],
   preview: {
-    select: { title: "label", subtitle: "url" },
+    select: { label: "label", subtitle: "url" },
+    prepare({ label, subtitle }) {
+      const first = Array.isArray(label)
+        ? (label.find((l) => l?._key === "en") ?? label[0])?.value
+        : undefined;
+      return { title: first ?? "Link", subtitle };
+    },
   },
 });

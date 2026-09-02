@@ -1,0 +1,13 @@
+{
+  "nav": {
+    "tagline": "Policy Intelligence",
+    "emptyLinks": "No navigation links set"
+  },
+  "languageSwitcher": {
+    "label": "Select language"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist, or hasn't been published in Sanity yet."
+  }
+}

@@ -48,8 +48,9 @@ When adding a new entity: copy this shape —
 
 | Field | Type | Notes |
 |---|---|---|
+| siteName | internationalizedArray<string> | i18n (2026-09-01): one entry per locale. Falls back to the default locale (`en`) when an entry is missing. |
 | theme | -> Theme | Implemented (2026-09-01). Optional (not required) — if unset, the site falls back to Tailwind's default palette in `app/globals.css`. |
-| navLinks | Array<-> PageData \| -> Link> | Polymorphic reference (2026-09-01): each item is either a Page (linked by its `urlSlug`) or a Link (custom/external URL). Order controls navbar order. |
+| navLinks | Array<-> PageData \| -> Link> | Polymorphic reference (2026-09-01): each item is either a Page (linked by its `urlSlug`) or a Link (custom/external URL). Order controls navbar order. A Page reference points at one locale's document; the navbar resolves the label from the current locale's translation via the shared slug. |
 
 ## PageData
 
@@ -57,12 +58,17 @@ When adding a new entity: copy this shape —
 
 Renamed from `Page` (2026-09-01 sketch): `blocks` → `sections`, `friendlyUrl` → `urlSlug`.
 
+i18n (2026-09-01): document-level via `@sanity/document-internationalization` — one
+document per locale, linked by a `translation.metadata` doc, created/managed from the
+Translations menu in Studio.
+
 | Field | Type | Notes |
 |---|---|---|
 | name | string | |
 | sections | Array<Object (Block variant)> | See [Block Schemas](#block-schemas). |
 | showNavbar | boolean | |
-| urlSlug | slug | |
+| urlSlug | slug | **Shared across locales** (`/en/home` and `/es/home` both have slug `home`). Uniqueness scoped by `language` (`sanity/lib/isUniqueOtherThanLanguage.ts`). |
+| language | string | Managed by the i18n plugin; hidden/read-only in the form. |
 
 ---
 
@@ -216,7 +222,7 @@ Referenced from `Global.navLinks`, `Banner.cta`, and (assumed) `Associate.link`.
 
 | Field | Type | Notes |
 |---|---|---|
-| label | string | |
+| label | internationalizedArray<string> | i18n (2026-09-01): one entry per locale, falls back to `en`. |
 | url | string | |
 | type | [external, internal] | |
 

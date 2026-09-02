@@ -4,7 +4,13 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { locales, localeLabels, type Locale } from "@/lib/i18n";
 
-export function LanguageSwitcher({ locale }: { locale: Locale }) {
+export function LanguageSwitcher({
+  locale,
+  label,
+}: {
+  locale: Locale;
+  label: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -18,7 +24,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
     <select
       value={locale}
       onChange={handleChange}
-      aria-label="Select language"
+      aria-label={label}
       className="rounded-md text-sm"
     >
       {locales.map((l) => (

@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 export interface BannerProps {
   title: string;
   content?: string;

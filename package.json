@@ -6,13 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate:i18n": "node --experimental-strip-types scripts/migrate-to-i18n.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@sanity/client": "^7.26.2",
     "@sanity/color-input": "^6.1.4",
+    "@sanity/document-internationalization": "^6.2.34",
     "@sanity/image-url": "^2.1.1",
+    "@sanity/language-filter": "^5.0.18",
     "@sanity/vision": "^6.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -23,6 +26,7 @@
     "react-dom": "19.2.8",
     "react-flagpack": "^2.0.6",
     "sanity": "^6.11.0",
+    "sanity-plugin-internationalized-array": "^5.2.3",
     "shadcn": "^4.19.1",
     "styled-components": "^6.5.3",
     "tailwind-merge": "^3.6.0",

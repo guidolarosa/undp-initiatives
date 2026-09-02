@@ -67,9 +67,21 @@ This gives editors a normal "publish and it goes live" experience without a deve
 
 ## Internationalization
 
-English is the only shipped locale, but routing is locale-prefixed from the start (`/en/...`, part of the `[locale]/[[...slug]]` structure described in [Routing](#routing-pages-are-created-from-the-cms)) using Next.js App Router's i18n routing convention. This avoids a URL-structure migration (and the SEO/link-breakage that comes with it) when a second language is added later.
+Three locales ship: **English (default), Spanish, Portuguese**. Routing is locale-prefixed (`/en/...`, `/es/...`, `/pt/...`), part of the `[locale]/[[...slug]]` structure. The single source of truth for the locale list is `lib/i18n.ts` (`locales`, `defaultLocale`, `localeLabels`, and `languages` — the `{id,title}` shape the Sanity plugins want); `next.config.ts`, `sanity.config.ts`, and the routes all read from it.
 
-Sanity content is **not** localized yet — schemas are single-language. When a second locale ships, content fields will move to Sanity's document internationalization pattern (e.g. per-locale documents or localized field sets); this is additive to the schema and does not require another routing change, since the URL structure already accounts for it.
+**Redirects** (in `next.config.ts`): `/` and each bare `/<locale>` redirect to `/<locale>/home`.
+
+**`<html lang>`**: the site's root layout lives at `app/[locale]/layout.tsx` (so `locale` is a Next *root param*), and Sanity Studio has its own minimal root layout at `app/studio/layout.tsx` — Studio must not inherit the site's Tailwind globals or fonts. There is no `app/layout.tsx`.
+
+**Content localization — document-level.** Pages are block-based (nested block arrays), so field-level localization would make every block field a per-language object. Instead, `pageData` uses [`@sanity/document-internationalization`](https://github.com/sanity-io/document-internationalization): one `pageData` document per locale, carrying a `language` field, linked by a hidden `translation.metadata` document. Slugs are **shared across locales** (`/en/home` and `/es/home` both have slug `home`); `urlSlug` uniqueness is scoped by language (`sanity/lib/isUniqueOtherThanLanguage.ts`).
+
+Short shared strings that aren't full documents — `global.siteName`, `link.label` — use **field-level** localization instead (`sanity-plugin-internationalized-array`, an array of `{_key: locale, value}`).
+
+**Queries** (`lib/sanity/queries.ts`) take a `locale`: `getPageBySlug` filters `language == $locale`; `getGlobalNav` resolves each internal nav item's label from the current locale's page (matched by shared slug), falling back to the default locale.
+
+**UI chrome strings** (not CMS content) — the 404 page, the navbar tagline — come from `lib/dictionaries/{en,es,pt}.json` via `getDictionary(locale)`.
+
+**Adding a locale**: add it to `locales`/`localeLabels` in `lib/i18n.ts`, add a `lib/dictionaries/<locale>.json`, and create the translated `pageData` documents in Studio. No other code changes.
 
 ## Deployment
 

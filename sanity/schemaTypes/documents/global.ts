@@ -8,9 +8,10 @@ export const global = defineType({
     defineField({
       name: "siteName",
       title: "Site Name",
-      type: "string",
+      type: "internationalizedArrayString",
       validation: (rule) => rule.required(),
-      description: "The name of the site as it appears in the browser tab and navigation.",
+      description:
+        "The name of the site as it appears in the browser tab and navigation. One entry per language.",
     }),
     defineField({
       name: "theme",
