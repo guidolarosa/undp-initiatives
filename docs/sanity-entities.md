@@ -72,6 +72,21 @@ Object types registered into `PageData.sections` — reusable UI "templates" you
 and arrange to build a page (confirmed 2026-09-01). Rendered via a `_type` → component registry
 (`components/blocks/`), per [`CLAUDE.md`](../CLAUDE.md).
 
+### Hero
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-01). First block built; also the working example of the page-builder
+plumbing (schema → GROQ projection → `components/blocks/` registry → `components/common/Hero`).
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Body paragraph; optional. Rendered with line breaks preserved. |
+| image | image | Optional. Hotspot enabled. |
+| backgroundColor | -> ColorToken | Required. Full-bleed background behind the block; resolved to its hex value. |
+| imagePosition | [left, right] | Required, defaults to `right`. Side the image sits on beside the text. |
+
 ### News
 
 **Kind:** Object (Block variant)

@@ -37,7 +37,7 @@ export default async function LocaleLayout({
   return (
     <div style={themeStyle} className="flex min-h-full flex-1 flex-col bg-background">
       <Navbar locale={locale} />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pt-8">{children}</main>
     </div>
   );
 }

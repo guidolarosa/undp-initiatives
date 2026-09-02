@@ -9,12 +9,40 @@ export interface NavLink {
   type: "external" | "internal";
 }
 
-export interface PageSection {
+export interface SanityImage {
+  asset?: { _ref: string; _type: "reference" };
+  hotspot?: { x: number; y: number; height: number; width: number };
+  crop?: { top: number; bottom: number; left: number; right: number };
+  lqip?: string;
+  dimensions?: { width: number; height: number; aspectRatio: number };
+}
+
+export interface HeroSection {
   _key: string;
-  _type: string;
+  _type: "hero";
+  title: string;
+  content?: string;
+  image?: SanityImage;
+  imagePosition: "left" | "right";
+  backgroundColor?: string;
+}
+
+export interface BannerSection {
+  _key: string;
+  _type: "banner";
+  title: string;
+  content?: string;
+  backgroundColor?: string;
+}
+
+export interface PlaceholderSection {
+  _key: string;
+  _type: "blockPlaceholder";
   title?: string;
   body?: string;
 }
+
+export type PageSection = HeroSection | PlaceholderSection;
 
 export interface PageData {
   _id: string;
@@ -103,7 +131,30 @@ export async function getPageBySlug(slug: string): Promise<PageData | null> {
       name,
       "slug": urlSlug.current,
       showNavbar,
-      sections
+      sections[]{
+        _key,
+        _type,
+        _type == "hero" => {
+          title,
+          content,
+          imagePosition,
+          "backgroundColor": backgroundColor->value.hex,
+          image{
+            ...,
+            "lqip": asset->metadata.lqip,
+            "dimensions": asset->metadata.dimensions
+          }
+        },
+        _type == "banner" => {
+          title,
+          content,
+          "backgroundColor": backgroundColor->value.hex,
+        },
+        _type == "blockPlaceholder" => {
+          title,
+          body
+        }
+      }
     }`,
     { slug },
   );

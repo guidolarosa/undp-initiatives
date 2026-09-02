@@ -6,6 +6,8 @@ import { link } from "./documents/link";
 import { pageData } from "./documents/pageData";
 import { theme } from "./documents/theme";
 import { blockPlaceholder } from "./objects/blockPlaceholder";
+import { hero } from "./objects/hero";
+import { banner } from "./objects/banner";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -14,4 +16,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   link,
   pageData,
   blockPlaceholder,
+  hero,
+  banner,
 ];

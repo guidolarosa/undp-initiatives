@@ -11,7 +11,7 @@ export async function Navbar({ locale }: { locale: Locale }) {
   const siteName = await getGlobalSiteName();
   return (
     <header className="border-b border-border bg-navbar">
-      <nav className="mx-auto flex max-w-5xl items-end justify-between gap-6 px-6 pb-4">
+      <nav className="mx-auto flex max-w-296.25 items-end justify-between gap-6 px-6 pb-4">
         <div className="h-22.5 w-11.25 relative">
           <Image
             src="/img/undp_logo.png"
