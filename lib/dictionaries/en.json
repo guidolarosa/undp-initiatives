@@ -9,5 +9,6 @@
   "notFound": {
     "title": "Page not found",
     "body": "This page doesn't exist, or hasn't been published in Sanity yet."
-  }
+  },
+  "fallbackNotice": "This page isn't available in your language yet — showing English."
 }

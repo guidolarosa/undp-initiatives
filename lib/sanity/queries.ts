@@ -51,6 +51,8 @@ export interface PageData {
   name: string;
   slug: string;
   language: string;
+  /** True when the requested locale had no page and the default locale was used. */
+  isFallback: boolean;
   showNavbar: boolean;
   sections: PageSection[];
 }
@@ -195,11 +197,15 @@ export async function getPageBySlug(
   slug: string,
   locale: Locale = defaultLocale,
 ): Promise<PageData | null> {
+  // Prefer the requested locale; fall back to the default locale's version so an
+  // untranslated page still renders (with a "fell back" flag) instead of 404ing.
   return sanityFetch<PageData>(
-    `*[_type == "pageData" && language == $locale && urlSlug.current == $slug][0] {
+    `*[_type == "pageData" && urlSlug.current == $slug && language in [$locale, $fallback]]
+      | order(select(language == $locale => 0, 1))[0] {
       _id,
       name,
       language,
+      "isFallback": language != $locale,
       "slug": urlSlug.current,
       showNavbar,
       sections[]{
@@ -227,6 +233,6 @@ export async function getPageBySlug(
         }
       }
     }`,
-    { slug, locale },
+    { slug, locale, fallback: defaultLocale },
   );
 }

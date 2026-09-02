@@ -9,5 +9,6 @@
   "notFound": {
     "title": "Página no encontrada",
     "body": "Esta página no existe o aún no se ha publicado en Sanity."
-  }
+  },
+  "fallbackNotice": "Esta página aún no está disponible en tu idioma — se muestra en inglés."
 }

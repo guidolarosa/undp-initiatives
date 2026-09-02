@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "migrate:i18n": "node --experimental-strip-types scripts/migrate-to-i18n.ts"
+    "migrate:i18n": "sanity exec scripts/migrate-to-i18n.ts --with-user-token"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
