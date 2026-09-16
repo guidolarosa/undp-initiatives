@@ -41,7 +41,14 @@ export const pageData = defineType({
       name: "sections",
       title: "Sections",
       type: "array",
-      of: [{ type: "hero" }, { type: "banner" }, { type: "blockPlaceholder" }],
+      of: [
+        { type: "hero" },
+        { type: "banner" },
+        { type: "blockPlaceholder" },
+        { type: "focusAreasList" },
+        { type: "lowerLinks" },
+        { type: "ctaBanner" },
+      ],
     }),
   ],
   preview: {

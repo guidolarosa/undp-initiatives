@@ -37,6 +37,45 @@ export interface BannerSection {
   backgroundColor?: string;
 }
 
+export interface FocusArea {
+  _key: string;
+  name: string;
+  description?: string;
+  backgroundColor?: string;
+}
+
+export interface FocusAreasListSection {
+  _key: string;
+  _type: "focusAreasList";
+  title: string;
+  focusAreas: FocusArea[];
+}
+
+export interface Link {
+  _key: string;
+  label: string;
+  url: string;
+  type: "external" | "internal";
+  color: string;
+}
+
+export interface LowerLinksSection {
+  _key: string;
+  _type: "lowerLinks";
+  title: string;
+  content?: string;
+  links: Link[];
+}
+
+export interface CTABannerSection {
+  _key: string;
+  _type: "ctaBanner";
+  title: string;
+  content?: string;
+  backgroundColor?: string;
+  cta: Link;
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -44,7 +83,12 @@ export interface PlaceholderSection {
   body?: string;
 }
 
-export type PageSection = HeroSection | BannerSection | PlaceholderSection;
+export type PageSection =
+  | HeroSection
+  | BannerSection
+  | FocusAreasListSection
+  | LowerLinksSection
+  | PlaceholderSection;
 
 export interface PageData {
   _id: string;
@@ -79,8 +123,8 @@ export async function getGlobalSiteName(
   return sanityFetch<string>(
     `*[_type == "global"][0]{
       "value": coalesce(
-        siteName[_key == $locale][0].value,
-        siteName[_key == $fallback][0].value,
+        siteName[language == $locale][0].value,
+        siteName[language == $fallback][0].value,
         siteName[0].value
       )
     }.value`,
@@ -110,8 +154,8 @@ export async function getGlobalNav(
           "url": @->url,
           "linkType": @->type,
           "label": coalesce(
-            @->label[_key == $locale][0].value,
-            @->label[_key == $fallback][0].value,
+            @->label[language == $locale][0].value,
+            @->label[language == $fallback][0].value,
             @->label[0].value
           )
         }
@@ -226,6 +270,47 @@ export async function getPageBySlug(
           title,
           content,
           "backgroundColor": backgroundColor->value.hex,
+        },
+        _type == "focusAreasList" => {
+          title,
+          // "arr[]->{...}" dereferences and loses the array item's own _key
+          // (React list key) — project via "@->" instead to keep it.
+          focusAreas[]{
+            _key,
+            "name": @->name,
+            "description": @->description,
+            "backgroundColor": @->backgroundColor->value.hex
+          }
+        },
+        _type == "lowerLinks" => {
+          title,
+          content,
+          links[]{
+            _key,
+            "label": coalesce(
+              @->label[language == $locale][0].value,
+              @->label[language == $fallback][0].value,
+              @->label[0].value
+            ),
+            "url": @->url,
+            "type": @->type,
+            "color": @->color->value.hex
+          }
+        },
+        _type == "ctaBanner" => {
+          title,
+          content,
+          "backgroundColor": backgroundColor->value.hex,
+          cta{
+            "label": coalesce(
+              @->label[language == $locale][0].value,
+              @->label[language == $fallback][0].value,
+              @->label[0].value
+            ),
+            "url": @->url,
+            "type": @->type,
+            "color": @->color->value.hex
+          }
         },
         _type == "blockPlaceholder" => {
           title,

@@ -28,6 +28,14 @@ export const link = defineType({
       initialValue: "internal",
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "color",
+      title: "Color",
+      description: "Color of the link. Used for lower links or other colored backgrounds.",
+      type: "reference",
+      to: [{ type: "colorToken" }],
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { label: "label", subtitle: "url" },

@@ -93,6 +93,33 @@ plumbing (schema → GROQ projection → `components/blocks/` registry → `comp
 | backgroundColor | -> ColorToken | Required. Full-bleed background behind the block; resolved to its hex value. |
 | imagePosition | [left, right] | Required, defaults to `right`. Side the image sits on beside the text. |
 
+### Banner
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-01). Distinct from the [Banner](#banner-1) entity documented further below
+(same name, different shape) — that one is a pending spec item; this is the block actually built.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional. |
+| backgroundColor | -> ColorToken | Required. Full-bleed background behind the block. |
+
+### FocusAreasList
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-01). Same role as the [FocusAreasBlock](#focusareasblock) spec item below —
+built under a different name (`focusAreasList`) and referencing the [FocusArea](#focusarea)
+document (named `focusAreas` in the schema; holds `name`/`description`/`backgroundColor`, not the
+`name`/`excerpt`/`color` shape sketched there). Reconcile naming when that spec item is resolved.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| focusAreas | Array<-> FocusArea> | Required, at least one. |
+
 ### News
 
 **Kind:** Object (Block variant)

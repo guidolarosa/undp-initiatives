@@ -27,8 +27,16 @@ const dryRun = process.argv.includes("--dry-run");
 const client = getCliClient({ apiVersion: "2024-01-01" });
 
 function toIntlArrayString(value: string) {
+  // sanity-plugin-internationalized-array v5+ keys array items on a `language`
+  // field, not `_key` (that's just an opaque unique array key) — see
+  // LANGUAGE_FIELD_NAME in its type defs. Queries filter on `language`.
   return [
-    { _key: DEFAULT_LOCALE, _type: "internationalizedArrayStringValue", value },
+    {
+      _key: DEFAULT_LOCALE,
+      _type: "internationalizedArrayStringValue",
+      language: DEFAULT_LOCALE,
+      value,
+    },
   ];
 }
 

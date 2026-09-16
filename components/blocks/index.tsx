@@ -2,12 +2,18 @@ import type { ComponentType } from "react";
 
 import type {
   BannerSection,
+  FocusAreasListSection,
   HeroSection,
+  LowerLinksSection,
   PageSection,
+  CTABannerSection,
 } from "@/lib/sanity/queries";
 
 import { HeroBlock } from "./Hero";
 import { BannerBlock } from "./Banner";
+import { FocusAreasListBlock } from "./FocusAreasList";
+import { LowerLinksBlock } from "./LowerLinks";
+import { CTABannerBlock } from "./CTABanner";
 
 /**
  * Registry: maps a Sanity block `_type` to the component that renders it.
@@ -18,11 +24,17 @@ import { BannerBlock } from "./Banner";
 type BlockRegistry = {
   hero: ComponentType<{ block: HeroSection }>;
   banner: ComponentType<{ block: BannerSection }>;
+  focusAreasList: ComponentType<{ block: FocusAreasListSection }>;
+  lowerLinks: ComponentType<{ block: LowerLinksSection }>;
+  ctaBanner: ComponentType<{ block: CTABannerSection }>;
 };
 
 const registry: BlockRegistry = {
   hero: HeroBlock,
   banner: BannerBlock,
+  focusAreasList: FocusAreasListBlock,
+  lowerLinks: LowerLinksBlock,
+  ctaBanner: CTABannerBlock,
 };
 
 export function Blocks({ sections }: { sections: PageSection[] }) {
