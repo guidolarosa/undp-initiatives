@@ -17,7 +17,7 @@ export interface LowerLinksProps {
 
 const LinkBlock = ({ link }: { link: LinkProps }) => {
   return (
-    <Link href={link.url} className="rounded-2xl h-60 flex flex-col flex-1" style={{ backgroundColor: link.color }}>
+    <Link href={link.url} className="rounded-2xl h-60 flex flex-col flex-1 aspect-square" style={{ backgroundColor: link.color }}>
       <div className="px-6 py-4 border-t mt-auto flex justify-between items-center font-medium">
         <h3 className="text-[18px] leading-7">{link.label}</h3>
         <ArrowRight className="w-6 h-6" />

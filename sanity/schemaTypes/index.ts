@@ -12,6 +12,8 @@ import { focusAreasList } from "./objects/focusAreasList";
 import { focusAreas } from "./documents/focusAreas";
 import { lowerLinks } from "./objects/lowerLinks";
 import { ctaBanner } from "./objects/ctaBanner";
+import { portfolioApproachCard } from "./objects/portfolioApproachCard";
+import { portfolioApproach } from "./objects/portfolioApproach";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -19,6 +21,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   colorToken,
   link,
   pageData,
+  // Blocks
   focusAreas,
   lowerLinks,
   blockPlaceholder,
@@ -26,4 +29,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   banner,
   ctaBanner,
   focusAreasList,
+  portfolioApproach,
+  // Modules
+  portfolioApproachCard,
 ];

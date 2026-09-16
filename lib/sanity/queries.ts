@@ -1,3 +1,4 @@
+import type { PortableTextBlock } from "@portabletext/react";
 import type { QueryParams } from "next-sanity";
 
 import { defaultLocale, type Locale } from "@/lib/i18n";
@@ -76,6 +77,23 @@ export interface CTABannerSection {
   cta: Link;
 }
 
+export interface PortfolioApproachSection {
+  _key: string;
+  _type: "portfolioApproach";
+  title: string;
+  /** Rich text (Sanity `array of block`) — render with components/common/PortableText. */
+  content?: PortableTextBlock[];
+  portfolioApproachCards: PortfolioApproachCard[];
+}
+
+export interface PortfolioApproachCard {
+  _key: string;
+  title: string;
+  content?: string;
+  image: SanityImage;
+  backgroundColor?: string;
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -88,6 +106,8 @@ export type PageSection =
   | BannerSection
   | FocusAreasListSection
   | LowerLinksSection
+  | CTABannerSection
+  | PortfolioApproachSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -310,6 +330,22 @@ export async function getPageBySlug(
             "url": @->url,
             "type": @->type,
             "color": @->color->value.hex
+          }
+        },
+        _type == "portfolioApproach" => {
+          title,
+          content,
+          // Cards are inline objects, not references — no "@->" here.
+          portfolioApproachCards[]{
+            _key,
+            title,
+            content,
+            "backgroundColor": backgroundColor->value.hex,
+            image{
+              ...,
+              "lqip": asset->metadata.lqip,
+              "dimensions": asset->metadata.dimensions
+            }
           }
         },
         _type == "blockPlaceholder" => {

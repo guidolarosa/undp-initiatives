@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@portabletext/react": "^8.0.1",
     "@sanity/client": "^7.26.2",
     "@sanity/color-input": "^6.1.4",
     "@sanity/document-internationalization": "^6.2.34",
