@@ -14,6 +14,9 @@ import { lowerLinks } from "./objects/lowerLinks";
 import { ctaBanner } from "./objects/ctaBanner";
 import { portfolioApproachCard } from "./objects/portfolioApproachCard";
 import { portfolioApproach } from "./objects/portfolioApproach";
+import { actors } from "./documents/actors";
+import { experiences } from "./objects/experiences";
+import { experience } from "./objects/experience";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -21,6 +24,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   colorToken,
   link,
   pageData,
+  actors,
   // Blocks
   focusAreas,
   lowerLinks,
@@ -30,6 +34,8 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   ctaBanner,
   focusAreasList,
   portfolioApproach,
+  experiences,
   // Modules
   portfolioApproachCard,
+  experience
 ];

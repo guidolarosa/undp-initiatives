@@ -8,6 +8,7 @@ import "../globals.css";
 import { Navbar } from "@/components/common/Navbar";
 import { defaultLocale, isLocale, locales } from "@/lib/i18n";
 import { getGlobalSiteName, getGlobalTheme } from "@/lib/sanity/queries";
+import Footer from "@/components/common/Footer";
 
 const mulish = Mulish({
   variable: "--font-mulish",
@@ -56,9 +57,11 @@ export default async function LocaleLayout({
     ? ({
         "--background": theme.backgroundColor,
         "--foreground": theme.frontColor,
+        "--footer": theme.footerBackgroundColor,
         "--navbar": theme.navbarColor,
         "--primary": theme.buttonColor,
         "--secondary": theme.secondaryButtonColor,
+        "--theme-green": theme.green,
       } as CSSProperties)
     : undefined;
 
@@ -74,6 +77,7 @@ export default async function LocaleLayout({
         >
           <Navbar locale={locale} />
           <main className="flex-1 pt-8">{children}</main>
+          <Footer />
         </div>
       </body>
     </html>

@@ -94,6 +94,21 @@ export interface PortfolioApproachCard {
   backgroundColor?: string;
 }
 
+export interface Experience {
+  _key: string;
+  content: string;
+  author: string;
+  role: string;
+}
+
+export interface ExperiencesSection {
+  _key: string;
+  _type: "experiences";
+  title: string;
+  content?: string;
+  experiences: Experience[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -108,6 +123,7 @@ export type PageSection =
   | LowerLinksSection
   | CTABannerSection
   | PortfolioApproachSection
+  | ExperiencesSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -231,6 +247,8 @@ export interface ThemeColors {
   buttonColor?: string;
   secondaryButtonColor?: string;
   navbarColor?: string;
+  footerBackgroundColor?: string;
+  green?: string;
 }
 
 export async function getGlobalTheme(): Promise<ThemeColors | null> {
@@ -240,7 +258,9 @@ export async function getGlobalTheme(): Promise<ThemeColors | null> {
       "frontColor": frontColor->value.hex,
       "buttonColor": buttonColor->value.hex,
       "secondaryButtonColor": secondaryButtonColor->value.hex,
-      "navbarColor": navbarColor->value.hex
+      "navbarColor": navbarColor->value.hex,
+      "footerBackgroundColor": footerBackgroundColor->value.hex,
+      "green": green->value.hex
     }`,
   );
 }
@@ -255,6 +275,39 @@ export async function getAllPageSlugs(): Promise<
     }`,
   );
   return slugs ?? [];
+}
+
+export interface Actor {
+  _id: string;
+  name: string;
+  image: {
+    src: string;
+    width: number;
+    height: number;
+    alt: string;
+    blurDataURL?: string;
+    lqip?: string;
+    dimensions?: { width: number; height: number; aspectRatio: number };
+  };
+  type: ["implementer", "cofounder"];
+  showInFooter: boolean;
+}
+
+export async function getActors(): Promise<Actor[]> {
+  const actors = await sanityFetch<Actor[]>(
+    `*[_type == "actors" && showInFooter == true] {
+      _id,
+      name,
+      image{
+        ...,
+        "lqip": asset->metadata.lqip,
+        "dimensions": asset->metadata.dimensions
+      },
+      type,
+      showInFooter
+    }`,
+  );
+  return actors ?? [];
 }
 
 export async function getPageBySlug(
@@ -330,6 +383,16 @@ export async function getPageBySlug(
             "url": @->url,
             "type": @->type,
             "color": @->color->value.hex
+          }
+        },
+        _type == "experiences" => {
+          title,
+          content,
+          experiences[]{
+            _key,
+            "content": @->content,
+            "author": @->author,
+            "role": @->role
           }
         },
         _type == "portfolioApproach" => {

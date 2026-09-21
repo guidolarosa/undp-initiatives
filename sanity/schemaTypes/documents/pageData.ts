@@ -49,6 +49,7 @@ export const pageData = defineType({
         { type: "lowerLinks" },
         { type: "ctaBanner" },
         { type: "portfolioApproach" },
+        { type: "experiences" },
       ],
     }),
   ],

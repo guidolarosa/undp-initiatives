@@ -48,6 +48,20 @@ export const theme = defineType({
       to: [{ type: "colorToken" }],
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "footerBackgroundColor",
+      title: "Footer background color",
+      type: "reference",
+      to: [{ type: "colorToken" }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "green",
+      title: "Green color",
+      type: "reference",
+      to: [{ type: "colorToken" }],
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "name" },
