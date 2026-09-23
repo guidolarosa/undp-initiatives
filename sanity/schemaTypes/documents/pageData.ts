@@ -50,6 +50,8 @@ export const pageData = defineType({
         { type: "ctaBanner" },
         { type: "portfolioApproach" },
         { type: "experiences" },
+        { type: "newsList" },
+        { type: "stats" },
       ],
     }),
   ],

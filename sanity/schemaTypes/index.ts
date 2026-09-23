@@ -17,6 +17,11 @@ import { portfolioApproach } from "./objects/portfolioApproach";
 import { actors } from "./documents/actors";
 import { experiences } from "./objects/experiences";
 import { experience } from "./objects/experience";
+import { newsList } from "./objects/newsList";
+import { news } from "./documents/news";
+import { newsCategory } from "./documents/newsCategory";
+import { stats } from "./objects/stats";
+import { statCard } from "./objects/statCard";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -35,7 +40,12 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   focusAreasList,
   portfolioApproach,
   experiences,
+  newsList,
+  stats,
   // Modules
   portfolioApproachCard,
-  experience
+  experience,
+  news,
+  newsCategory,
+  statCard,
 ];

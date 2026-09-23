@@ -9,6 +9,8 @@ import type {
   CTABannerSection,
   PortfolioApproachSection,
   ExperiencesSection,
+  NewsListSection,
+  StatsSection,
 } from "@/lib/sanity/queries";
 
 import { HeroBlock } from "./Hero";
@@ -18,6 +20,8 @@ import { LowerLinksBlock } from "./LowerLinks";
 import { CTABannerBlock } from "./CTABanner";
 import { PortfolioApproachBlock } from "./PortfolioApproach";
 import { ExperiencesBlock } from "./Experiences";
+import { NewsListBlock } from "./NewsList";
+import { StatsBlock } from "./Stats";
 
 /**
  * Registry: maps a Sanity block `_type` to the component that renders it.
@@ -33,6 +37,8 @@ type BlockRegistry = {
   ctaBanner: ComponentType<{ block: CTABannerSection }>;
   portfolioApproach: ComponentType<{ block: PortfolioApproachSection }>;
   experiences: ComponentType<{ block: ExperiencesSection }>;
+  newsList: ComponentType<{ block: NewsListSection }>;
+  stats: ComponentType<{ block: StatsSection }>;
 };
 
 const registry: BlockRegistry = {
@@ -43,6 +49,8 @@ const registry: BlockRegistry = {
   ctaBanner: CTABannerBlock,
   portfolioApproach: PortfolioApproachBlock,
   experiences: ExperiencesBlock,
+  newsList: NewsListBlock,
+  stats: StatsBlock,
 };
 
 export function Blocks({ sections }: { sections: PageSection[] }) {

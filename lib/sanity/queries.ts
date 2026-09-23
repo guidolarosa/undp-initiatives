@@ -109,6 +109,41 @@ export interface ExperiencesSection {
   experiences: Experience[];
 }
 
+export interface NewsItem {
+  _key: string;
+  title: string;
+  date: string;
+  category?: string;
+  url: string;
+  backgroundColor?: string;
+  image?: SanityImage;
+}
+
+export interface NewsListSection {
+  _key: string;
+  _type: "newsList";
+  title: string;
+  content?: string;
+  news: NewsItem[];
+  cta: Link;
+}
+
+export interface StatCard {
+  _key: string;
+  title: string;
+  content?: string;
+  color?: string;
+}
+
+export interface StatsSection {
+  _key: string;
+  _type: "stats";
+  title: string;
+  content?: string;
+  backgroundColor?: string;
+  cards: StatCard[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -124,6 +159,8 @@ export type PageSection =
   | CTABannerSection
   | PortfolioApproachSection
   | ExperiencesSection
+  | NewsListSection
+  | StatsSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -409,6 +446,51 @@ export async function getPageBySlug(
               "lqip": asset->metadata.lqip,
               "dimensions": asset->metadata.dimensions
             }
+          }
+        },
+        _type == "newsList" => {
+          title,
+          content,
+          // Rendered newest first, regardless of the order items were added
+          // to the list in Studio.
+          "news": news[]{
+            _key,
+            "title": @->title,
+            "date": @->date,
+            "category": coalesce(
+              @->category->label[language == $locale][0].value,
+              @->category->label[language == $fallback][0].value,
+              @->category->label[0].value
+            ),
+            "url": @->url,
+            "backgroundColor": @->backgroundColor->value.hex,
+            "image": @->image{
+              ...,
+              "lqip": asset->metadata.lqip,
+              "dimensions": asset->metadata.dimensions
+            }
+          } | order(date desc),
+          cta{
+            "label": coalesce(
+              @->label[language == $locale][0].value,
+              @->label[language == $fallback][0].value,
+              @->label[0].value
+            ),
+            "url": @->url,
+            "type": @->type,
+            "color": @->color->value.hex
+          }
+        },
+        _type == "stats" => {
+          title,
+          content,
+          "backgroundColor": backgroundColor->value.hex,
+          // Cards are inline objects, not references — no "@->" here.
+          cards[]{
+            _key,
+            title,
+            content,
+            "color": color->value.hex
           }
         },
         _type == "blockPlaceholder" => {

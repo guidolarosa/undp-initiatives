@@ -26,7 +26,14 @@ export async function Navbar({ locale }: { locale: Locale }) {
         </div>
         <div className="flex items-end gap-6 flex-1">
           <div className="flex items-center gap-4">
-            <div className="w-15 aspect-square bg-[#2E2E2E] rounded-full"></div>
+            <div className="w-15 aspect-square relative">
+              <Image
+                src="/logo.svg"
+                alt={siteName ?? "Logo"}
+                fill
+                className="object-contain"
+              />
+            </div>
             <div>
               <Link
                 href={`/${locale}/home`}

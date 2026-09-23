@@ -120,27 +120,73 @@ document (named `focusAreas` in the schema; holds `name`/`description`/`backgrou
 | title | string | Required. |
 | focusAreas | Array<-> FocusArea> | Required, at least one. |
 
-### News
+### NewsList
 
 **Kind:** Object (Block variant)
 
+Implemented (2026-09-22). Same role as the sketch's single "News" entity below, split the same
+way [FocusAreasList](#focusareaslist) split from `FocusAreasBlock`/`FocusArea`: `NewsList` is the
+block placed in `PageData.sections`, referencing many [News](#news) documents so the same item
+can be reused and so News is managed from its own list in Studio.
+
 | Field | Type | Notes |
 |---|---|---|
-| category | -> NewsCategory | |
-| title | string | |
-| url | string | |
-| image | image | |
-| date | date | |
-| backgroundColor | -> ColorToken | No reference arrow was drawn in the sketch for this field; assumed `-> ColorToken` for consistency with Theme/ChartSection. Confirm. |
+| title | string | Required. |
+| content | text | Optional body copy under the title. |
+| news | Array<-> News> | Required, at least one. Rendered by each News item's `date`, newest first — not array order. |
+| cta | -> Link | The "Read more" button below the grid. |
+
+### News
+
+**Kind:** Document
+
+Implemented (2026-09-22) as a document (not an inline block field) — see [NewsList](#newslist)
+above. `backgroundColor` made optional, not required: the design has plain white cards.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| date | date | Required. Controls display order in a NewsList. |
+| category | -> NewsCategory | Required. |
+| image | image | Required. Hotspot enabled. |
+| url | string | Required. Where "Read more" links to. |
+| backgroundColor | -> ColorToken | Optional. |
 
 ### NewsCategory
 
 **Kind:** Document
 
+Implemented (2026-09-22). Dropped `slug` (no category-filtered listing exists yet — add it if
+that's built later) and made `label` an internationalized array, matching `Link.label`, since it's
+locale-facing text (e.g. "Theme 1").
+
 | Field | Type | Notes |
 |---|---|---|
-| slug | slug | |
-| label | string | |
+| label | internationalizedArray<string> | Required. One entry per language. |
+
+### Stats
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-22). Cards are inline objects (`StatCard`), not references — unlike
+`NewsList`/`FocusAreasList`, these aren't a reusable content library, just this block's own layout.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional body copy. |
+| backgroundColor | -> ColorToken | Required. Full-bleed background behind the whole block. |
+| cards | Array<Object: StatCard> | Required, at least one. |
+
+### StatCard
+
+**Kind:** Object
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. The highlighted stat, e.g. "1 in 5", "68%". |
+| content | text | Optional caption. |
+| color | -> ColorToken | Required. This card's own background color. |
 
 ### Banner
 
