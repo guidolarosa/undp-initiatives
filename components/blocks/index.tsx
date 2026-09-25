@@ -12,6 +12,7 @@ import type {
   NewsListSection,
   StatsSection,
   InterventionsListSection,
+  ShiftsInLogicSection,
 } from "@/lib/sanity/queries";
 
 import { HeroBlock } from "./Hero";
@@ -24,6 +25,7 @@ import { ExperiencesBlock } from "./Experiences";
 import { NewsListBlock } from "./NewsList";
 import { StatsBlock } from "./Stats";
 import { InterventionsListBlock } from "./InterventionsList";
+import { ShiftsInLogicBlock } from "./ShiftsInLogic";
 
 /**
  * Registry: maps a Sanity block `_type` to the component that renders it.
@@ -42,6 +44,7 @@ type BlockRegistry = {
   newsList: ComponentType<{ block: NewsListSection }>;
   stats: ComponentType<{ block: StatsSection }>;
   interventionsList: ComponentType<{ block: InterventionsListSection }>;
+  shiftsInLogic: ComponentType<{ block: ShiftsInLogicSection }>;
 };
 
 const registry: BlockRegistry = {
@@ -55,6 +58,7 @@ const registry: BlockRegistry = {
   newsList: NewsListBlock,
   stats: StatsBlock,
   interventionsList: InterventionsListBlock,
+  shiftsInLogic: ShiftsInLogicBlock,
 };
 
 export function Blocks({ sections }: { sections: PageSection[] }) {

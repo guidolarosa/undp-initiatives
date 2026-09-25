@@ -29,6 +29,8 @@ import { intent } from "./documents/intent";
 import { activity } from "./documents/activity";
 import { shift } from "./documents/shift";
 import { interventionsList } from "./objects/interventionsList";
+import { shiftsInLogic } from "./objects/shiftsInLogic";
+import { shiftInLogicRow } from "./objects/shiftInLogicRow";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -56,7 +58,9 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   newsList,
   stats,
   interventionsList,
+  shiftsInLogic,
   // Modules
+  shiftInLogicRow,
   portfolioApproachCard,
   experience,
   news,

@@ -165,6 +165,24 @@ export interface InterventionsListSection {
   interventions: InterventionCard[];
 }
 
+export interface ShiftInLogicRow {
+  _key: string;
+  label: string;
+  content?: string;
+  color?: string;
+  image?: SanityImage;
+}
+
+export interface ShiftsInLogicSection {
+  _key: string;
+  _type: "shiftsInLogic";
+  title: string;
+  content?: string;
+  leadIn?: string;
+  backgroundColor?: string;
+  rows: ShiftInLogicRow[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -183,6 +201,7 @@ export type PageSection =
   | NewsListSection
   | StatsSection
   | InterventionsListSection
+  | ShiftsInLogicSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -527,6 +546,24 @@ export async function getPageBySlug(
             "primaryFocusArea": @->primaryFocusArea->{
               name,
               "color": backgroundColor->value.hex
+            }
+          }
+        },
+        _type == "shiftsInLogic" => {
+          title,
+          content,
+          leadIn,
+          "backgroundColor": backgroundColor->value.hex,
+          // Rows are inline objects, not references — no "@->" here.
+          rows[]{
+            _key,
+            label,
+            content,
+            "color": color->value.hex,
+            image{
+              ...,
+              "lqip": asset->metadata.lqip,
+              "dimensions": asset->metadata.dimensions
             }
           }
         },

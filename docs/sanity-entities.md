@@ -522,6 +522,36 @@ Nothing in the block links anywhere yet (no Intervention detail page/route exist
 | content | text | Optional. |
 | backgroundColor | -> ColorToken | Required. Applies to the panel only, not the full block width (unlike most other blocks' `backgroundColor`). |
 
+### ShiftsInLogic
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-26). A title/content intro, a full-width lead-in line, then a stack of
+pill-shaped rows each describing one "from X to Y" shift. Named `shiftsInLogic` rather than anything
+containing just "shift" or "portfolio" — both [Shift](#shift) (the unrelated activities/from/to
+domain document) and [PortfolioApproach](#portfolioapproach) already exist.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional. Paragraph beside the title. |
+| leadIn | text | Optional. The line between the intro and the rows. Confirmed as a **single** field — the "A shift in logic:" prefix is authored as part of the same string, not a separate label. |
+| rows | Array<Object: ShiftInLogicRow> | Required, at least one. |
+
+### ShiftInLogicRow
+
+**Kind:** Object
+
+Inline object (like [StatCard](#statcard)/`PortfolioApproachCard`), not a reference — these rows
+belong to their block, they aren't a reusable content library.
+
+| Field | Type | Notes |
+|---|---|---|
+| label | string | Required. e.g. "From fragmentation to Coherence". |
+| image | image | Optional. The diagram between label and content. Confirmed as a per-row **upload**, not a fixed set of hardcoded SVGs, so new row types don't need a code change. |
+| content | text | Optional. |
+| color | -> ColorToken | Required. This row's own background color. |
+
 ---
 
 ## Open items
