@@ -144,6 +144,27 @@ export interface StatsSection {
   cards: StatCard[];
 }
 
+export interface InterventionCardFocusArea {
+  name: string;
+  color?: string;
+}
+
+export interface InterventionCard {
+  _key: string;
+  name: string;
+  primaryFocusArea?: InterventionCardFocusArea;
+}
+
+export interface InterventionsListSection {
+  _key: string;
+  _type: "interventionsList";
+  eyebrow?: string;
+  title: string;
+  content?: string;
+  backgroundColor?: string;
+  interventions: InterventionCard[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -161,6 +182,7 @@ export type PageSection =
   | ExperiencesSection
   | NewsListSection
   | StatsSection
+  | InterventionsListSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -326,7 +348,8 @@ export interface Actor {
     lqip?: string;
     dimensions?: { width: number; height: number; aspectRatio: number };
   };
-  type: ["implementer", "cofounder"];
+  /** Array of `actorType` slugs (e.g. "implementer", "cofounder"), not the translated label. */
+  type: string[];
   showInFooter: boolean;
 }
 
@@ -340,7 +363,7 @@ export async function getActors(): Promise<Actor[]> {
         "lqip": asset->metadata.lqip,
         "dimensions": asset->metadata.dimensions
       },
-      type,
+      "type": type[]->slug.current,
       showInFooter
     }`,
   );
@@ -491,6 +514,20 @@ export async function getPageBySlug(
             title,
             content,
             "color": color->value.hex
+          }
+        },
+        _type == "interventionsList" => {
+          eyebrow,
+          title,
+          content,
+          "backgroundColor": backgroundColor->value.hex,
+          interventions[]{
+            _key,
+            "name": @->name,
+            "primaryFocusArea": @->primaryFocusArea->{
+              name,
+              "color": backgroundColor->value.hex
+            }
           }
         },
         _type == "blockPlaceholder" => {

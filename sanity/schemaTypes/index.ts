@@ -22,6 +22,13 @@ import { news } from "./documents/news";
 import { newsCategory } from "./documents/newsCategory";
 import { stats } from "./objects/stats";
 import { statCard } from "./objects/statCard";
+import { intervention } from "./documents/intervention";
+import { actorType } from "./documents/actorType";
+import { outcome } from "./documents/outcome";
+import { intent } from "./documents/intent";
+import { activity } from "./documents/activity";
+import { shift } from "./documents/shift";
+import { interventionsList } from "./objects/interventionsList";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -30,6 +37,12 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   link,
   pageData,
   actors,
+  actorType,
+  intervention,
+  outcome,
+  intent,
+  activity,
+  shift,
   // Blocks
   focusAreas,
   lowerLinks,
@@ -42,6 +55,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   experiences,
   newsList,
   stats,
+  interventionsList,
   // Modules
   portfolioApproachCard,
   experience,

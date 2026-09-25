@@ -52,6 +52,7 @@ export const pageData = defineType({
         { type: "experiences" },
         { type: "newsList" },
         { type: "stats" },
+        { type: "interventionsList" },
       ],
     }),
   ],

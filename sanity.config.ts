@@ -22,7 +22,7 @@ export default defineConfig({
     // a "Translations" menu that links the versions via a translation.metadata doc.
     documentInternationalization({
       supportedLanguages: [...languages],
-      schemaTypes: ["pageData"],
+      schemaTypes: ["pageData", "intervention"],
     }),
     // Field-level translation for short shared strings (site name, link labels)
     // where a whole separate document per locale would be overkill.

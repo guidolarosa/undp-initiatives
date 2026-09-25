@@ -18,14 +18,10 @@ export const actors = defineType({
     defineField({
       name: 'type',
       title: 'Type',
+      description:
+        'What kind of actor this is — e.g. Implementer, Cofounder, Government, Civil society, International org. Managed as its own list of Actor type documents so new types can be added without a schema change.',
       type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        list: [
-          { title: 'Implementer', value: 'implementer' },
-          { title: 'Cofounder', value: 'cofounder' },
-        ],
-      },
+      of: [{ type: 'reference', to: [{ type: 'actorType' }] }],
     }),
     defineField({
       name: 'showInFooter',

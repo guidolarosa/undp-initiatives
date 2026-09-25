@@ -307,27 +307,36 @@ Referenced from `Global.navLinks`, `Banner.cta`, and (assumed) `Associate.link`.
 
 **Kind:** Document
 
+Implemented (2026-09-25), decided in a full grilling session against a newer ERD sketch. Document-
+internationalized like `PageData` (one document per locale, `language` field, slug uniqueness scoped
+by language) — confirmed explicitly, since Intervention content (name, outcome text, activity
+excerpts...) all needs translation the same way page content does.
+
 | Field | Type | Notes |
 |---|---|---|
-| name | string | |
-| slug | slug | |
-| status | [started, non-started] | Value renamed from `not-started` to match the 2026-09-01 sketch — confirm this wasn't a spelling slip. |
-| focusAreas | Array<-> FocusArea> | |
-| primaryActor | -> Actor | |
-| secondaryActors | Array<-> Actor> | |
-| localization | geopoint | Original text draft called this "global-coordinates". |
-| outcomes | Array<-> Outcome> | |
-| activities | Array<-> Activity> | |
+| name | string | Required. |
+| slug | slug | Required. Shared across locales, like `PageData.urlSlug`. |
+| language | string | Managed by the i18n plugin; hidden/read-only in the form. |
+| status | [started, not-started] | Confirmed `not-started` (not `non-started` as both sketches had it — a repeated typo, not intentional vocabulary). |
+| focusAreas | Array<-> [FocusArea](#focusarea)> | Required, at least one. |
+| primaryFocusArea | -> [FocusArea](#focusarea) | New field, not in either sketch. Needed because the first block fed by Intervention data (a card list) badges each card with exactly one focus area, and relying on `focusAreas[0]` (array order) was judged too fragile/implicit. |
+| primaryActor | -> [Actor](#actor) | Required. |
+| secondaryActors | Array<-> [Actor](#actor)> | |
+| localization | geopoint | |
+| outcomes | Array<-> [Outcome](#outcome)> | |
+| activities | Array<-> [Activity](#activity)> | |
+| mainPhoto | image | Confirmed kept on Intervention (the newer sketch draws it here, resolving the old sketch-vs-text-draft conflict). |
 
 **Notes:**
-- `color` and `mainPhoto` were on Intervention in the original text draft but do **not** appear on this
-  entity in the 2026-09-01 sketch (`mainPhoto` now lives on `Connection` instead). Removed here on the
-  assumption the sketch is authoritative — confirm if this was actually just a sketch omission and
-  Intervention should keep one or both.
+- No `connection` field yet — see [Connection](#connection) below; deferred entirely, by choice, not
+  oversight.
 
 ### Connection
 
 **Kind:** Document
+
+**Deferred (2026-09-25)** — explicitly not built in this pass ("a bit complicated, leave that for
+later"). Spec below is unchanged from the prior review, kept for whenever this gets picked up.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -344,43 +353,62 @@ Referenced from `Global.navLinks`, `Banner.cta`, and (assumed) `Associate.link`.
 
 **Kind:** Document
 
+Implemented (2026-09-25). Confirmed explicitly: **not** referenced from Intervention — the two are
+joined only indirectly, through Activities each one separately references. No `intervention` field
+exists on Shift.
+
 | Field | Type | Notes |
 |---|---|---|
-| activities | Array<-> Activity> | |
-| from | date | |
-| to | date | |
-
-**Notes:**
-- Open: relationship to Intervention still not shown in either the text draft or the sketch (Shift
-  isn't referenced from Intervention).
+| activities | Array<-> [Activity](#activity)> | Required, at least one. |
+| from | date | Required. |
+| to | date | Required. |
 
 ### Activity
 
 **Kind:** Document
 
+Implemented (2026-09-25) as specced. Plain, single-language document (see i18n note below).
+
 | Field | Type | Notes |
 |---|---|---|
-| name | string | |
-| date | date | |
+| name | string | Required. |
+| date | date | Required. |
 | url | string | |
-| image | image | |
-| excerpt | string | |
+| image | image | Hotspot enabled. |
+| excerpt | text | |
+
+**Notes:**
+- i18n (2026-09-25): confirmed **no** document-internationalization plugin on Activity (or Outcome).
+  Each locale's Intervention document references its own separately-authored Activity/Outcome
+  documents — translation happens by authoring parallel content per locale, not by linking translated
+  Activities to a source via the plugin. Less machinery; matches how the rest of an Intervention's
+  content is translated anyway.
 
 ### Outcome
 
 **Kind:** Document
 
+Implemented (2026-09-25). The `content`/`videoUrl`/`numericValue`/`text` relationship — flagged
+"assumed, not confirmed" in the prior review — turned out to be more specific than guessed: **not**
+"numericValue always shown, text/video is the supplementary mode." Confirmed instead:
+- `content = "video"` → only `videoUrl` is relevant.
+- `content = "text"` → `numericValue` **and** `text` are shown together.
+
+`videoUrl`, `numericValue`, and `text` are each hidden in Studio and only required for the mode
+that's active (`hidden`/`validation` keyed off the sibling `content` field).
+
 | Field | Type | Notes |
 |---|---|---|
-| intents | Array<-> Intent> | |
-| type | [pill, circle] | |
-| size | [small, large] | |
-| content | [text, video] | Selects which of `text` / `videoUrl` is used for display. |
-| videoUrl | string | Shown only if `content` = `video` (marked `*`/optional in sketch). |
-| numericValue | number | |
-| text | richText | Assumed shown only if `content` = `text` — not explicitly stated, confirm before building. |
+| intents | Array<-> [Intent](#intent)> | |
+| type | [pill, circle] | Required. |
+| size | [small, large] | Required. |
+| content | [text, video] | Required. Mode switch — see above. |
+| videoUrl | url | Required only when `content = video`; hidden otherwise. |
+| numericValue | number | Required only when `content = text`; hidden otherwise. |
+| text | richText | Confirmed rich text (Portable Text, same as `PortfolioApproach.content`). Required only when `content = text`; hidden otherwise. |
 
 **Notes:**
+- Not internationalized — see [Activity](#activity)'s i18n note above; same reasoning applies here.
 - See [OutcomesBlock](#outcomesblock) — the sketch also shows a same-named, differently-shaped
   `Outcome` (`id, slug, label`) nested under a page-builder block. Not the same document type as this
   one; modeled as a separate `OutcomeTag` object pending your confirmation.
@@ -389,14 +417,21 @@ Referenced from `Global.navLinks`, `Banner.cta`, and (assumed) `Associate.link`.
 
 **Kind:** Document
 
+Implemented (2026-09-25). `label` made an internationalized array rather than a plain string —
+treated like `NewsCategory.label`/`Link.label` (a short, reusable, locale-facing tag), not like a
+document-internationalized type — since the same Intent (e.g. "Youth Employment") is expected to be
+reused across many Outcomes/Interventions rather than authored once per locale.
+
 | Field | Type | Notes |
 |---|---|---|
-| label | string | |
-| color | -> ColorToken | |
+| label | internationalizedArray<string> | Required. One entry per language. |
+| color | -> ColorToken | Required. |
 
 ### Associate
 
 **Kind:** Document
+
+Not built in this pass — out of scope for the Intervention graph work (2026-09-25). Spec unchanged.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -408,33 +443,84 @@ Referenced from `Global.navLinks`, `Banner.cta`, and (assumed) `Associate.link`.
 
 **Kind:** Document
 
-| Field | Type | Notes |
+**Reused, not rebuilt (2026-09-25).** The graph's `FocusArea` (`name`, `excerpt`, `color -> ColorToken`)
+turned out to be the same concept as the `focusAreas` document already implemented for the
+`FocusAreasList` marketing block — confirmed explicitly rather than assumed. `Intervention.focusAreas`
+and `Intervention.primaryFocusArea` both point at the **existing** `focusAreas` document type, field
+names kept as they already are (`description`, `backgroundColor`) rather than renamed to match this
+sketch's `excerpt`/`color` — same concept, no functional reason to rename and break the existing
+`FocusAreasList` block/query.
+
+| Field (as actually implemented) | Type | Notes |
 |---|---|---|
-| name | string | |
-| excerpt | string | |
-| color | -> ColorToken | Added per 2026-09-01 sketch. Confirmed to reference ColorToken, not a raw hexcode (the sketch's `[hexcode]` annotation was a sketch slip). |
+| name | string | Required. |
+| description | text | Sketch calls this `excerpt` — kept as `description`, see above. |
+| backgroundColor | -> ColorToken | Sketch calls this `color` — kept as `backgroundColor`, see above. |
 
 ### Actor
 
 **Kind:** Document
 
+**Reused, not rebuilt (2026-09-25).** The graph's `Actor` (`name`, `type -> ActorType`) is **not** a
+new document — it's the existing `actors` document (already implemented for footer partner logos:
+`name`, `image`, `type`, `showInFooter`), with `type` changed in place. Confirmed explicitly after
+flagging the collision: `actors.type` was `array of string` (`[implementer, cofounder]`); it's now
+`array of reference -> ActorType`, kept as an **array** (not the single reference the sketch draws) so
+an actor can carry more than one type value if needed.
+
 | Field | Type | Notes |
 |---|---|---|
 | name | string | |
-| type | -> ActorType | |
+| image | image | |
+| type | Array<-> ActorType> | Was `array of string` (`[implementer, cofounder]`); implementer/cofounder now become `ActorType` documents like any other type (government, civil, international-org), created by hand in Studio. |
+| showInFooter | boolean | Unchanged. |
+
+**Notes:**
+- **Migration required, not yet run:** the one existing `actors` document ("UNDP") still has
+  `type: ["implementer"]` as raw strings — that no longer matches the new reference-array schema. Once
+  the `implementer`/`cofounder`/etc. `ActorType` documents exist in Studio, that document's `type`
+  field needs migrating to reference them (same shape of one-off migration as `scripts/migrate-to-i18n.ts`
+  earlier in this project).
 
 ### ActorType
 
 **Kind:** Document
 
+Implemented (2026-09-25) — the "unresolved conflict" flagged in the prior review is now resolved:
+`label` is **open-ended**, not the locked 3-option enum. Confirmed by the actual decision made this
+session: `implementer`/`cofounder` need to coexist as `ActorType` values alongside
+`government`/`civil`/`international-org`, which only works if new types can be added without a schema
+change. `label` is an internationalized array, same reasoning as [Intent.label](#intent) — a short,
+reusable, locale-facing tag.
+
 | Field | Type | Notes |
 |---|---|---|
-| label | string | **Unresolved conflict.** Earlier spec review (previous session) explicitly changed this from a fixed `select` [government, civil, international-org] to free text, specifically so new actor types can be added later without a schema change. The 2026-09-01 sketch redraws `label` as that same fixed select again. Kept as `string` here (not silently reverted) — needs an explicit decision from you: keep it open-ended, or lock it back to the 3-option enum? |
-| color | -> ColorToken | |
+| label | internationalizedArray<string> | Required. One entry per language. Open-ended — not a fixed `select`. |
+| slug | slug | Added 2026-09-25, after content review — with `label` translated 3 ways, code needs a stable, non-translated key. Source defaults to the English `label` value. `Footer.tsx`'s implementer/cofounder split reads this, not the label text; `getActors()` resolves `type[]->slug.current`. |
+| color | -> ColorToken | Required. |
 
 **Notes:**
-- A sticky note next to ActorType in the sketch is cut off ("Actor exis...") and still unread — ask
-  again if it matters, or paste/retype it here.
+- The sketch's cut-off sticky note next to ActorType ("Actor exis...") was never retyped/resolved — not
+  revisited in this session either, since it didn't come up as blocking. Ask again if it turns out to
+  matter.
+- The existing `cofounder` document doesn't have its slug filled in yet (`implementer`'s does) — open
+  it in Studio and hit Generate.
+
+### InterventionsList
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-25). The first block fed by Intervention data — a curated (not auto-filtered:
+confirmed explicitly, no `status`-based filtering) list of Interventions beside a title/content panel.
+Nothing in the block links anywhere yet (no Intervention detail page/route exists).
+
+| Field | Type | Notes |
+|---|---|---|
+| eyebrow | string | Optional. Small label above the list, e.g. "New interventions". |
+| interventions | Array<-> Intervention> | Required, at least one. Manually curated and ordered by the editor — not automatic. |
+| title | string | Required. Heading in the colored panel. |
+| content | text | Optional. |
+| backgroundColor | -> ColorToken | Required. Applies to the panel only, not the full block width (unlike most other blocks' `backgroundColor`). |
 
 ---
 
@@ -442,17 +528,22 @@ Referenced from `Global.navLinks`, `Banner.cta`, and (assumed) `Associate.link`.
 
 - **OutcomesBlock vs Outcome**: same name in the sketch, incompatible field sets. Needs an explicit
   call — separate type (current assumption, named `OutcomeTag`) vs. the block referencing the real
-  `Outcome` document and only previewing `slug`/`label`.
-- **ActorType.label**: free text (current, from prior session) vs. fixed 3-option select (per new
-  sketch) — direct conflict, unresolved.
-- **Intervention.color / Intervention.mainPhoto**: dropped per the new sketch (mainPhoto moved to
-  Connection) — confirm this wasn't a sketch omission.
+  `Outcome` document and only previewing `slug`/`label`. (Unrelated to the 2026-09-25 Intervention
+  build — that page-builder block was never built either.)
+- ~~ActorType.label: free text vs. fixed 3-option select~~ — **Resolved (2026-09-25):** open-ended,
+  confirmed. See [ActorType](#actortype).
+- ~~Intervention.color / Intervention.mainPhoto~~ — **Resolved (2026-09-25):** `mainPhoto` kept on
+  Intervention; no `color` field (never came up as needed). See [Intervention](#intervention).
+- ~~Shift not referenced from Intervention~~ — **Resolved (2026-09-25), confirmed intentional:** they're
+  joined only indirectly, through shared Activity references. See [Shift](#shift).
 - **backgroundColor fields on News / Banner / FocusAreasBlock**: assumed `-> ColorToken` for consistency
   with Theme and ChartSection.color, but no reference arrow was actually drawn for these three in the
   sketch.
 - **Associate.link**: assumed `-> Link` based on the field being renamed to match the Link entity's
   name; no arrow confirms it — could just be a renamed `url` string.
-- **Connection**: still not referenced from Intervention or PageData — attachment point undefined.
-- **Shift / Associate**: still not referenced from Intervention or PageData — attachment point
-  undefined.
-- **Sticky note near ActorType**: illegible ("Actor exis...") — unresolved.
+- **Connection**: deferred by explicit choice (2026-09-25), not an oversight — "a bit complicated,
+  leave that for later." Still not referenced from Intervention or PageData when it is picked up.
+- **Associate**: still not built, not referenced from Intervention or PageData — attachment point
+  undefined. Out of scope for the 2026-09-25 Intervention build.
+- **Sticky note near ActorType**: illegible ("Actor exis...") — still unresolved, didn't come up as
+  blocking this session.
