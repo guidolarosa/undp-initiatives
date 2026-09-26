@@ -183,6 +183,24 @@ export interface ShiftsInLogicSection {
   rows: ShiftInLogicRow[];
 }
 
+export interface TerritoryPoint {
+  _id: string;
+  name: string;
+  lat?: number;
+  lng?: number;
+  color?: string;
+}
+
+export interface TerritorySection {
+  _key: string;
+  _type: "territory";
+  title: string;
+  content?: string;
+  backgroundColor?: string;
+  /** Every located Intervention in this locale — not curated on the block. */
+  points: TerritoryPoint[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -202,6 +220,7 @@ export type PageSection =
   | StatsSection
   | InterventionsListSection
   | ShiftsInLogicSection
+  | TerritorySection
   | PlaceholderSection;
 
 export interface PageData {
@@ -565,6 +584,24 @@ export async function getPageBySlug(
               "lqip": asset->metadata.lqip,
               "dimensions": asset->metadata.dimensions
             }
+          }
+        },
+        _type == "territory" => {
+          title,
+          content,
+          "backgroundColor": backgroundColor->value.hex,
+          // Not curated on the block: every located Intervention in this
+          // locale is plotted, so adding one is all it takes to map it.
+          "points": *[
+            _type == "intervention" &&
+            language == $locale &&
+            defined(localization)
+          ]{
+            _id,
+            name,
+            "lat": localization.lat,
+            "lng": localization.lng,
+            "color": primaryFocusArea->backgroundColor->value.hex
           }
         },
         _type == "blockPlaceholder" => {

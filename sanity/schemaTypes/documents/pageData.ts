@@ -54,6 +54,7 @@ export const pageData = defineType({
         { type: "stats" },
         { type: "interventionsList" },
         { type: "shiftsInLogic" },
+        { type: "territory" },
       ],
     }),
   ],

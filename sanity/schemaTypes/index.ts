@@ -31,6 +31,7 @@ import { shift } from "./documents/shift";
 import { interventionsList } from "./objects/interventionsList";
 import { shiftsInLogic } from "./objects/shiftsInLogic";
 import { shiftInLogicRow } from "./objects/shiftInLogicRow";
+import { territory } from "./objects/territory";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -59,6 +60,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   stats,
   interventionsList,
   shiftsInLogic,
+  territory,
   // Modules
   shiftInLogicRow,
   portfolioApproachCard,

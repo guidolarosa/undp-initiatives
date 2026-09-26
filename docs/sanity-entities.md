@@ -552,6 +552,43 @@ belong to their block, they aren't a reusable content library.
 | content | text | Optional. |
 | color | -> ColorToken | Required. This row's own background color. |
 
+### Territory
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-26). A title/content panel beside a vector map of São Tomé and Príncipe.
+
+Map points are **not curated on the block** — every [Intervention](#intervention) in the current
+locale with a `localization` geopoint is plotted automatically, so adding a located intervention is
+all it takes to put it on the map. Each point takes its colour from that intervention's
+`primaryFocusArea`, and shows the intervention name on hover/focus.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional. |
+| backgroundColor | -> ColorToken | Required. Applies to the title/content panel, not the map side. |
+
+**Implementation notes:**
+- **MapLibre GL + OpenFreeMap** (`tiles.openfreemap.org/styles/positron`) — a real vector basemap,
+  free with no API key and no signup. Replaced an earlier hand-rolled `d3-geo` + Natural Earth SVG
+  approach (2026-09-26) on request for a real, simplified map.
+- **Checked and rejected: CARTO Positron.** Its tiles still return HTTP 200, but the image content is
+  now an "API KEY REQUIRED" watermark — a status-code check alone does not catch this. Also rejected
+  OSM standard raster (too busy, and their tile policy discourages production sites).
+- **Attribution is set explicitly** in `TerritoryMap.tsx`. OpenStreetMap data is ODbL-licensed so
+  credit is legally required, and the OpenFreeMap style does not declare it on its sources, so
+  MapLibre cannot pick it up automatically. Do not remove it.
+- **The map is locked** (`interactive: false`) — no pan, zoom or rotate. Framed on fixed bounds
+  covering both islands. This also means it can never hijack page scroll.
+- `maplibre-gl` is imported *inside* `useEffect`, not at module scope: it touches `window` on import,
+  which would break server rendering of the component shell. v6 has **no default export** — use named
+  imports (`Map`, `Marker`, `Popup`, `AttributionControl`).
+- Points are plain lat/lng; MapLibre handles projection. A geopoint outside the frame simply falls
+  outside the visible bounds.
+- Trade-off accepted: this adds a third-party runtime dependency (visitors' browsers fetch tiles from
+  OpenFreeMap), where the previous SVG approach was fully self-contained.
+
 ---
 
 ## Open items
