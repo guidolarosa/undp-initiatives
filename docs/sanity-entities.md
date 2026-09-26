@@ -120,6 +120,38 @@ document (named `focusAreas` in the schema; holds `name`/`description`/`backgrou
 | title | string | Required. |
 | focusAreas | Array<-> FocusArea> | Required, at least one. |
 
+### FocusAreasDetail
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-26). A cluster of clickable focus area shapes beside a card grid
+(Insight/Opportunity/Actions) showing the selected focus area's content. References the same
+[FocusArea](#focusarea) document as [FocusAreasList](#focusareaslist), now extended with the
+`insight`/`opportunity`/`actions` fields below.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional body paragraph beside the title. |
+| focusAreas | Array<-> FocusArea> | Required, at least one. Shape/position in the cluster are assigned automatically by list order, not curated per-item. |
+
+**Implementation notes:**
+- **Shape cluster** (`components/common/FocusAreasDetail.tsx`): a repeating 5-slot pattern (circle,
+  circle, diamond, circle, square) assigns each focus area's *shape* by its stable index in the full
+  list, and its *position* by its index among the currently unselected items — so clicking one animates
+  it to a fixed "spotlight" slot (top right of the cluster) via CSS transitions, and the rest reflow to
+  fill the gap. No new library added (no framer-motion) — pure CSS `transition-all` on inline
+  top/left/width/height/rotate.
+- Curved/arc-following label text (as in the design mock) is approximated as straight, rotated text —
+  true text-on-a-circular-path was judged not worth the added complexity for this pass.
+- **Read more**: each card measures its own `scrollHeight` vs `clientHeight` (via `ResizeObserver`)
+  against an 8-line `line-clamp` to decide whether to show the button — not a hardcoded line count.
+- **Modal**: same background color as the card it came from; overlay is `bg-white/40 backdrop-blur-sm`;
+  closes on backdrop click, the close button, or Escape.
+- **Card grid**: Insight/Opportunity/Actions are fixed grid positions (top-left/top-right/bottom-left) —
+  a focus area missing one of these fields just leaves that cell empty, matching the design mock's empty
+  bottom-right cell.
+
 ### NewsList
 
 **Kind:** Object (Block variant)
@@ -456,6 +488,9 @@ sketch's `excerpt`/`color` — same concept, no functional reason to rename and 
 | name | string | Required. |
 | description | text | Sketch calls this `excerpt` — kept as `description`, see above. |
 | backgroundColor | -> ColorToken | Sketch calls this `color` — kept as `backgroundColor`, see above. |
+| insight | richText | Added 2026-09-26 for [FocusAreasDetail](#focusareasdetail). Optional — only needed for focus areas placed in that block. |
+| opportunity | richText | Added 2026-09-26 for [FocusAreasDetail](#focusareasdetail). Optional, same as above. |
+| actions | richText | Added 2026-09-26 for [FocusAreasDetail](#focusareasdetail). Optional, same as above. |
 
 ### Actor
 

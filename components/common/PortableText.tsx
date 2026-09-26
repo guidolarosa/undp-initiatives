@@ -16,6 +16,22 @@ const components: PortableTextComponents = {
       </p>
     ),
   },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="mt-4 list-disc space-y-1 pl-5 text-foreground/80 text-xl">
+        {children}
+      </ul>
+    ),
+    number: ({ children }) => (
+      <ol className="mt-4 list-decimal space-y-1 pl-5 text-foreground/80 text-xl">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => <li className="pl-1">{children}</li>,
+    number: ({ children }) => <li className="pl-1">{children}</li>,
+  },
 };
 
 export function PortableText({ value }: { value: PortableTextBlock[] }) {

@@ -46,6 +46,7 @@ export const pageData = defineType({
         { type: "banner" },
         { type: "blockPlaceholder" },
         { type: "focusAreasList" },
+        { type: "focusAreasDetail" },
         { type: "lowerLinks" },
         { type: "ctaBanner" },
         { type: "portfolioApproach" },

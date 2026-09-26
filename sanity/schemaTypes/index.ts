@@ -9,6 +9,7 @@ import { blockPlaceholder } from "./objects/blockPlaceholder";
 import { hero } from "./objects/hero";
 import { banner } from "./objects/banner";
 import { focusAreasList } from "./objects/focusAreasList";
+import { focusAreasDetail } from "./objects/focusAreasDetail";
 import { focusAreas } from "./documents/focusAreas";
 import { lowerLinks } from "./objects/lowerLinks";
 import { ctaBanner } from "./objects/ctaBanner";
@@ -54,6 +55,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   banner,
   ctaBanner,
   focusAreasList,
+  focusAreasDetail,
   portfolioApproach,
   experiences,
   newsList,

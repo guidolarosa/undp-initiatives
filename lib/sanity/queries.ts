@@ -52,6 +52,24 @@ export interface FocusAreasListSection {
   focusAreas: FocusArea[];
 }
 
+export interface FocusAreaDetail {
+  _key: string;
+  name: string;
+  backgroundColor?: string;
+  /** Rich text (Sanity `array of block`) — render with components/common/PortableText. */
+  insight?: PortableTextBlock[];
+  opportunity?: PortableTextBlock[];
+  actions?: PortableTextBlock[];
+}
+
+export interface FocusAreasDetailSection {
+  _key: string;
+  _type: "focusAreasDetail";
+  title: string;
+  content?: string;
+  focusAreas: FocusAreaDetail[];
+}
+
 export interface Link {
   _key: string;
   label: string;
@@ -212,6 +230,7 @@ export type PageSection =
   | HeroSection
   | BannerSection
   | FocusAreasListSection
+  | FocusAreasDetailSection
   | LowerLinksSection
   | CTABannerSection
   | PortfolioApproachSection
@@ -451,6 +470,20 @@ export async function getPageBySlug(
             "name": @->name,
             "description": @->description,
             "backgroundColor": @->backgroundColor->value.hex
+          }
+        },
+        _type == "focusAreasDetail" => {
+          title,
+          content,
+          // "arr[]->{...}" dereferences and loses the array item's own _key
+          // (React list key) — project via "@->" instead to keep it.
+          focusAreas[]{
+            _key,
+            "name": @->name,
+            "backgroundColor": @->backgroundColor->value.hex,
+            "insight": @->insight,
+            "opportunity": @->opportunity,
+            "actions": @->actions
           }
         },
         _type == "lowerLinks" => {

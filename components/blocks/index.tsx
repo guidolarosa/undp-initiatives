@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import type {
   BannerSection,
   FocusAreasListSection,
+  FocusAreasDetailSection,
   HeroSection,
   LowerLinksSection,
   PageSection,
@@ -19,6 +20,7 @@ import type {
 import { HeroBlock } from "./Hero";
 import { BannerBlock } from "./Banner";
 import { FocusAreasListBlock } from "./FocusAreasList";
+import { FocusAreasDetailBlock } from "./FocusAreasDetail";
 import { LowerLinksBlock } from "./LowerLinks";
 import { CTABannerBlock } from "./CTABanner";
 import { PortfolioApproachBlock } from "./PortfolioApproach";
@@ -39,6 +41,7 @@ type BlockRegistry = {
   hero: ComponentType<{ block: HeroSection }>;
   banner: ComponentType<{ block: BannerSection }>;
   focusAreasList: ComponentType<{ block: FocusAreasListSection }>;
+  focusAreasDetail: ComponentType<{ block: FocusAreasDetailSection }>;
   lowerLinks: ComponentType<{ block: LowerLinksSection }>;
   ctaBanner: ComponentType<{ block: CTABannerSection }>;
   portfolioApproach: ComponentType<{ block: PortfolioApproachSection }>;
@@ -54,6 +57,7 @@ const registry: BlockRegistry = {
   hero: HeroBlock,
   banner: BannerBlock,
   focusAreasList: FocusAreasListBlock,
+  focusAreasDetail: FocusAreasDetailBlock,
   lowerLinks: LowerLinksBlock,
   ctaBanner: CTABannerBlock,
   portfolioApproach: PortfolioApproachBlock,

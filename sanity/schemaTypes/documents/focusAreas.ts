@@ -26,6 +26,27 @@ export const focusAreas = defineType({
       to: [{ type: "colorToken" }],
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "insight",
+      title: "Insight",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Used by the Focus Areas Detail block. Optional — only needed for focus areas placed in that block.",
+    }),
+    defineField({
+      name: "opportunity",
+      title: "Opportunity",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Used by the Focus Areas Detail block. Optional — only needed for focus areas placed in that block.",
+    }),
+    defineField({
+      name: "actions",
+      title: "Actions",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Used by the Focus Areas Detail block. Optional — only needed for focus areas placed in that block.",
+    }),
   ],
   preview: {
     select: { title: "name" },
