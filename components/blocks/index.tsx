@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import type { Locale } from "@/lib/i18n";
 import type {
   BannerSection,
   FocusAreasListSection,
@@ -15,6 +16,7 @@ import type {
   InterventionsListSection,
   ShiftsInLogicSection,
   TerritorySection,
+  MarqueeBannerSection,
 } from "@/lib/sanity/queries";
 
 import { HeroBlock } from "./Hero";
@@ -30,6 +32,7 @@ import { StatsBlock } from "./Stats";
 import { InterventionsListBlock } from "./InterventionsList";
 import { ShiftsInLogicBlock } from "./ShiftsInLogic";
 import { TerritoryBlock } from "./Territory";
+import { MarqueeBannerBlock } from "./MarqueeBanner";
 
 /**
  * Registry: maps a Sanity block `_type` to the component that renders it.
@@ -51,6 +54,7 @@ type BlockRegistry = {
   interventionsList: ComponentType<{ block: InterventionsListSection }>;
   shiftsInLogic: ComponentType<{ block: ShiftsInLogicSection }>;
   territory: ComponentType<{ block: TerritorySection }>;
+  marqueeBanner: ComponentType<{ block: MarqueeBannerSection; locale: Locale }>;
 };
 
 const registry: BlockRegistry = {
@@ -67,16 +71,24 @@ const registry: BlockRegistry = {
   interventionsList: InterventionsListBlock,
   shiftsInLogic: ShiftsInLogicBlock,
   territory: TerritoryBlock,
+  marqueeBanner: MarqueeBannerBlock,
 };
 
-export function Blocks({ sections }: { sections: PageSection[] }) {
+export function Blocks({
+  sections,
+  locale,
+}: {
+  sections: PageSection[];
+  locale: Locale;
+}) {
   return (
     <>
       {sections.map((section) => {
         const Component = registry[section._type as keyof BlockRegistry] as
-          ComponentType<{ block: PageSection }> | undefined;
+          | ComponentType<{ block: PageSection; locale?: Locale }>
+          | undefined;
         return Component ? (
-          <Component key={section._key} block={section} />
+          <Component key={section._key} block={section} locale={locale} />
         ) : null;
       })}
     </>

@@ -30,7 +30,7 @@ export function CTABanner({
       <section className={"pt-8"}>
         <div className="text-center border-t py-18">
           <div className="mx-auto max-w-221 flex flex-col gap-8 items-center">
-            <h2 className="text-[56px] font-semibold leading-18 tracking-[-0.02em]">
+            <h2>
               {title}
             </h2>
             {content && (

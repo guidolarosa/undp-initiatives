@@ -15,8 +15,8 @@ export async function Navbar({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <header className="border-b border-border bg-navbar">
-      <nav className="mx-auto flex max-w-296.25 items-end justify-between gap-6 px-6 pb-4">
-        <div className="h-22.5 w-11.25 relative">
+      <nav className="mx-auto flex max-w-296.25 items-end justify-between gap-3 lg:gap-6 px-6 pb-4">
+        <div className="lg:h-22.5 lg:w-11.25 h-16 w-8 relative">
           <Image
             src="/img/undp_logo.png"
             alt="UNDP"
@@ -25,8 +25,8 @@ export async function Navbar({ locale }: { locale: Locale }) {
           />
         </div>
         <div className="flex items-end gap-6 flex-1">
-          <div className="flex items-center gap-4">
-            <div className="w-15 aspect-square relative">
+          <div className="flex items-center lg:gap-4 gap-1">
+            <div className="lg:w-15 w-12 aspect-square relative">
               <Image
                 src="/logo.svg"
                 alt={siteName ?? "Logo"}
@@ -37,26 +37,30 @@ export async function Navbar({ locale }: { locale: Locale }) {
             <div>
               <Link
                 href={`/${locale}/home`}
-                className="font-semibold tracking-tight text-[33px] leading-none"
+                className="font-semibold tracking-tight text-[24px] lg:text-[33px] leading-none"
               >
                 {siteName}
               </Link>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground hidden lg:block">
                 {dict.nav.tagline}
               </p>
             </div>
           </div>
-          <NavLinks
-            links={navLinks}
-            locale={locale}
-            emptyLabel={dict.nav.emptyLinks}
-          />
+          <div className="hidden lg:block ml-auto">
+            <NavLinks
+              links={navLinks}
+              locale={locale}
+              emptyLabel={dict.nav.emptyLinks}
+            /> 
+          </div>
         </div>
-        <div className="text-2xl leading-none">🇸🇹</div>
-        <LanguageSwitcher
-          locale={locale}
-          label={dict.languageSwitcher.label}
-        />
+        <div className="text-2xl leading-none hidden lg:block">🇸🇹</div>
+        <span className="hidden lg:block">
+          <LanguageSwitcher
+            locale={locale}
+            label={dict.languageSwitcher.label}
+          />
+        </span>
       </nav>
     </header>
   );

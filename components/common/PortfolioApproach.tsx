@@ -30,7 +30,7 @@ const PortfolioApproachCard = ({
 }) => {
   return (
     <div
-      className="flex gap-4 pr-[calc(50vw-568px)] flex-1 border-b pl-12 justify-between last:border-b-0"
+      className="flex gap-4 lg:pr-[calc(50vw-568px)] flex-1 border-b lg:pl-12 px-4 py-6 lg:py-0 justify-between last:border-b-0 first:border-t lg:first:border-t-0"
       style={{ backgroundColor: portfolioApproachCard.backgroundColor }}
     >
       <div className="flex flex-col justify-center h-full">
@@ -42,7 +42,7 @@ const PortfolioApproachCard = ({
         )}
       </div>
       {portfolioApproachCard.image && (
-        <div className="relative aspect-square w-full max-w-40 my-auto">
+        <div className="relative aspect-square w-full lg:max-w-40 my-auto max-w-24">
           <Image
             src={portfolioApproachCard.image.src}
             alt={portfolioApproachCard.image.alt}
@@ -65,21 +65,19 @@ export function PortfolioApproach({
   portfolioApproachCards,
 }: PortfolioApproachProps) {
   return (
-    <section className="w-full min-h-172 flex border-b">
-      <div className="border-t grid grid-cols-[1.5fr_1fr]">
-        <div className="mx-auto max-w-280 flex flex-col h-full border-t mt-8">
-          <div className="border-b py-8 flex-1 pl-[calc(50vw-568px)]">
-            <h2 className="text-[56px] font-semibold leading-18 tracking-[-0.02em]">
-              {title}
-            </h2>
+    <section className="w-full min-h-172 flex lg:border-b mb-40">
+      <div className="lg:border-t grid grid-cols-1 lg:grid-cols-[1.5fr_1fr]">
+        <div className="mx-auto max-w-280 flex flex-col h-full border-t lg:mt-8">
+          <div className="border-b py-8 flex-1 lg:pl-[calc(50vw-568px)] px-4 lg:px-0">
+            <h2>{title}</h2>
           </div>
           {content && (
-            <div className="py-8 pl-[calc(50vw-568px)] pr-11 *:text-[20px] mb-8">
+            <div className="py-8 lg:pl-[calc(50vw-568px)] px-4 lg:px-0 pr-11 *:text-[20px] mb-8">
               <PortableText value={content} />
             </div>
           )}
         </div>
-        <div className="flex flex-col h-full border-l">
+        <div className="flex flex-col h-full lg:border-l">
           {portfolioApproachCards.map((card) => (
             <PortfolioApproachCard
               key={card._key}

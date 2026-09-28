@@ -69,7 +69,7 @@ export function InterventionsList({
         className="flex flex-col border-l"
       >
         <div className="mt-8 flex-1 border-y py-12 pl-11 pr-[calc(50vw-568px)]">
-          <h2 className="text-[56px] font-semibold leading-18 tracking-[-0.02em]">
+          <h2>
             {title}
           </h2>
         </div>

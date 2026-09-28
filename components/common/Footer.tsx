@@ -13,9 +13,9 @@ const Footer = async () => {
 
   return (
     <footer className="bg-footer w-full py-20 text-white">
-      <div className="mx-auto max-w-270">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 grid-rows-2 gap-6 py-10 gap-y-30">
-          <div className="col-span-1 border-t border-white pt-4 flex flex-col gap-4">
+      <div className="mx-auto lg:max-w-270">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 grid-rows-2 gap-6 py-10 gap-y-30 px-4">
+          <div className="lg:col-span-1 border-t border-white pt-4 flex flex-col gap-4">
             <h2 className="text-2xl font-bold">IMPLEMENTED BY:</h2>
             <div className="gap-2 grid grid-cols-4">
               {implementers.map((implementer) => (
@@ -30,7 +30,7 @@ const Footer = async () => {
               ))}
             </div>
           </div>
-          <div className="col-span-1 border-t border-white pt-4 flex flex-col gap-4">
+          <div className="lg:col-span-1 border-t border-white pt-4 flex flex-col gap-4">
             <h2 className="text-2xl font-bold">CO-FOUNDED BY:</h2>
             <div className="gap-2 grid grid-cols-4">
               {cofounders.map((cofounder) => (
@@ -40,7 +40,7 @@ const Footer = async () => {
               ))}
             </div>
           </div>
-          <div className="col-span-2 border-y py-4 ">
+          <div className="lg:col-span-2 border-y py-4 ">
             <h2 className="text-2xl font-bold">CONTACT US AT</h2>
           </div>
         </div>

@@ -55,7 +55,7 @@ export default async function Page({
           {getDictionary(locale).fallbackNotice}
         </p>
       )}
-      <Blocks sections={page.sections ?? []} />
+      <Blocks sections={page.sections ?? []} locale={locale} />
     </>
   );
 }

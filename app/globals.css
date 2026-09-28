@@ -130,4 +130,23 @@
   html {
     @apply font-sans;
   }
+  h2 {
+    @apply text-[36px] lg:text-[56px] font-semibold leading-10 lg:leading-15 tracking-[-0.02em];
+  }
+}
+
+/*
+ * Marquee Banner block: the track holds two identical copies of its content
+ * back to back, and this shifts it from -50% (second copy in the starting
+ * position) to 0% (first copy back in the starting position) — since the
+ * copies are identical, the loop point is invisible, and the content reads
+ * as continuously sliding left-to-right.
+ */
+@keyframes marquee-rtl {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0%);
+  }
 }

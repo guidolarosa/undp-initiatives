@@ -27,7 +27,7 @@ export function Hero({
     <div style={backgroundColor ? { backgroundColor } : undefined}>
       <section
         className={cn(
-          "mx-auto grid min-h-159 border-y",
+          "mx-auto grid lg:min-h-159 border-y",
           image && imagePosition === "left"
             ? "md:grid-cols-[1fr_1.25fr]"
             : "md:grid-cols-[1.25fr_1fr]",
@@ -36,13 +36,12 @@ export function Hero({
         <div
           className={cn(
             image && imagePosition === "left" ? "md:order-2" : "md:order-1",
-            "border-t mt-auto py-15",
-            content && "flex flex-col justify-between h-full mt-8 py-0"
+            "lg:border-t mt-auto lg:py-15 px-4 border-b lg:border-b-0",
+            content && "flex flex-col justify-between h-full mt-8 py-0",
           )}
         >
           <h2
             className={cn(
-              "text-[56px] font-semibold leading-15 tracking-[-0.02em]",
               imagePosition === "left"
                 ? "pl-11 pr-[calc(50vw-568px)]"
                 : "pl-[calc(50vw-568px)] pr-11 py-8",
@@ -66,10 +65,10 @@ export function Hero({
         {image && (
           <div
             className={cn(
-              "relative h-full py-11",
+              "relative h-89 lg:h-full lg:py-11 py-6",
               imagePosition === "left"
-                ? "md:order-1 border-r pr-11 pl-[calc(50vw-568px)]"
-                : "border-l pl-11 pr-[calc(50vw-568px)] md:order-2",
+                ? "md:order-1 lg:border-r pr-11 pl-[calc(50vw-568px)]"
+                : "lg:border-l lg:pl-11 lg:pr-[calc(50vw-568px)] md:order-2 px-4",
             )}
           >
             <Image

@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import type { PortableTextBlock } from "@portabletext/react";
 import { X } from "lucide-react";
+import { gsap } from "gsap";
+import { Flip } from "gsap/Flip";
 
 import { PortableText } from "@/components/common/PortableText";
 import { cn } from "@/lib/utils";
+
+gsap.registerPlugin(Flip);
 
 export interface FocusAreaDetailItem {
   _key: string;
@@ -31,23 +41,43 @@ const CARD_META: { field: CardField; label: string; index: number; gridArea: str
 ];
 
 /**
- * A fixed "two on top, one large diamond overlapping in the center, two on
- * the bottom" grid — pixel-matched to the design reference, and **never
- * recomputed on selection**: every focus area always sits at the same
- * top/left/size/rotation. Extra focus areas repeat the pattern in a new row
- * stacked below (see `getSlot`).
- *
- * `labelTilt` is independent of `shapeRotate` — every label reads at roughly
- * the same gentle angle in the reference regardless of the shape underneath
- * it (the diamond's label is nowhere near as rotated as the diamond itself).
+ * Each focus area's own look — kept stable and keyed to its index in the
+ * full list, so (e.g.) a diamond always looks like a rotated diamond no
+ * matter which position slot it's currently placed in. `labelTilt` is
+ * independent of `shapeRotate` — every label reads at roughly the same
+ * gentle angle in the reference regardless of the shape underneath it (the
+ * diamond's label is nowhere near as rotated as the diamond itself).
+ */
+const SHAPE_LOOK = [
+  { shape: "circle", shapeRotate: 0, labelTilt: -20 },
+  { shape: "circle", shapeRotate: 0, labelTilt: -16 },
+  { shape: "diamond", shapeRotate: 45, labelTilt: -20 },
+  { shape: "circle", shapeRotate: 0, labelTilt: -20 },
+  { shape: "square", shapeRotate: 0, labelTilt: 0 },
+] as const;
+
+/**
+ * The resting grid — "two on top, one large diamond overlapping in the
+ * center, two on the bottom" — pixel-matched to the design reference. Used
+ * as-is when nothing is selected. Extra focus areas repeat the pattern in a
+ * new row stacked below (see `getSlot`).
  */
 const SLOTS = [
-  { shape: "circle", top: 0, left: 0, size: 43, shapeRotate: 0, labelTilt: -20, z: 10 },
-  { shape: "circle", top: 1, left: 57, size: 43, shapeRotate: 0, labelTilt: -16, z: 10 },
-  { shape: "diamond", top: 35, left: 34, size: 32, shapeRotate: 45, labelTilt: -20, z: 30 },
-  { shape: "circle", top: 58, left: 0, size: 42, shapeRotate: 0, labelTilt: -20, z: 10 },
-  { shape: "square", top: 64, left: 61, size: 35, shapeRotate: 0, labelTilt: 0, z: 10 },
+  { top: 0, left: 0, size: 43, z: 10 },
+  { top: 1, left: 57, size: 43, z: 10 },
+  { top: 35, left: 34, size: 32, z: 30 },
+  { top: 58, left: 0, size: 42, z: 10 },
+  { top: 64, left: 61, size: 35, z: 10 },
 ] as const;
+
+// When one focus area is selected, the rest reflow into these 4 of the 5
+// resting slots — always skipping index 1 (top right), which the spotlight
+// below takes over.
+const REMAINING_ORDER = [0, 2, 3, 4];
+
+// Where the selected shape animates to — takes over the top-right corner,
+// enlarged, per the design's dotted arrow toward the card grid.
+const SPOTLIGHT = { top: 0, left: 55, size: 45, z: 100 };
 
 function getSlot(index: number) {
   const slot = SLOTS[index % SLOTS.length];
@@ -55,7 +85,18 @@ function getSlot(index: number) {
   return { ...slot, top: slot.top + row * 100 };
 }
 
-function shapeClassName(shape: (typeof SLOTS)[number]["shape"]) {
+function getRemainingSlot(reflowIndex: number) {
+  const slotIndex = REMAINING_ORDER[reflowIndex % REMAINING_ORDER.length];
+  const row = Math.floor(reflowIndex / REMAINING_ORDER.length);
+  const slot = SLOTS[slotIndex];
+  return { ...slot, top: slot.top + row * 100 };
+}
+
+function getShapeLook(index: number) {
+  return SHAPE_LOOK[index % SHAPE_LOOK.length];
+}
+
+function shapeClassName(shape: (typeof SHAPE_LOOK)[number]["shape"]) {
   return shape === "circle" ? "rounded-full" : "rounded-2xl";
 }
 
@@ -65,12 +106,40 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [modalField, setModalField] = useState<CardField | null>(null);
 
+  const clusterRef = useRef<HTMLDivElement>(null);
+  const flipStateRef = useRef<Flip.FlipState | null>(null);
+  const flipTweenRef = useRef<gsap.core.Timeline | null>(null);
+
   // Switching focus areas invalidates whatever card the modal was showing,
   // so both are set together wherever selection changes (see `selectFocusArea`).
+  // The GSAP Flip state is captured *before* the position/size change (i.e.
+  // before setSelectedKey re-renders with new top/left/width/height), then
+  // animated from in the layout effect below, once the new layout has
+  // actually been committed to the DOM.
   const selectFocusArea = (key: string) => {
+    if (clusterRef.current) {
+      flipStateRef.current = Flip.getState(
+        clusterRef.current.querySelectorAll<HTMLElement>("[data-shape]"),
+      );
+    }
     setSelectedKey(key);
     setModalField(null);
   };
+
+  useLayoutEffect(() => {
+    const state = flipStateRef.current;
+    if (!state) return;
+    flipStateRef.current = null;
+    flipTweenRef.current?.kill();
+    flipTweenRef.current = Flip.from(state, {
+      duration: 0.6,
+      ease: "power2.inOut",
+      scale: true,
+    });
+    return () => {
+      flipTweenRef.current?.kill();
+    };
+  }, [selectedKey]);
 
   useEffect(() => {
     if (!modalField) return;
@@ -85,11 +154,16 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
     ? focusAreas.find((item) => item._key === selectedKey)
     : undefined;
 
-  const positioned = focusAreas.map((item, index) => ({
-    item,
-    isSelected: item._key === selected?._key,
-    slot: getSlot(index),
-  }));
+  let reflowIndex = 0;
+  const positioned = focusAreas.map((item, index) => {
+    const isSelected = item._key === selected?._key;
+    const slot = !selected
+      ? getSlot(index)
+      : isSelected
+        ? SPOTLIGHT
+        : getRemainingSlot(reflowIndex++);
+    return { item, isSelected, look: getShapeLook(index), slot };
+  });
 
   const clusterRows = Math.ceil(focusAreas.length / SLOTS.length);
   const modalMeta = modalField
@@ -115,27 +189,27 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
           <div className="mx-auto mt-16 grid max-w-280 items-start gap-10 md:grid-cols-2">
             {/* Focus area shape cluster */}
             <div
+              ref={clusterRef}
               className="relative w-full"
               style={{ paddingBottom: `${clusterRows * 100}%` }}
             >
-              {positioned.map(({ item, isSelected, slot }) => (
-                // Outer wrapper: the shape's position never changes on
-                // selection — only this wrapper's own transform (a plain
-                // screen-space translate + scale) animates, so a selected
-                // shape pops toward the top right without ever moving,
-                // resizing, or reflowing any other shape.
+              {positioned.map(({ item, isSelected, look, slot }) => (
+                // Outer wrapper: GSAP Flip owns this element's position/size
+                // animation entirely (captured before the click, re-measured
+                // after React re-renders with the new slot) — no competing
+                // CSS transition here. The inner button's own shape rotation
+                // never changes on selection, only which slot the wrapper
+                // sits in.
                 <div
                   key={item._key}
-                  className="absolute transition-transform duration-500 ease-out"
+                  data-shape={item._key}
+                  className="absolute"
                   style={{
                     top: `${slot.top}%`,
                     left: `${slot.left}%`,
                     width: `${slot.size}%`,
                     height: `${slot.size}%`,
-                    transform: isSelected
-                      ? "translate(12%, -12%) scale(1.15)"
-                      : undefined,
-                    zIndex: isSelected ? 100 : slot.z,
+                    zIndex: slot.z,
                   }}
                 >
                   <button
@@ -144,20 +218,20 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
                     aria-pressed={isSelected}
                     style={
                       {
-                        transform: `rotate(${slot.shapeRotate}deg)`,
+                        transform: `rotate(${look.shapeRotate}deg)`,
                         backgroundColor: item.backgroundColor,
                       } as CSSProperties
                     }
                     className={cn(
                       "flex h-full w-full items-center justify-center p-6 text-center transition-shadow duration-300",
-                      shapeClassName(slot.shape),
+                      shapeClassName(look.shape),
                       isSelected
-                        ? "cursor-default shadow-lg ring-4 ring-white/80"
+                        ? "cursor-default shadow-lg"
                         : "cursor-pointer hover:brightness-95",
                     )}
                   >
                     <span
-                      style={{ transform: `rotate(${slot.labelTilt}deg)` }}
+                      style={{ transform: `rotate(${look.labelTilt}deg)` }}
                       className="line-clamp-3 inline-block text-sm font-semibold text-foreground"
                     >
                       {item.name}

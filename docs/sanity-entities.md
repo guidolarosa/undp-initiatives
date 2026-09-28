@@ -152,6 +152,41 @@ Implemented (2026-09-26). A cluster of clickable focus area shapes beside a card
   a focus area missing one of these fields just leaves that cell empty, matching the design mock's empty
   bottom-right cell.
 
+### MarqueeBanner
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-09-26). A title/content panel beside an image (same layout as
+[Hero](#hero), image fixed on the right — no `imagePosition` toggle), with a full-width
+marquee strip along the bottom that loops `marqueeText` left-to-right forever.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional body paragraph beside the title. |
+| image | image | Optional. Hotspot enabled. |
+| marqueeText | string | Required. The looping strip's text. |
+| marqueeLinkUrl | string | Optional. See implementation notes — resolved to a locale-aware href, or treated as external, by the block wrapper. |
+| backgroundColor | -> ColorToken | Required. Full-bleed background behind the whole block. |
+
+**Implementation notes:**
+- **Locale-aware link** (`components/blocks/MarqueeBanner.tsx`): `marqueeLinkUrl` is authored
+  as a bare internal path (e.g. `/initiatives`, not `/en/initiatives`) and the block wrapper
+  prefixes it with the current locale at render time — same convention as `NavLinks.tsx`. A
+  value starting with `http://`/`https://` is instead treated as external (opens in a new
+  tab, untouched).
+- **Pure CSS marquee, no JS/client component**: the track renders two identical copies of the
+  text back-to-back and an infinite `@keyframes marquee-ltr` (defined in `app/globals.css`)
+  slides it from `translateX(-50%)` to `translateX(0%)` — since the two copies are identical,
+  the loop point is invisible. No animation library needed for this one; unlike
+  [FocusAreasDetail](#focusareasdetail), nothing here depends on click state, so the whole
+  block stays a Server Component.
+- **Accessibility**: the repeated visual copies are `aria-hidden`; the single link (or a
+  `role="marquee"` div when there's no link) carries one clean `aria-label` with the text
+  once, not repeated. Respects `prefers-reduced-motion` (animation disabled via
+  `motion-reduce:animate-none`). Hovering the link pauses the scroll
+  (`group-hover:[animation-play-state:paused]`).
+
 ### NewsList
 
 **Kind:** Object (Block variant)

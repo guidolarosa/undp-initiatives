@@ -219,6 +219,22 @@ export interface TerritorySection {
   points: TerritoryPoint[];
 }
 
+export interface MarqueeBannerSection {
+  _key: string;
+  _type: "marqueeBanner";
+  title: string;
+  content?: string;
+  image?: SanityImage;
+  marqueeText: string;
+  /**
+   * An internal path (e.g. "/initiatives") or a full external URL. Resolving
+   * this into a locale-aware href/target happens in
+   * components/blocks/MarqueeBanner.tsx, not here.
+   */
+  marqueeLinkUrl?: string;
+  backgroundColor?: string;
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -240,6 +256,7 @@ export type PageSection =
   | InterventionsListSection
   | ShiftsInLogicSection
   | TerritorySection
+  | MarqueeBannerSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -635,6 +652,18 @@ export async function getPageBySlug(
             "lat": localization.lat,
             "lng": localization.lng,
             "color": primaryFocusArea->backgroundColor->value.hex
+          }
+        },
+        _type == "marqueeBanner" => {
+          title,
+          content,
+          marqueeText,
+          marqueeLinkUrl,
+          "backgroundColor": backgroundColor->value.hex,
+          image{
+            ...,
+            "lqip": asset->metadata.lqip,
+            "dimensions": asset->metadata.dimensions
           }
         },
         _type == "blockPlaceholder" => {
