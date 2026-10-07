@@ -10,5 +10,14 @@
     "title": "Page not found",
     "body": "This page doesn't exist, or hasn't been published in Sanity yet."
   },
-  "fallbackNotice": "This page isn't available in your language yet — showing English."
+  "fallbackNotice": "This page isn't available in your language yet — showing English.",
+  "initiativesExplorer": {
+    "typeLabel": "Initiative",
+    "focusAreasLabel": "Focus Areas",
+    "allFocusAreas": "All focus areas",
+    "visualizeBy": "Visualize by",
+    "backToList": "Back to all initiatives",
+    "emptyFiltered": "No initiatives match this focus area.",
+    "readMore": "Read more"
+  }
 }

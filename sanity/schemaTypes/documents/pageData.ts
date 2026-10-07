@@ -1,3 +1,4 @@
+import { ThLargeIcon } from "@sanity/icons/ThLarge";
 import { defineField, defineType } from "sanity";
 
 import { isUniqueOtherThanLanguage } from "../../lib/isUniqueOtherThanLanguage";
@@ -6,6 +7,7 @@ export const pageData = defineType({
   name: "pageData",
   title: "Page",
   type: "document",
+  icon: ThLargeIcon,
   fields: [
     defineField({
       name: "name",
@@ -57,6 +59,7 @@ export const pageData = defineType({
         { type: "shiftsInLogic" },
         { type: "territory" },
         { type: "marqueeBanner" },
+        { type: "initiativesExplorer" },
       ],
     }),
   ],

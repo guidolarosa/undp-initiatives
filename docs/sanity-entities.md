@@ -187,6 +187,60 @@ marquee strip along the bottom that loops `marqueeText` left-to-right forever.
   `motion-reduce:animate-none`). Hovering the link pauses the scroll
   (`group-hover:[animation-play-state:paused]`).
 
+### InitiativesExplorer
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-10-06), against real design mockups (two earlier attempts went out before
+the mockups actually came through — both looked wrong and were corrected against the images
+once they landed). A graph placeholder + tagline beside a title/description, a Focus Area
+filter dropdown, and a grid of Intervention cards; clicking a card swaps the right side to
+that Intervention's full detail view (title, actor tags, category tags, photo, About text,
+latest activities). The graph itself is left as an empty placeholder box, with a
+non-functional "Visualize by" dropdown above it — no chart library wired up yet; confirmed
+explicitly to leave for later.
+
+Like [Territory](#territory), **Interventions are not curated on this block** — every
+Intervention in the current locale is read directly (same for the Focus Area filter's
+options: every [FocusArea](#focusarea) document, not a curated list) — so adding one is all
+it takes for it to show up here.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| description | text | Optional. |
+| graphTagline | string | Optional. Caption under the graph placeholder, with a link icon — e.g. "Each line is a connection between interventions" in the mock. |
+| graphBackgroundColor | -> ColorToken | Optional. The graph panel's own background — not the full block (the mock's graph panel has a distinct tan background and does not stretch to match the card list's height). |
+| aboutTitle | string | Required (has a default initial value). The detail view's "About the initiative" heading — shared across every Intervention shown in this block, translated per-locale like any other block field. Confirmed explicitly: **not** per-Intervention. |
+| activitiesTitle | string | Required (has a default initial value). Same as `aboutTitle`, for the "Latest activities" heading. |
+
+**Implementation notes:**
+- **Card fields** (list view): photo (`mainPhoto`), a static "Initiative" type label (from the
+  locale dictionary, not a schema field), name, then a *vertical* stack of solid-color pills
+  for every one of `focusAreas` (not just `primaryFocusArea` — confirmed by the mock showing
+  multiple category pills per card) and one outline pill for `primaryActor`.
+- **Detail view fields**: name, `primaryActor` + `secondaryActors` combined as a horizontal row
+  of outline actor-tag pills (no avatar images — the mock shows plain text pills), the full
+  `focusAreas` array as a horizontal row of solid-color category pills, `mainPhoto`, the
+  `Intervention.about` rich text under the block's `aboutTitle` heading (with a bottom-border
+  underline), and `activities` (newest first) in a bordered panel under `activitiesTitle`:
+  each entry shows its date, an optional `Activity.category` tag (e.g. "Theme 1" in the mock —
+  added 2026-10-06 as a new optional field on [Activity](#activity)), photo, name, and a
+  "Read more" link to `activity.url`. Only the first 2 activities show initially; a
+  `bg-theme-green` pill button reveals the rest (confirmed: the Activity Category field is
+  free text, not a reference to Intent or a new taxonomy document — kept deliberately simple).
+- **Filter dropdown**: `components/ui/select.tsx`, scaffolded via the shadcn CLI (Base UI's
+  `Select` primitive, matching this project's `base-nova` style) and re-styled per spec:
+  rounded-full, 1px black border, transparent background. The CLI's generated file imported
+  `cn` from a new `cn` npm package instead of this project's own `@/lib/utils` — fixed to use
+  the existing one, and the redundant dependency was removed. A second dropdown next to it in
+  the mock (labeled "Initiatives") is deliberately **not built yet** — confirmed explicitly,
+  may be added later.
+- **Client-side only state**: filtering and selecting an initiative are plain `useState` in
+  `components/common/InitiativesExplorer.tsx` — no URL/query-param routing (confirmed
+  explicitly: a selected initiative's detail view is not meant to be deep-linkable/shareable
+  for this pass). Changing the Focus Area filter resets the selection back to the list.
+
 ### NewsList
 
 **Kind:** Object (Block variant)
@@ -393,6 +447,7 @@ excerpts...) all needs translation the same way page content does.
 | outcomes | Array<-> [Outcome](#outcome)> | |
 | activities | Array<-> [Activity](#activity)> | |
 | mainPhoto | image | Confirmed kept on Intervention (the newer sketch draws it here, resolving the old sketch-vs-text-draft conflict). |
+| about | richText | Added 2026-10-06 for [InitiativesExplorer](#initiativesexplorer)'s detail view. The section *heading* above this text ("About the initiative") is **not** here — it's a shared, translatable field on the block itself, not per-Intervention (confirmed explicitly: every Intervention shown in a given block uses the same heading). |
 
 **Notes:**
 - No `connection` field yet — see [Connection](#connection) below; deferred entirely, by choice, not
@@ -443,6 +498,7 @@ Implemented (2026-09-25) as specced. Plain, single-language document (see i18n n
 | url | string | |
 | image | image | Hotspot enabled. |
 | excerpt | text | |
+| category | string | Added 2026-10-06 for [InitiativesExplorer](#initiativesexplorer)'s activity list (e.g. "Theme 1" in the mock). Optional, free text — confirmed explicitly, not a reference to Intent or a new taxonomy. |
 
 **Notes:**
 - i18n (2026-09-25): confirmed **no** document-internationalization plugin on Activity (or Outcome).

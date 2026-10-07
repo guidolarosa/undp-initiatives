@@ -1,3 +1,4 @@
+import { CaseIcon } from "@sanity/icons/Case";
 import { defineField, defineType } from "sanity";
 
 import { isUniqueOtherThanLanguage } from "../../lib/isUniqueOtherThanLanguage";
@@ -11,6 +12,7 @@ export const intervention = defineType({
   name: "intervention",
   title: "Intervention",
   type: "document",
+  icon: CaseIcon,
   fields: [
     defineField({
       name: "name",
@@ -93,6 +95,14 @@ export const intervention = defineType({
       title: "Main photo",
       type: "image",
       options: { hotspot: true },
+    }),
+    defineField({
+      name: "about",
+      title: "About",
+      type: "array",
+      of: [{ type: "block" }],
+      description:
+        "Shown in the Initiatives Explorer block's detail view, under that block's (translatable) \"About the initiative\" heading.",
     }),
   ],
   preview: {

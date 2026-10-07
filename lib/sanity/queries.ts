@@ -235,6 +235,58 @@ export interface MarqueeBannerSection {
   backgroundColor?: string;
 }
 
+export interface InitiativeFocusArea {
+  _id: string;
+  name: string;
+  color?: string;
+}
+
+export interface InitiativeActor {
+  name: string;
+  image?: SanityImage;
+}
+
+export interface InitiativeActivity {
+  _id: string;
+  name: string;
+  date: string;
+  url?: string;
+  excerpt?: string;
+  image?: SanityImage;
+  category?: string;
+}
+
+export interface Initiative {
+  _id: string;
+  name: string;
+  slug: string;
+  mainPhoto?: SanityImage;
+  primaryFocusArea?: InitiativeFocusArea;
+  /** Full list — the detail view's "list of categories". */
+  focusAreas: InitiativeFocusArea[];
+  primaryActor?: InitiativeActor;
+  secondaryActors: InitiativeActor[];
+  /** Rich text (Sanity `array of block`) — render with components/common/PortableText. */
+  about?: PortableTextBlock[];
+  /** Newest first. */
+  activities: InitiativeActivity[];
+}
+
+export interface InitiativesExplorerSection {
+  _key: string;
+  _type: "initiativesExplorer";
+  title: string;
+  description?: string;
+  graphTagline?: string;
+  graphBackgroundColor?: string;
+  aboutTitle: string;
+  activitiesTitle: string;
+  /** Every Focus Area, for the filter dropdown — not curated on the block. */
+  focusAreaOptions: InitiativeFocusArea[];
+  /** Every Intervention in this locale — not curated on the block. */
+  initiatives: Initiative[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -257,6 +309,7 @@ export type PageSection =
   | ShiftsInLogicSection
   | TerritorySection
   | MarqueeBannerSection
+  | InitiativesExplorerSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -664,6 +717,75 @@ export async function getPageBySlug(
             ...,
             "lqip": asset->metadata.lqip,
             "dimensions": asset->metadata.dimensions
+          }
+        },
+        _type == "initiativesExplorer" => {
+          title,
+          description,
+          graphTagline,
+          "graphBackgroundColor": graphBackgroundColor->value.hex,
+          aboutTitle,
+          activitiesTitle,
+          // Not curated on the block — every Focus Area is a filter option,
+          // and every Intervention in this locale is listed, same philosophy
+          // as Territory's map points.
+          "focusAreaOptions": *[_type == "focusAreas"] | order(name asc) {
+            _id,
+            name,
+            "color": backgroundColor->value.hex
+          },
+          "initiatives": *[
+            _type == "intervention" &&
+            language == $locale
+          ] | order(name asc) {
+            _id,
+            name,
+            "slug": slug.current,
+            mainPhoto{
+              ...,
+              "lqip": asset->metadata.lqip,
+              "dimensions": asset->metadata.dimensions
+            },
+            "primaryFocusArea": primaryFocusArea->{
+              _id,
+              name,
+              "color": backgroundColor->value.hex
+            },
+            "focusAreas": coalesce(focusAreas[]->{
+              _id,
+              name,
+              "color": backgroundColor->value.hex
+            }, []),
+            "primaryActor": primaryActor->{
+              name,
+              image{
+                ...,
+                "lqip": asset->metadata.lqip,
+                "dimensions": asset->metadata.dimensions
+              }
+            },
+            "secondaryActors": coalesce(secondaryActors[]->{
+              name,
+              image{
+                ...,
+                "lqip": asset->metadata.lqip,
+                "dimensions": asset->metadata.dimensions
+              }
+            }, []),
+            about,
+            "activities": coalesce(activities[]->{
+              _id,
+              name,
+              date,
+              url,
+              excerpt,
+              category,
+              image{
+                ...,
+                "lqip": asset->metadata.lqip,
+                "dimensions": asset->metadata.dimensions
+              }
+            } | order(date desc), [])
           }
         },
         _type == "blockPlaceholder" => {

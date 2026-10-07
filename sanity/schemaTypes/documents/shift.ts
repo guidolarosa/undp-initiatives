@@ -1,3 +1,4 @@
+import { TransferIcon } from "@sanity/icons/Transfer";
 import { defineField, defineType } from "sanity";
 
 /**
@@ -8,6 +9,7 @@ export const shift = defineType({
   name: "shift",
   title: "Shift",
   type: "document",
+  icon: TransferIcon,
   fields: [
     defineField({
       name: "activities",

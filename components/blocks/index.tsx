@@ -17,6 +17,7 @@ import type {
   ShiftsInLogicSection,
   TerritorySection,
   MarqueeBannerSection,
+  InitiativesExplorerSection,
 } from "@/lib/sanity/queries";
 
 import { HeroBlock } from "./Hero";
@@ -33,6 +34,7 @@ import { InterventionsListBlock } from "./InterventionsList";
 import { ShiftsInLogicBlock } from "./ShiftsInLogic";
 import { TerritoryBlock } from "./Territory";
 import { MarqueeBannerBlock } from "./MarqueeBanner";
+import { InitiativesExplorerBlock } from "./InitiativesExplorer";
 
 /**
  * Registry: maps a Sanity block `_type` to the component that renders it.
@@ -55,6 +57,10 @@ type BlockRegistry = {
   shiftsInLogic: ComponentType<{ block: ShiftsInLogicSection }>;
   territory: ComponentType<{ block: TerritorySection }>;
   marqueeBanner: ComponentType<{ block: MarqueeBannerSection; locale: Locale }>;
+  initiativesExplorer: ComponentType<{
+    block: InitiativesExplorerSection;
+    locale: Locale;
+  }>;
 };
 
 const registry: BlockRegistry = {
@@ -72,6 +78,7 @@ const registry: BlockRegistry = {
   shiftsInLogic: ShiftsInLogicBlock,
   territory: TerritoryBlock,
   marqueeBanner: MarqueeBannerBlock,
+  initiativesExplorer: InitiativesExplorerBlock,
 };
 
 export function Blocks({

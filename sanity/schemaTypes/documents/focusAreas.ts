@@ -1,9 +1,11 @@
+import { TargetIcon } from "@sanity/icons/Target";
 import { defineField, defineType } from "sanity";
 
 export const focusAreas = defineType({
   name: "focusAreas",
   title: "Focus Areas",
   type: "document",
+  icon: TargetIcon,
   fields: [
     defineField({
       name: "name",

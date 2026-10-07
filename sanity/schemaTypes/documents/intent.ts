@@ -1,3 +1,4 @@
+import { BulbFilledIcon } from "@sanity/icons/BulbFilled";
 import { defineField, defineType } from "sanity";
 
 /**
@@ -9,6 +10,7 @@ export const intent = defineType({
   name: "intent",
   title: "Intent",
   type: "document",
+  icon: BulbFilledIcon,
   fields: [
     defineField({
       name: "label",

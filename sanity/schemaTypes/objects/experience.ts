@@ -1,3 +1,4 @@
+import { DoubleQuoteIcon } from "@sanity/icons/DoubleQuote";
 import { defineField, defineType } from "sanity";
 
 /**
@@ -8,6 +9,7 @@ export const experience = defineType({
   name: "experience",
   title: "Experience",
   type: "document",
+  icon: DoubleQuoteIcon,
   fields: [
     defineField({
       name: "content",

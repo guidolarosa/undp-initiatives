@@ -1,3 +1,4 @@
+import { TrendUpwardIcon } from "@sanity/icons/TrendUpward";
 import { defineField, defineType } from "sanity";
 
 type OutcomeParent = { content?: "text" | "video" };
@@ -14,6 +15,7 @@ export const outcome = defineType({
   name: "outcome",
   title: "Outcome",
   type: "document",
+  icon: TrendUpwardIcon,
   fields: [
     defineField({
       name: "intents",

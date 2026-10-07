@@ -1,9 +1,11 @@
+import { DropIcon } from "@sanity/icons/Drop";
 import { defineField, defineType } from "sanity";
 
 export const colorToken = defineType({
   name: "colorToken",
   title: "Color token",
   type: "document",
+  icon: DropIcon,
   fields: [
     defineField({
       name: "name",

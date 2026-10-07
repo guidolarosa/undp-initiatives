@@ -1,3 +1,4 @@
+import { ActivityIcon } from "@sanity/icons/Activity";
 import { defineField, defineType } from "sanity";
 
 /**
@@ -10,6 +11,7 @@ export const activity = defineType({
   name: "activity",
   title: "Activity",
   type: "document",
+  icon: ActivityIcon,
   fields: [
     defineField({
       name: "name",
@@ -38,6 +40,13 @@ export const activity = defineType({
       name: "excerpt",
       title: "Excerpt",
       type: "text",
+    }),
+    defineField({
+      name: "category",
+      title: "Activity Category",
+      type: "string",
+      description:
+        'Shown as a small tag on the activity (e.g. "Theme 1"). Optional, free text.',
     }),
   ],
   preview: {

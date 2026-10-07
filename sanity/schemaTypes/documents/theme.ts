@@ -1,9 +1,11 @@
+import { ColorWheelIcon } from "@sanity/icons/ColorWheel";
 import { defineField, defineType } from "sanity";
 
 export const theme = defineType({
   name: "theme",
   title: "Theme",
   type: "document",
+  icon: ColorWheelIcon,
   fields: [
     defineField({
       name: "name",
