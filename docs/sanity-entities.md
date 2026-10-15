@@ -241,6 +241,45 @@ it takes for it to show up here.
   explicitly: a selected initiative's detail view is not meant to be deep-linkable/shareable
   for this pass). Changing the Focus Area filter resets the selection back to the list.
 
+### OutcomesSection
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-10-14). A title/filter/legend panel beside a grid of [Outcome](#outcome) stat
+cards (each showing its `numericValue` + `text`, colored by its — indirect — Focus Area).
+
+Like [InitiativesExplorer](#initiativesexplorer), **Outcomes are not curated on this block** —
+every text-content Outcome referenced by at least one Intervention in the current locale is read
+directly (same for the Focus Area filter/legend's options: every [FocusArea](#focusarea)
+document) — so adding one is all it takes for it to show up here.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional. |
+
+**Implementation notes:**
+- **Outcome has no direct Focus Area field, and no color field** — confirmed explicitly, not
+  assumed (a `color` field was briefly added, then reverted the same day on correction: the card's
+  color must come from the Focus Area, not be independently settable). An Outcome's focus area —
+  and with it, its card color — is derived: the `primaryFocusArea` of the first Intervention (in
+  this locale, ordered by creation for determinism) that lists the Outcome in its `outcomes`
+  array. The GROQ projection (`lib/sanity/queries.ts`) computes this via
+  `*[_type == "intervention" && references(^._id)] | order(_createdAt asc)[0].primaryFocusArea->{...}`,
+  a "find documents that reference me" backlink query. Confirmed as a single focus area per
+  outcome (not a set) — in practice each Outcome belongs to one Intervention.
+- Only Outcomes with `content == "text"` are included (video-content Outcomes have no
+  `numericValue`/`text` to show as a stat tile), and only ones actually referenced by an
+  Intervention in this locale — an Outcome document with no referencing Intervention anywhere
+  (orphaned draft content) never reaches the grid.
+- **Numeric formatting**: `Outcome.numericValue` is formatted with locale-aware thousands
+  separators (`Intl.NumberFormat(locale)`) in the block wrapper, not hardcoded — "219.077" in the
+  design mock is simply how the "." grouping separator renders for `es`/`pt`.
+- **Filter dropdown and stagger animation reused** from InitiativesExplorer (per explicit
+  instruction to reuse the existing filter dropdown): `components/ui/select.tsx` styled the same
+  way, and the same `useCardStagger` hook for the "cards stagger in when the filter changes"
+  treatment.
+
 ### NewsList
 
 **Kind:** Object (Block variant)
@@ -534,7 +573,11 @@ that's active (`hidden`/`validation` keyed off the sibling `content` field).
 - Not internationalized — see [Activity](#activity)'s i18n note above; same reasoning applies here.
 - See [OutcomesBlock](#outcomesblock) — the sketch also shows a same-named, differently-shaped
   `Outcome` (`id, slug, label`) nested under a page-builder block. Not the same document type as this
-  one; modeled as a separate `OutcomeTag` object pending your confirmation.
+  one; modeled as a separate `OutcomeTag` object pending your confirmation. Also not the same as the
+  actually-built [OutcomesSection](#outcomessection) block below, which renders *this* document.
+- **No `color` field** (2026-10-14, briefly added then reverted the same day) — [OutcomesSection](#outcomessection)'s
+  stat cards are colored by the outcome's (indirect) Focus Area instead, confirmed explicitly: **not**
+  an independently-settable field on Outcome.
 
 ### Intent
 

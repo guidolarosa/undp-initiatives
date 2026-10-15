@@ -24,20 +24,6 @@ export const outcome = defineType({
       of: [{ type: "reference", to: [{ type: "intent" }] }],
     }),
     defineField({
-      name: "type",
-      title: "Type",
-      type: "string",
-      options: { list: ["pill", "circle"] },
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "size",
-      title: "Size",
-      type: "string",
-      options: { list: ["small", "large"] },
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
       name: "content",
       title: "Content",
       description:
@@ -103,12 +89,11 @@ export const outcome = defineType({
     }),
   ],
   preview: {
-    select: { type: "type", numericValue: "numericValue", content: "content" },
-    prepare({ type, numericValue, content }) {
+    select: { type: "type", numericValue: "numericValue", content: "content", text: "text.0.children[0].text" },
+    prepare({ content, text }) {
       return {
-        title: content === "video" ? "Video outcome" : String(numericValue ?? ""),
-        subtitle: `${type ?? "outcome"}`,
+        title: content === "video" ? "Video outcome" : String(text ?? ""),
       };
     },
-  },
+  }
 });

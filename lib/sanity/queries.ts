@@ -287,6 +287,35 @@ export interface InitiativesExplorerSection {
   initiatives: Initiative[];
 }
 
+export interface OutcomeCard {
+  _id: string;
+  numericValue: number;
+  /** Flattened to plain text in GROQ (`pt::text`) for the compact card label. */
+  text: string;
+  /**
+   * The Outcome's focus area — derived, not a field on Outcome itself: the
+   * `primaryFocusArea` of the (first) Intervention in this locale that
+   * lists this Outcome in its `outcomes` array. The card's color comes
+   * from here too (`focusArea.color`), not from a field on Outcome — not
+   * independently customizable, confirmed explicitly.
+   */
+  focusArea?: {
+    _id: string;
+    color?: string;
+  };
+}
+
+export interface OutcomesSectionSection {
+  _key: string;
+  _type: "outcomesSection";
+  title: string;
+  content?: string;
+  /** Every Focus Area, for the filter dropdown and legend — not curated on the block. */
+  focusAreaOptions: InitiativeFocusArea[];
+  /** Every text-content Outcome referenced by an Intervention in this locale — not curated on the block. */
+  outcomes: OutcomeCard[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -310,6 +339,7 @@ export type PageSection =
   | TerritorySection
   | MarqueeBannerSection
   | InitiativesExplorerSection
+  | OutcomesSectionSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -786,6 +816,39 @@ export async function getPageBySlug(
                 "dimensions": asset->metadata.dimensions
               }
             } | order(date desc), [])
+          }
+        },
+        _type == "outcomesSection" => {
+          title,
+          content,
+          // Not curated on the block — every Focus Area is a filter/legend
+          // option, same philosophy as InitiativesExplorer's dropdown.
+          "focusAreaOptions": *[_type == "focusAreas"] | order(name asc) {
+            _id,
+            name,
+            "color": backgroundColor->value.hex
+          },
+          // Not curated either: every text-content Outcome referenced by at
+          // least one Intervention in this locale. An Outcome has no direct
+          // Focus Area field (and no color field — not independently
+          // customizable, confirmed explicitly): focusArea is derived below
+          // as the primaryFocusArea of the first Intervention that lists
+          // this Outcome in its outcomes array, ordered by creation so [0]
+          // is deterministic when more than one Intervention qualifies.
+          "outcomes": *[
+            _type == "outcome" &&
+            content == "text" &&
+            count(*[_type == "intervention" && language == $locale && references(^._id)]) > 0
+          ] {
+            _id,
+            numericValue,
+            "text": pt::text(text),
+            "focusArea": *[
+              _type == "intervention" && language == $locale && references(^._id)
+            ] | order(_createdAt asc)[0].primaryFocusArea->{
+              _id,
+              "color": backgroundColor->value.hex
+            }
           }
         },
         _type == "blockPlaceholder" => {

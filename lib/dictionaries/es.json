@@ -19,5 +19,10 @@
     "backToList": "Volver a todas las iniciativas",
     "emptyFiltered": "Ninguna iniciativa coincide con esta área de enfoque.",
     "readMore": "Leer más"
+  },
+  "outcomesSection": {
+    "focusAreasLabel": "Áreas de enfoque",
+    "allFocusAreas": "Todas las áreas de enfoque",
+    "emptyFiltered": "Ningún resultado coincide con esta área de enfoque."
   }
 }

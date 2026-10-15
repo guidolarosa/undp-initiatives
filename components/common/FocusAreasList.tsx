@@ -13,7 +13,7 @@ export interface FocusAreasListProps {
 export function FocusAreasList({ title, focusAreas }: FocusAreasListProps) {
   return (
     <div className="my-29.75 border-y mb-30">
-      <section className={"pt-8"}>
+      <section className={"pt-8"}>  
         <div className="border-t py-18">
           <div className="mx-auto max-w-280 flex flex-col gap-12 px-4 lg:px-0">
             <h2>

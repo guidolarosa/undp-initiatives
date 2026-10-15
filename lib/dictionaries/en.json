@@ -19,5 +19,10 @@
     "backToList": "Back to all initiatives",
     "emptyFiltered": "No initiatives match this focus area.",
     "readMore": "Read more"
+  },
+  "outcomesSection": {
+    "focusAreasLabel": "Focus Areas",
+    "allFocusAreas": "All focus areas",
+    "emptyFiltered": "No outcomes match this focus area."
   }
 }

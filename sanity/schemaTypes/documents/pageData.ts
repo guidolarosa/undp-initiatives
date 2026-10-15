@@ -60,6 +60,7 @@ export const pageData = defineType({
         { type: "territory" },
         { type: "marqueeBanner" },
         { type: "initiativesExplorer" },
+        { type: "outcomesSection" },
       ],
     }),
   ],
