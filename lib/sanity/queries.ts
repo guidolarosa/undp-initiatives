@@ -316,6 +316,35 @@ export interface OutcomesSectionSection {
   outcomes: OutcomeCard[];
 }
 
+export interface Milestone {
+  _key: string;
+  /** ISO date string (YYYY-MM-DD). */
+  date: string;
+  description: string;
+  importance: "low" | "medium" | "high";
+}
+
+export interface Chronology {
+  _key: string;
+  fromText: string;
+  toText: string;
+  milestones: Milestone[];
+}
+
+export interface SignalsOfChangeSection {
+  _key: string;
+  _type: "signalsOfChange";
+  title: string;
+  content?: string;
+  circleText: string;
+  circleSizeText: string;
+  backgroundColor?: string;
+  milestoneColor?: string;
+  /** ISO date string — every Chronology's timeline starts here and ends at "now". */
+  timelineStartDate: string;
+  chronologies: Chronology[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -340,6 +369,7 @@ export type PageSection =
   | MarqueeBannerSection
   | InitiativesExplorerSection
   | OutcomesSectionSection
+  | SignalsOfChangeSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -848,6 +878,28 @@ export async function getPageBySlug(
             ] | order(_createdAt asc)[0].primaryFocusArea->{
               _id,
               "color": backgroundColor->value.hex
+            }
+          }
+        },
+        _type == "signalsOfChange" => {
+          title,
+          content,
+          circleText,
+          circleSizeText,
+          "backgroundColor": backgroundColor->value.hex,
+          "milestoneColor": milestoneColor->value.hex,
+          timelineStartDate,
+          // Inline objects, not references — like ShiftInLogicRow, these
+          // rows belong to the block, not a reusable content library.
+          chronologies[]{
+            _key,
+            fromText,
+            toText,
+            milestones[]{
+              _key,
+              date,
+              description,
+              importance
             }
           }
         },

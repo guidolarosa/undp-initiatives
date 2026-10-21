@@ -19,6 +19,7 @@ import type {
   MarqueeBannerSection,
   InitiativesExplorerSection,
   OutcomesSectionSection,
+  SignalsOfChangeSection,
 } from "@/lib/sanity/queries";
 
 import { HeroBlock } from "./Hero";
@@ -37,6 +38,7 @@ import { TerritoryBlock } from "./Territory";
 import { MarqueeBannerBlock } from "./MarqueeBanner";
 import { InitiativesExplorerBlock } from "./InitiativesExplorer";
 import { OutcomesSectionBlock } from "./OutcomesSection";
+import { SignalsOfChangeBlock } from "./SignalsOfChange";
 
 /**
  * Registry: maps a Sanity block `_type` to the component that renders it.
@@ -64,6 +66,7 @@ type BlockRegistry = {
     locale: Locale;
   }>;
   outcomesSection: ComponentType<{ block: OutcomesSectionSection; locale: Locale }>;
+  signalsOfChange: ComponentType<{ block: SignalsOfChangeSection; locale: Locale }>;
 };
 
 const registry: BlockRegistry = {
@@ -83,6 +86,7 @@ const registry: BlockRegistry = {
   marqueeBanner: MarqueeBannerBlock,
   initiativesExplorer: InitiativesExplorerBlock,
   outcomesSection: OutcomesSectionBlock,
+  signalsOfChange: SignalsOfChangeBlock,
 };
 
 export function Blocks({

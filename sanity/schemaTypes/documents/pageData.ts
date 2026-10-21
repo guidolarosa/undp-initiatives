@@ -61,6 +61,7 @@ export const pageData = defineType({
         { type: "marqueeBanner" },
         { type: "initiativesExplorer" },
         { type: "outcomesSection" },
+        { type: "signalsOfChange" },
       ],
     }),
   ],

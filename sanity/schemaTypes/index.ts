@@ -36,6 +36,9 @@ import { territory } from "./objects/territory";
 import { marqueeBanner } from "./objects/marqueeBanner";
 import { initiativesExplorer } from "./objects/initiativesExplorer";
 import { outcomesSection } from "./objects/outcomesSection";
+import { signalsOfChange } from "./objects/signalsOfChange";
+import { chronology } from "./objects/chronology";
+import { milestone } from "./objects/milestone";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -69,6 +72,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   marqueeBanner,
   initiativesExplorer,
   outcomesSection,
+  signalsOfChange,
   // Modules
   shiftInLogicRow,
   portfolioApproachCard,
@@ -76,4 +80,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   news,
   newsCategory,
   statCard,
+  chronology,
+  milestone,
 ];

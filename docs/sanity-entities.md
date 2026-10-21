@@ -280,6 +280,63 @@ document) — so adding one is all it takes for it to show up here.
   way, and the same `useCardStagger` hook for the "cards stagger in when the filter changes"
   treatment.
 
+### SignalsOfChange
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-10-20). A stack of [Chronology](#chronology) timelines beside a title/content
+panel — structurally the same two-column, bordered-title-box pattern as [Territory](#territory)
+(confirmed explicitly: "base this on the structure of other sections"), just mirrored — the
+colored panel is on the *right* here, not the left, matching the design mock.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| content | text | Optional. Body paragraph beside the title. |
+| circleText | string | Required. Legend text at the bottom, e.g. "Each circle is a signal". |
+| circleSizeText | string | Required. Second legend text, e.g. "The size of the circles depends on the relevance of the signal." |
+| backgroundColor | -> ColorToken | Required. Full-bleed background behind the title/content panel. |
+| milestoneColor | -> ColorToken | Required. Shared by every Milestone circle across every Chronology — not per-Chronology or per-Milestone. |
+| timelineStartDate | date | Required. Every Chronology's timeline starts here and ends at "now" — confirmed as a single value shared by every Chronology, not one per Chronology. |
+| chronologies | Array<Object: [Chronology](#chronology)> | Required, at least one. |
+
+**Implementation notes:**
+- **"Circle text" / "Size of Circle text"**: in the first pass at this spec these read as
+  sub-properties of `milestoneColor`, which didn't match anything visible in the mock (plain
+  colored dots, no text on them) — asked directly, confirmed they're actually the two bottom
+  legend strings (`circleText`/`circleSizeText` above), not a text-on-circle feature.
+- **No graphics library used** — plain positioned `<div>`s (not SVG — an SVG `viewBox` stretched
+  non-uniformly across a wide, short timeline would distort circle radii into ellipses unless the
+  viewBox's aspect ratio is kept square with the rendered box, which a responsive full-width row
+  isn't). Each Milestone's horizontal position is `(date - timelineStartDate) / (now -
+  timelineStartDate)` as a percentage; circle diameter is a fixed px-per-importance scale (low 10,
+  medium 18, high 30).
+- **Year tick marks** ("2025", "2026" in the mock) are computed, not stored — every whole-year
+  boundary strictly between `timelineStartDate` and "now" gets a tick, in addition to the fixed
+  start and "now" ticks at the two ends. Generalizes to any span, not hardcoded to exactly 3 ticks.
+- **"Now"**: resolved once per render in the block wrapper (`components/blocks/SignalsOfChange.tsx`),
+  not stored. For this statically generated site that means it's effectively frozen as of the last
+  build — flagged as a known tradeoff, not something addressed with revalidation infrastructure.
+- **Tooltip is pure CSS** (`group-hover`/`group-focus-within` + `transition-opacity`) — the whole
+  component has no `useState`/hooks and is **not** a Client Component, unlike most of this app's
+  other interactive blocks.
+- **Verified against the mock** via a temporary scratch route with mock data (not committed —
+  deleted after confirming the layout and the hover tooltip both work) rather than shipped
+  unverified, since there's no real content for a brand-new block type yet.
+
+### Chronology
+
+**Kind:** Object
+
+Inline object (like ShiftInLogicRow/PortfolioApproachCard, not a reference) — one "From X to Y"
+row belongs to its [SignalsOfChange](#signalsofchange) block, not a reusable content library.
+
+| Field | Type | Notes |
+|---|---|---|
+| fromText | string | Required. |
+| toText | string | Required. |
+| milestones | Array<Object: Milestone> | Required, at least one. `{date, description, importance: [low, medium, high]}` — `description` shown in the hover tooltip, `importance` controls circle size. |
+
 ### NewsList
 
 **Kind:** Object (Block variant)
