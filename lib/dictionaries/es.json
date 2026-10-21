@@ -14,6 +14,7 @@
   "initiativesExplorer": {
     "typeLabel": "Iniciativa",
     "focusAreasLabel": "Áreas de enfoque",
+    "interventionsLabel": "Intervenciones",
     "allFocusAreas": "Todas las áreas de enfoque",
     "visualizeBy": "Visualizar por",
     "backToList": "Volver a todas las iniciativas",

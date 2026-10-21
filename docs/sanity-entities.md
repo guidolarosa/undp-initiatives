@@ -193,12 +193,13 @@ marquee strip along the bottom that loops `marqueeText` left-to-right forever.
 
 Implemented (2026-10-06), against real design mockups (two earlier attempts went out before
 the mockups actually came through — both looked wrong and were corrected against the images
-once they landed). A graph placeholder + tagline beside a title/description, a Focus Area
-filter dropdown, and a grid of Intervention cards; clicking a card swaps the right side to
-that Intervention's full detail view (title, actor tags, category tags, photo, About text,
-latest activities). The graph itself is left as an empty placeholder box, with a
-non-functional "Visualize by" dropdown above it — no chart library wired up yet; confirmed
-explicitly to leave for later.
+once they landed). A radial graph + tagline beside a title/description, a Focus Area filter
+dropdown, and a grid of Intervention cards; clicking a card (or a dot on the graph — same
+selection state either way) swaps the right side to that Intervention's full detail view
+(title, actor tags, category tags, photo, About text, latest activities). The graph's own
+"Visualize by" dropdown above it is still a non-functional placeholder — confirmed explicitly
+to leave for later; only the graph itself (added 2026-10-21, see
+[InitiativesGraph](#initiativesgraph) below) moved out of placeholder status.
 
 Like [Territory](#territory), **Interventions are not curated on this block** — every
 Intervention in the current locale is read directly (same for the Focus Area filter's
@@ -240,6 +241,53 @@ it takes for it to show up here.
   `components/common/InitiativesExplorer.tsx` — no URL/query-param routing (confirmed
   explicitly: a selected initiative's detail view is not meant to be deep-linkable/shareable
   for this pass). Changing the Focus Area filter resets the selection back to the list.
+
+#### InitiativesGraph
+
+`components/common/InitiativesGraph.tsx` — the radial graph in the block's left panel.
+Colored arcs around the edge = Focus Areas; dots on an inner dashed ring = Interventions,
+positioned within their `primaryFocusArea`'s angular span; curved "ribbon" lines connect a
+dot to its primary Focus Area arc (always, while active) and to each of its *secondary* focus
+areas (`focusAreas` minus `primaryFocusArea` — no new field needed, this relationship already
+existed). Clicking a dot calls the same `onSelect`/`selectedId` the cards use, so a dot and its
+matching card are just two views onto one selection state.
+
+Decisions made explicitly, not assumed, when this was scoped:
+- **No charting library** — plain SVG + trigonometry + GSAP (already a dependency here for
+  other blocks' animations), not D3. The layout is bespoke enough (categorical arcs + an inner
+  point ring + point-to-arc ribbons) that a library wouldn't meaningfully reduce the custom
+  path/position math needed either way.
+- **Secondary-focus ribbons only render while a dot is hovered or selected** — not always-on
+  for every Intervention that has one, to avoid a "spaghetti" graph as more Interventions are
+  added. (The design mock's single visible ribbon, on reinspection, reads as an illustration of
+  this hover state, not an always-on one.)
+- **The zoomed-in framing persists for as long as that Intervention stays selected** (eased
+  back out only when "Back to all initiatives" is clicked) — matching the detail panel's own
+  lifecycle, not a momentary flourish that reverts on its own.
+- **Interventions-to-Interventions connections are out of scope** — the mock's text explicitly
+  flags this needs a new `connection`-type field on Intervention that hasn't been built (see
+  the deferred [Connection](#connection) document above, which already covers an Intervention-to-
+  Intervention link). Nothing here tries to approximate that with existing data.
+
+**Implementation notes:**
+- **Square `viewBox`, not a measured container size**: the SVG uses a fixed `0 0 400 400`
+  viewBox with the default `preserveAspectRatio="xMidYMid meet"`, so it's never distorted into
+  an ellipse by its (non-square, height-capped) container — the browser letterboxes/centers it
+  instead of stretching. No `ResizeObserver`/JS-measured pixel dimensions needed.
+- **Curved arc labels**: each Focus Area's name sits on a `<textPath>` referencing an invisible
+  label-only arc. That label arc's direction is reversed when its midpoint falls in the bottom
+  half of the circle — otherwise `textPath` would render the label upside down there, a
+  standard radial-label technique.
+- **Hydration bug found and fixed during this build**: `Math.cos`/`Math.sin` can differ in
+  their last bit or two between the server and browser JS engines for the exact same input —
+  unrounded, this was enough to make the server-rendered `<path d="...">` strings mismatch the
+  client's on hydration (React logged "A tree hydrated but some attributes... didn't match").
+  Fixed by rounding every computed coordinate to 3 decimal places — far more precision than
+  this is visibly rendered at, and enough to make server and client output byte-identical.
+- **Verified against the mock** via a temporary scratch route with mock data mirroring the
+  design images (not committed — deleted after confirming the static layout, label
+  orientation, hover ribbons/tooltip, and the click → zoom → detail-panel sync all worked),
+  then re-verified against the real Sanity dataset on the actual `/initiatives` page.
 
 ### OutcomesSection
 

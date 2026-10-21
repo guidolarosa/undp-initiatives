@@ -5,6 +5,7 @@ import { Link2 } from "lucide-react";
 
 import { InitiativeCard } from "@/components/common/InitiativesExplorerCard";
 import { InitiativeDetail } from "@/components/common/InitiativesExplorerDetail";
+import { InitiativesGraph } from "@/components/common/InitiativesGraph";
 import type {
   ExplorerFocusArea,
   ExplorerInitiative,
@@ -101,8 +102,15 @@ export function InitiativesExplorer({
                 <SelectItem value="interventions">{dict.visualizeBy}</SelectItem>
               </SelectContent>
             </Select>
-            <div className="flex w-full flex-1 items-center justify-center text-sm text-muted-foreground">
-              Graph
+            <div className="min-h-0 w-full flex-1">
+              <InitiativesGraph
+                focusAreas={focusAreaOptions}
+                initiatives={initiatives}
+                selectedId={selectedId}
+                onSelect={selectInitiative}
+                focusAreasLabel={dict.focusAreasLabel}
+                interventionsLabel={dict.interventionsLabel}
+              />
             </div>
           </div>
           {graphTagline && (

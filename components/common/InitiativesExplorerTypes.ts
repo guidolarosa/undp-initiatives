@@ -44,6 +44,7 @@ export interface ExplorerInitiative {
 export interface InitiativesExplorerDict {
   typeLabel: string;
   focusAreasLabel: string;
+  interventionsLabel: string;
   allFocusAreas: string;
   visualizeBy: string;
   backToList: string;
