@@ -4,12 +4,17 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 import type { ExplorerFocusArea, ExplorerInitiative } from "@/components/common/InitiativesExplorerTypes";
+import { cn } from "@/lib/utils";
 
 export interface InitiativesGraphProps {
   focusAreas: ExplorerFocusArea[];
   initiatives: ExplorerInitiative[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
+  /** Initiative-dot selection/zoom — omit both to disable dot interaction entirely. */
+  selectedId?: string | null;
+  onSelect?: (id: string) => void;
+  /** Focus-area-arc selection — omit both to disable arc interaction entirely. */
+  selectedFocusAreaId?: string | null;
+  onSelectFocusArea?: (id: string) => void;
   focusAreasLabel: string;
   interventionsLabel: string;
 }
@@ -28,6 +33,13 @@ const DOT_RADIUS = 6;
 const DOT_HIT_RADIUS = 15;
 const ARC_GAP_DEG = 9;
 const ZOOM_SCALE = 2.1;
+const LABEL_GAP = 6;
+// A bottom-half label's path is traced in reverse (see labelArcPath) so its
+// text reads upright — but that flip also puts the text on the *inner* side
+// of the path instead of the outer side, pulling it visually closer to the
+// colored arc than a top-half label at the same radius. This extra radius
+// compensates so both halves end up with the same visible gap.
+const LABEL_GAP_BOTTOM_EXTRA = 14;
 // Radii + angular spans for the two curved "Focus Areas" / "Interventions"
 // legend labels, centered on due north like the reference image.
 const FOCUS_AREAS_LABEL_RADIUS = RING_RADIUS + (ARC_RADIUS - RING_RADIUS) * 0.55;
@@ -61,6 +73,11 @@ function arcPath(r: number, fromDeg: number, toDeg: number, sweep: 0 | 1 = 1) {
   return `M ${start.x} ${start.y} A ${r} ${r} 0 ${large} ${sweep} ${end.x} ${end.y}`;
 }
 
+function isBottomHalf(fromDeg: number, toDeg: number) {
+  const mid = ((fromDeg + toDeg) / 2) % 360;
+  return mid > 0 && mid < 180;
+}
+
 /**
  * Same physical arc (same curve, same bulge direction) as `arcPath(r, fromDeg,
  * toDeg)`, but — when its midpoint sits in the bottom half of the circle —
@@ -70,9 +87,7 @@ function arcPath(r: number, fromDeg: number, toDeg: number, sweep: 0 | 1 = 1) {
  * it is what keeps it the same curve, just traced the other way.
  */
 function labelArcPath(r: number, fromDeg: number, toDeg: number) {
-  const mid = ((fromDeg + toDeg) / 2) % 360;
-  const bottomHalf = mid > 0 && mid < 180;
-  return bottomHalf ? arcPath(r, toDeg, fromDeg, 0) : arcPath(r, fromDeg, toDeg, 1);
+  return isBottomHalf(fromDeg, toDeg) ? arcPath(r, toDeg, fromDeg, 0) : arcPath(r, fromDeg, toDeg, 1);
 }
 
 /** An arc of the given angular width, centered on due north (-90deg). */
@@ -105,11 +120,14 @@ interface PositionedInitiative {
 export function InitiativesGraph({
   focusAreas,
   initiatives,
-  selectedId,
+  selectedId = null,
   onSelect,
+  selectedFocusAreaId = null,
+  onSelectFocusArea,
   focusAreasLabel,
   interventionsLabel,
 }: InitiativesGraphProps) {
+  const dotsInteractive = Boolean(onSelect);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const groupRef = useRef<SVGGElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
@@ -207,28 +225,45 @@ export function InitiativesGraph({
         </text>
 
         {/* Outer Focus Area arcs + curved labels */}
-        {positionedFocusAreas.map((focusArea, index) => (
-          <g key={focusArea._id}>
-            <path
-              d={arcPath(ARC_RADIUS, focusArea.startDeg, focusArea.endDeg)}
-              fill="none"
-              stroke={focusArea.color}
-              strokeWidth={ARC_STROKE}
-              strokeLinecap="butt"
-            />
-            <path
-              id={`focus-area-label-${index}`}
-              d={labelArcPath(ARC_RADIUS + ARC_STROKE + 6, focusArea.startDeg, focusArea.endDeg)}
-              fill="none"
-              className="invisible"
-            />
-            <text className="fill-foreground text-[10px] font-medium">
-              <textPath href={`#focus-area-label-${index}`} startOffset="50%" textAnchor="middle">
-                {focusArea.name}
-              </textPath>
-            </text>
-          </g>
-        ))}
+        {positionedFocusAreas.map((focusArea, index) => {
+          const isSelectedArea = focusArea._id === selectedFocusAreaId;
+          const labelGap =
+            LABEL_GAP +
+            (isBottomHalf(focusArea.startDeg, focusArea.endDeg) ? LABEL_GAP_BOTTOM_EXTRA : 0);
+          return (
+            <g key={focusArea._id}>
+              <path
+                d={arcPath(ARC_RADIUS, focusArea.startDeg, focusArea.endDeg)}
+                fill="none"
+                stroke={focusArea.color}
+                strokeWidth={isSelectedArea ? ARC_STROKE + 3 : ARC_STROKE}
+                strokeLinecap="butt"
+                onClick={onSelectFocusArea ? () => onSelectFocusArea(focusArea._id) : undefined}
+                className={cn(
+                  "transition-[stroke-width] duration-200",
+                  onSelectFocusArea && "cursor-pointer",
+                )}
+              />
+              <path
+                id={`focus-area-label-${index}`}
+                d={labelArcPath(ARC_RADIUS + ARC_STROKE + labelGap, focusArea.startDeg, focusArea.endDeg)}
+                fill="none"
+                className="invisible"
+              />
+              <text
+                onClick={onSelectFocusArea ? () => onSelectFocusArea(focusArea._id) : undefined}
+                className={cn(
+                  "fill-foreground text-[10px] font-medium",
+                  onSelectFocusArea && "cursor-pointer",
+                )}
+              >
+                <textPath href={`#focus-area-label-${index}`} startOffset="50%" textAnchor="middle">
+                  {focusArea.name}
+                </textPath>
+              </text>
+            </g>
+          );
+        })}
 
         {/* Secondary-focus ribbons for whichever dot is active (hovered or selected) */}
         {activePoint &&
@@ -289,10 +324,14 @@ export function InitiativesGraph({
           return (
             <g
               key={initiative._id}
-              className="cursor-pointer"
-              onMouseEnter={() => setHoveredId(initiative._id)}
-              onMouseLeave={() => setHoveredId((current) => (current === initiative._id ? null : current))}
-              onClick={() => onSelect(initiative._id)}
+              className={cn(dotsInteractive && "cursor-pointer")}
+              onMouseEnter={dotsInteractive ? () => setHoveredId(initiative._id) : undefined}
+              onMouseLeave={
+                dotsInteractive
+                  ? () => setHoveredId((current) => (current === initiative._id ? null : current))
+                  : undefined
+              }
+              onClick={dotsInteractive ? () => onSelect?.(initiative._id) : undefined}
             >
               <circle cx={x} cy={y} r={DOT_HIT_RADIUS} fill="transparent" />
               <circle

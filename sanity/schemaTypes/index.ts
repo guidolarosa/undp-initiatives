@@ -39,6 +39,8 @@ import { outcomesSection } from "./objects/outcomesSection";
 import { signalsOfChange } from "./objects/signalsOfChange";
 import { chronology } from "./objects/chronology";
 import { milestone } from "./objects/milestone";
+import { focusAreasBreakdown } from "./objects/focusAreasBreakdown";
+import { focusAreaResult } from "./objects/focusAreaResult";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -73,6 +75,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   initiativesExplorer,
   outcomesSection,
   signalsOfChange,
+  focusAreasBreakdown,
   // Modules
   shiftInLogicRow,
   portfolioApproachCard,
@@ -82,4 +85,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   statCard,
   chronology,
   milestone,
+  focusAreaResult,
 ];

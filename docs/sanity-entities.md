@@ -277,7 +277,11 @@ Decisions made explicitly, not assumed, when this was scoped:
 - **Curved arc labels**: each Focus Area's name sits on a `<textPath>` referencing an invisible
   label-only arc. That label arc's direction is reversed when its midpoint falls in the bottom
   half of the circle — otherwise `textPath` would render the label upside down there, a
-  standard radial-label technique.
+  standard radial-label technique. That same reversal also puts the glyphs on the path's *inner*
+  side instead of its outer side, which — found on explicit feedback the gap looked too tight —
+  pulls a bottom-half label visibly closer to its arc than a top-half label at the same radius.
+  Fixed with a flat extra radius added only for bottom-half labels (`LABEL_GAP_BOTTOM_EXTRA`), so
+  both halves read with the same visual gap.
 - **Hydration bug found and fixed during this build**: `Math.cos`/`Math.sin` can differ in
   their last bit or two between the server and browser JS engines for the exact same input —
   unrounded, this was enough to make the server-rendered `<path d="...">` strings mismatch the
@@ -371,6 +375,68 @@ colored panel is on the *right* here, not the left, matching the design mock.
 - **Verified against the mock** via a temporary scratch route with mock data (not committed —
   deleted after confirming the layout and the hover tooltip both work) rather than shipped
   unverified, since there's no real content for a brand-new block type yet.
+
+### FocusAreasBreakdown
+
+**Kind:** Object (Block variant)
+
+Implemented (2026-10-27) against a design mockup. A title/description/breakdown header over a
+two-column layout: the same radial graph from [InitiativesGraph](#initiativesgraph) on the
+left — extended with a new arc-click selection mode, see below — and a details panel on the
+right showing the selected [FocusArea](#focusarea)'s initiatives, early results, gap, and
+potential partnership text.
+
+Like [InitiativesExplorer](#initiativesexplorer)/[OutcomesSection](#outcomessection), **Focus
+Areas are not curated on this block** — every FocusArea document is plotted, each carrying its
+own Interventions (matched by `primaryFocusArea`), `earlyResults`, `gap`, and
+`potentialPartnership` (see [FocusArea](#focusarea) above) — so adding a Focus Area document is
+all it takes for it to show up here.
+
+| Field | Type | Notes |
+|---|---|---|
+| title | string | Required. |
+| description | text | Optional. Top-right paragraph. |
+| breakdown | text | Optional. Second paragraph, below the divider, e.g. "Explore each focus area to see...". |
+| graphTitle | string | Required. e.g. "Investment will be distributed towards social cohesion in these five areas:". |
+
+**Implementation notes:**
+- **One of the five Focus Areas is selected by default** (the first one — confirmed explicitly
+  it doesn't matter which) so the panel is never empty on load.
+- **`InitiativesGraph` extended, not duplicated** — confirmed explicitly over building a second,
+  simpler component. `selectedId`/`onSelect` (initiative-dot click/zoom) are now optional, and
+  two new optional props, `selectedFocusAreaId`/`onSelectFocusArea`, add a second, independent
+  interaction mode: clicking a Focus Area's outer arc (or its curved label) selects it — no zoom,
+  just a thicker stroke on the selected arc (a dashed leader-line/arrowhead callout was tried
+  first, approximating the mock's dotted-arrow pointing at the panel, then removed on explicit
+  feedback — the thicker stroke alone is the selection indicator). This block passes only the
+  arc-selection props, so its initiative dots render decoratively — not clickable, no hover
+  ribbons/tooltip — since the mock shows no dot interaction here, only arc selection.
+- **Bottom-half arc labels get extra radius, not the same gap as top-half ones** —
+  `labelArcPath` traces a bottom-half label's invisible path in reverse so the text reads
+  upright (see [InitiativesGraph](#initiativesgraph)), but that flip also puts the glyphs on the
+  path's *inner* side instead of its outer side, pulling bottom labels visibly closer to their
+  colored arc than top labels at the same radius. Fixed (2026-10-27, on explicit feedback the
+  gap looked wrong) by adding a flat extra radius (`LABEL_GAP_BOTTOM_EXTRA`) only for bottom-half
+  labels, so both halves end up with the same visual gap.
+- **Initiative `status` field repurposed**, not duplicated — `Intervention.status` was
+  `[started, not-started]` and unused anywhere in the frontend; confirmed explicitly to just
+  change its option list to `[funded, looking-for-partners]` for this block's card badges rather
+  than add a second status field.
+- **Early result values are free-text strings** (`FocusAreaResult.value`, see
+  [FocusArea](#focusarea) above), not numbers — confirmed explicitly, matching `StatCard`'s
+  existing pattern, so an editor can type "1.240" (or "7+", "~50") exactly as it should display,
+  with no locale-number-formatting logic needed in the block.
+- **Panel background color and content opacity are both GSAP-owned, not React-controlled**, once
+  mounted — a `useLayoutEffect` keyed on the selected Focus Area's id fades the content out,
+  swaps the displayed Focus Area via a timeline `.call()`, crossfades the panel's
+  `backgroundColor` to the new color, then fades the content back in. The panel's DOM background
+  is set once on mount and never again via a React `style` prop, so a re-render can never snap it
+  back and fight the in-progress GSAP tween (same ownership split as `InitiativesGraph`'s own zoom
+  effect).
+- **Verified against the mock** via a temporary scratch route with mock data (not committed —
+  deleted after confirming the arc-click → panel crossfade, status badges, early-result cards,
+  and gap/potential-partnership text all matched the design image) before wiring the real GROQ
+  query.
 
 ### Chronology
 
@@ -582,7 +648,7 @@ excerpts...) all needs translation the same way page content does.
 | name | string | Required. |
 | slug | slug | Required. Shared across locales, like `PageData.urlSlug`. |
 | language | string | Managed by the i18n plugin; hidden/read-only in the form. |
-| status | [started, not-started] | Confirmed `not-started` (not `non-started` as both sketches had it — a repeated typo, not intentional vocabulary). |
+| status | [funded, looking-for-partners] | Was `[started, not-started]` (confirmed `not-started`, not the `non-started` typo in both sketches) until 2026-10-27: repurposed for [FocusAreasBreakdown](#focusareasbreakdown)'s initiative-card badges — the original values were unused anywhere in the frontend, so changing the option list broke nothing. |
 | focusAreas | Array<-> [FocusArea](#focusarea)> | Required, at least one. |
 | primaryFocusArea | -> [FocusArea](#focusarea) | New field, not in either sketch. Needed because the first block fed by Intervention data (a card list) badges each card with exactly one focus area, and relying on `focusAreas[0]` (array order) was judged too fragile/implicit. |
 | primaryActor | -> [Actor](#actor) | Required. |
@@ -730,6 +796,23 @@ sketch's `excerpt`/`color` — same concept, no functional reason to rename and 
 | insight | richText | Added 2026-09-26 for [FocusAreasDetail](#focusareasdetail). Optional — only needed for focus areas placed in that block. |
 | opportunity | richText | Added 2026-09-26 for [FocusAreasDetail](#focusareasdetail). Optional, same as above. |
 | actions | richText | Added 2026-09-26 for [FocusAreasDetail](#focusareasdetail). Optional, same as above. |
+| earlyResults | Array<[FocusAreaResult](#focusarearesult)> | Added 2026-10-27 for [FocusAreasBreakdown](#focusareasbreakdown). Optional, same as above. |
+| gap | richText | Added 2026-10-27 for [FocusAreasBreakdown](#focusareasbreakdown). Optional, same as above. |
+| potentialPartnership | richText | Added 2026-10-27 for [FocusAreasBreakdown](#focusareasbreakdown). Optional, same as above. |
+
+#### FocusAreaResult
+
+**Kind:** Object (inline, used by `FocusArea.earlyResults`)
+
+A single stat (e.g. "1.240" / "Direct beneficiaries"). `value` is a free-text string, not a
+number — confirmed explicitly: editors type the display string as-is (locale thousands
+separators, "+", "%", etc. all included), the same approach already used by `StatCard`, rather
+than formatting a number field at render time.
+
+| Field | Type | Notes |
+|---|---|---|
+| value | string | Required. e.g. "1.240", "17", "7". |
+| label | string | Required. e.g. "Direct beneficiaries". |
 
 ### Actor
 

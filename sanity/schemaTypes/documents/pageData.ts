@@ -62,6 +62,7 @@ export const pageData = defineType({
         { type: "initiativesExplorer" },
         { type: "outcomesSection" },
         { type: "signalsOfChange" },
+        { type: "focusAreasBreakdown" },
       ],
     }),
   ],

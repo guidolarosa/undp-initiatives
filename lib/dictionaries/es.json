@@ -30,5 +30,16 @@
     "from": "De",
     "to": "A",
     "now": "Ahora"
+  },
+  "focusAreasBreakdown": {
+    "focusAreasLabel": "Áreas de enfoque",
+    "interventionsLabel": "Intervenciones",
+    "initiativesForLabel": "Iniciativas para {focusArea}",
+    "fundedLabel": "Financiado",
+    "lookingForPartnersLabel": "Buscando socios",
+    "earlyResultsLabel": "Resultados iniciales",
+    "gapLabel": "Brecha",
+    "potentialPartnershipLabel": "Posible alianza",
+    "emptyInitiatives": "Aún no hay iniciativas para esta área de enfoque."
   }
 }

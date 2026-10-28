@@ -40,8 +40,14 @@ export const intervention = defineType({
     defineField({
       name: "status",
       title: "Status",
+      description: "Shown as a badge on the Focus Areas Breakdown block's initiative cards.",
       type: "string",
-      options: { list: ["started", "not-started"] },
+      options: {
+        list: [
+          { title: "Funded", value: "funded" },
+          { title: "Looking for partners", value: "looking-for-partners" },
+        ],
+      },
       validation: (rule) => rule.required(),
     }),
     defineField({

@@ -30,5 +30,16 @@
     "from": "From",
     "to": "To",
     "now": "Now"
+  },
+  "focusAreasBreakdown": {
+    "focusAreasLabel": "Focus Areas",
+    "interventionsLabel": "Interventions",
+    "initiativesForLabel": "Initiatives for {focusArea}",
+    "fundedLabel": "Funded",
+    "lookingForPartnersLabel": "Looking for partners",
+    "earlyResultsLabel": "Early results",
+    "gapLabel": "Gap",
+    "potentialPartnershipLabel": "Potential partnership",
+    "emptyInitiatives": "No initiatives yet for this focus area."
   }
 }

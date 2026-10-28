@@ -345,6 +345,40 @@ export interface SignalsOfChangeSection {
   chronologies: Chronology[];
 }
 
+export interface FocusAreaResult {
+  _key: string;
+  value: string;
+  label: string;
+}
+
+export interface FocusAreaBreakdownInitiative {
+  _id: string;
+  name: string;
+  status: "funded" | "looking-for-partners";
+}
+
+export interface FocusAreaBreakdownArea {
+  _id: string;
+  name: string;
+  color?: string;
+  /** Interventions whose `primaryFocusArea` is this Focus Area. */
+  initiatives: FocusAreaBreakdownInitiative[];
+  earlyResults: FocusAreaResult[];
+  gap?: PortableTextBlock[];
+  potentialPartnership?: PortableTextBlock[];
+}
+
+export interface FocusAreasBreakdownSection {
+  _key: string;
+  _type: "focusAreasBreakdown";
+  title: string;
+  description?: string;
+  breakdown?: string;
+  graphTitle: string;
+  /** Every Focus Area, for the graph — not curated on the block. */
+  focusAreas: FocusAreaBreakdownArea[];
+}
+
 export interface PlaceholderSection {
   _key: string;
   _type: "blockPlaceholder";
@@ -370,6 +404,7 @@ export type PageSection =
   | InitiativesExplorerSection
   | OutcomesSectionSection
   | SignalsOfChangeSection
+  | FocusAreasBreakdownSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -901,6 +936,38 @@ export async function getPageBySlug(
               description,
               importance
             }
+          }
+        },
+        _type == "focusAreasBreakdown" => {
+          title,
+          description,
+          breakdown,
+          graphTitle,
+          // Not curated on the block — every Focus Area is plotted on the
+          // graph, each carrying its own initiatives (matched by
+          // primaryFocusArea), early results, gap, and potential
+          // partnership text, same philosophy as InitiativesExplorer/
+          // OutcomesSection/Territory.
+          "focusAreas": *[_type == "focusAreas"] | order(name asc) {
+            _id,
+            name,
+            "color": backgroundColor->value.hex,
+            "initiatives": *[
+              _type == "intervention" &&
+              language == $locale &&
+              primaryFocusArea._ref == ^._id
+            ] | order(name asc) {
+              _id,
+              name,
+              status
+            },
+            "earlyResults": coalesce(earlyResults[]{
+              _key,
+              value,
+              label
+            }, []),
+            gap,
+            potentialPartnership
           }
         },
         _type == "blockPlaceholder" => {

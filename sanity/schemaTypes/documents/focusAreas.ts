@@ -49,6 +49,27 @@ export const focusAreas = defineType({
       of: [{ type: "block" }],
       description: "Used by the Focus Areas Detail block. Optional — only needed for focus areas placed in that block.",
     }),
+    defineField({
+      name: "earlyResults",
+      title: "Early results",
+      type: "array",
+      of: [{ type: "focusAreaResult" }],
+      description: "Used by the Focus Areas Breakdown block. Optional — only needed for focus areas placed in that block.",
+    }),
+    defineField({
+      name: "gap",
+      title: "Gap",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Used by the Focus Areas Breakdown block. Optional — only needed for focus areas placed in that block.",
+    }),
+    defineField({
+      name: "potentialPartnership",
+      title: "Potential partnership",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Used by the Focus Areas Breakdown block. Optional — only needed for focus areas placed in that block.",
+    }),
   ],
   preview: {
     select: { title: "name" },
