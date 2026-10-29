@@ -85,7 +85,7 @@ export function ShiftsInLogic({
       style={backgroundColor ? { backgroundColor } : undefined}
       className="w-full border-y"
     >
-      <div className="grid border-b md:grid-cols-2">
+      <div className="grid border-b md:grid-cols-[1.5fr_1fr]">
         <div className="py-16 pl-[calc(50vw-568px)] pr-11">
           <h2 className="text-[56px] font-semibold leading-15 tracking-[-0.02em]">
             {title}

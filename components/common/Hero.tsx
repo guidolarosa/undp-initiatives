@@ -36,7 +36,7 @@ export function Hero({
         <div
           className={cn(
             image && imagePosition === "left" ? "md:order-2" : "md:order-1",
-            "lg:border-t mt-auto lg:py-15 px-4 border-b lg:border-b-0",
+            "lg:border-t mt-auto lg:py-15 border-b lg:border-b-0",
             content && "flex flex-col justify-between h-full mt-8 py-0",
           )}
         >

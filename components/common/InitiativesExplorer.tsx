@@ -114,7 +114,7 @@ export function InitiativesExplorer({
             </div>
           </div>
           {graphTagline && (
-            <div className="flex items-center gap-2 border-t px-6 py-3 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 border-t px-6 py-3 text-sm text-muted-foreground bg-background justify-center">
               <Link2 className="size-4 shrink-0" />
               {graphTagline}
             </div>

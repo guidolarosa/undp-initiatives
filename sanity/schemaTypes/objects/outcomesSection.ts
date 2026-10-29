@@ -2,17 +2,16 @@ import { defineField, defineType } from "sanity";
 
 /**
  * Outcomes Section — Block variant (registered into PageData.sections).
- * A title/legend/filter panel beside a grid of Outcome cards (each showing
- * its numericValue + text, colored by the Outcome's own `color` field).
+ * A title (with its own divider) over a description beside a row of
+ * highlighted stat cards — same `statCard` object as the Stats block
+ * (free-text value/label/color), not filtering/dropdown UI.
  *
- * Outcomes are **not curated on this block** — every text-content Outcome
- * referenced by at least one Intervention in the current locale is read
- * directly, same philosophy as Territory/InitiativesExplorer.
- *
- * An Outcome has no direct Focus Area field. For the "Focus Areas" filter,
- * an Outcome's focus area(s) are derived: every Intervention that lists
- * this Outcome in its `outcomes` array contributes its own
- * `primaryFocusArea` — confirmed explicitly, not assumed.
+ * Redesigned 2026-10-28, confirmed explicitly: cards are now curated
+ * directly on this block (e.g. "11" / "Interventions"), not derived from
+ * Outcome documents — the new cards are portfolio-wide tallies with no
+ * natural single Focus Area to color them by, unlike the old per-Outcome
+ * model. The Outcome document type is unchanged and still exists for
+ * `Intervention.outcomes`, just no longer read by this block.
  */
 export const outcomesSection = defineType({
   name: "outcomesSection",
@@ -27,8 +26,15 @@ export const outcomesSection = defineType({
     }),
     defineField({
       name: "content",
-      title: "Content",
+      title: "Description",
       type: "text",
+    }),
+    defineField({
+      name: "cards",
+      title: "Cards",
+      type: "array",
+      of: [{ type: "statCard" }],
+      validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {

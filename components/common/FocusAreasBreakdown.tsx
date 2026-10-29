@@ -1,48 +1,22 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { PortableTextBlock } from "@portabletext/react";
 import { gsap } from "gsap";
 
+import {
+  FocusAreaBreakdownPanel,
+  type FocusAreaBreakdownArea,
+  type FocusAreasBreakdownDict,
+} from "@/components/common/FocusAreaBreakdownPanel";
 import { InitiativesGraph } from "@/components/common/InitiativesGraph";
 import type { ExplorerInitiative } from "@/components/common/InitiativesExplorerTypes";
-import { PortableText } from "@/components/common/PortableText";
 
-export interface FocusAreaBreakdownInitiative {
-  _id: string;
-  name: string;
-  status: "funded" | "looking-for-partners";
-}
-
-export interface FocusAreaBreakdownResult {
-  _key: string;
-  value: string;
-  label: string;
-}
-
-export interface FocusAreaBreakdownArea {
-  _id: string;
-  name: string;
-  color?: string;
-  initiatives: FocusAreaBreakdownInitiative[];
-  earlyResults: FocusAreaBreakdownResult[];
-  gap?: PortableTextBlock[];
-  potentialPartnership?: PortableTextBlock[];
-}
-
-/** UI chrome strings — see lib/dictionaries/*.json: focusAreasBreakdown. */
-export interface FocusAreasBreakdownDict {
-  focusAreasLabel: string;
-  interventionsLabel: string;
-  /** Contains the literal placeholder "{focusArea}", replaced with the selected area's name. */
-  initiativesForLabel: string;
-  fundedLabel: string;
-  lookingForPartnersLabel: string;
-  earlyResultsLabel: string;
-  gapLabel: string;
-  potentialPartnershipLabel: string;
-  emptyInitiatives: string;
-}
+export type {
+  FocusAreaBreakdownArea,
+  FocusAreaBreakdownInitiative,
+  FocusAreaBreakdownResult,
+  FocusAreasBreakdownDict,
+} from "@/components/common/FocusAreaBreakdownPanel";
 
 export interface FocusAreasBreakdownProps {
   title: string;
@@ -56,47 +30,6 @@ export interface FocusAreasBreakdownProps {
 const PANEL_FADE_OUT = 0.2;
 const PANEL_FADE_IN = 0.25;
 const PANEL_COLOR_DURATION = 0.4;
-
-function StatusBadge({
-  status,
-  dict,
-}: {
-  status: FocusAreaBreakdownInitiative["status"];
-  dict: FocusAreasBreakdownDict;
-}) {
-  return (
-    <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.06em]">
-      <span aria-hidden="true">{status === "funded" ? "●" : "◐"}</span>
-      {status === "funded" ? dict.fundedLabel : dict.lookingForPartnersLabel}
-    </span>
-  );
-}
-
-function InitiativeMiniCard({
-  initiative,
-  dict,
-}: {
-  initiative: FocusAreaBreakdownInitiative;
-  dict: FocusAreasBreakdownDict;
-}) {
-  return (
-    <div className="flex flex-col gap-2 rounded-2xl bg-background/70 p-4">
-      <div className="border-b border-black/10 pb-2">
-        <StatusBadge status={initiative.status} dict={dict} />
-      </div>
-      <span className="text-sm font-medium">{initiative.name}</span>
-    </div>
-  );
-}
-
-function ResultCard({ result }: { result: FocusAreaBreakdownResult }) {
-  return (
-    <div className="flex flex-col gap-1 rounded-2xl border border-black/10 p-4">
-      <span className="text-3xl font-bold leading-tight">{result.value}</span>
-      <span className="text-sm">{result.label}</span>
-    </div>
-  );
-}
 
 export function FocusAreasBreakdown({
   title,
@@ -211,11 +144,6 @@ export function FocusAreasBreakdown({
 
   if (!displayed) return null;
 
-  const initiativesForTitle = dict.initiativesForLabel.replace(
-    "{focusArea}",
-    displayed.name,
-  );
-
   return (
     <section className="mx-auto border-t">
       <div className="py-14">
@@ -250,60 +178,12 @@ export function FocusAreasBreakdown({
           />
         </div>
 
-        <div ref={panelRef} className="rounded-3xl p-8">
-          <div ref={contentRef} className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
-              <h3 className="border-b border-black/10 pb-3 text-lg font-semibold">
-                {initiativesForTitle}
-              </h3>
-              {displayed.initiatives.length === 0 ? (
-                <p className="text-sm">{dict.emptyInitiatives}</p>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  {displayed.initiatives.map((initiative) => (
-                    <InitiativeMiniCard
-                      key={initiative._id}
-                      initiative={initiative}
-                      dict={dict}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {displayed.earlyResults.length > 0 && (
-              <div className="flex flex-col gap-4">
-                <h3 className="border-b border-black/10 pb-3 text-lg font-semibold">
-                  {dict.earlyResultsLabel}
-                </h3>
-                <div className="grid grid-cols-3 gap-3">
-                  {displayed.earlyResults.map((result) => (
-                    <ResultCard key={result._key} result={result} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {displayed.gap && displayed.gap.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <h3 className="border-b border-black/10 pb-3 text-lg font-semibold">
-                  {dict.gapLabel}
-                </h3>
-                <PortableText value={displayed.gap} />
-              </div>
-            )}
-
-            {displayed.potentialPartnership &&
-              displayed.potentialPartnership.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <h3 className="border-b border-black/10 pb-3 text-lg font-semibold">
-                    {dict.potentialPartnershipLabel}
-                  </h3>
-                  <PortableText value={displayed.potentialPartnership} />
-                </div>
-              )}
-          </div>
-        </div>
+        <FocusAreaBreakdownPanel
+          area={displayed}
+          dict={dict}
+          panelRef={panelRef}
+          contentRef={contentRef}
+        />
       </div>
     </section>
   );

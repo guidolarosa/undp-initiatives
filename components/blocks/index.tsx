@@ -67,7 +67,7 @@ type BlockRegistry = {
     block: InitiativesExplorerSection;
     locale: Locale;
   }>;
-  outcomesSection: ComponentType<{ block: OutcomesSectionSection; locale: Locale }>;
+  outcomesSection: ComponentType<{ block: OutcomesSectionSection }>;
   signalsOfChange: ComponentType<{ block: SignalsOfChangeSection; locale: Locale }>;
   focusAreasBreakdown: ComponentType<{ block: FocusAreasBreakdownSection; locale: Locale }>;
 };

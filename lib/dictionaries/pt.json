@@ -21,11 +21,6 @@
     "emptyFiltered": "Nenhuma iniciativa corresponde a esta área de foco.",
     "readMore": "Leia mais"
   },
-  "outcomesSection": {
-    "focusAreasLabel": "Áreas de foco",
-    "allFocusAreas": "Todas as áreas de foco",
-    "emptyFiltered": "Nenhum resultado corresponde a esta área de foco."
-  },
   "signalsOfChange": {
     "from": "De",
     "to": "Para",

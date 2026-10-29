@@ -297,40 +297,36 @@ Decisions made explicitly, not assumed, when this was scoped:
 
 **Kind:** Object (Block variant)
 
-Implemented (2026-10-14). A title/filter/legend panel beside a grid of [Outcome](#outcome) stat
-cards (each showing its `numericValue` + `text`, colored by its — indirect — Focus Area).
-
-Like [InitiativesExplorer](#initiativesexplorer), **Outcomes are not curated on this block** —
-every text-content Outcome referenced by at least one Intervention in the current locale is read
-directly (same for the Focus Area filter/legend's options: every [FocusArea](#focusarea)
-document) — so adding one is all it takes for it to show up here.
+Implemented (2026-10-14), **redesigned (2026-10-28)** against a new mock. A title (with its own
+dashed divider) beside a description, next to a row of highlighted stat cards — same `statCard`
+object the [Stats](#stats) block already uses (free-text `title`/`content`/`color`, not a number
+field), no filter/dropdown UI.
 
 | Field | Type | Notes |
 |---|---|---|
 | title | string | Required. |
-| content | text | Optional. |
+| content | text | Optional. Labeled "Description" in Studio — added 2026-10-14, just never rendered until this redesign. |
+| cards | Array<Object: [StatCard](#statcard)> | Added 2026-10-28. Required, at least one. |
 
 **Implementation notes:**
-- **Outcome has no direct Focus Area field, and no color field** — confirmed explicitly, not
-  assumed (a `color` field was briefly added, then reverted the same day on correction: the card's
-  color must come from the Focus Area, not be independently settable). An Outcome's focus area —
-  and with it, its card color — is derived: the `primaryFocusArea` of the first Intervention (in
-  this locale, ordered by creation for determinism) that lists the Outcome in its `outcomes`
-  array. The GROQ projection (`lib/sanity/queries.ts`) computes this via
-  `*[_type == "intervention" && references(^._id)] | order(_createdAt asc)[0].primaryFocusArea->{...}`,
-  a "find documents that reference me" backlink query. Confirmed as a single focus area per
-  outcome (not a set) — in practice each Outcome belongs to one Intervention.
-- Only Outcomes with `content == "text"` are included (video-content Outcomes have no
-  `numericValue`/`text` to show as a stat tile), and only ones actually referenced by an
-  Intervention in this locale — an Outcome document with no referencing Intervention anywhere
-  (orphaned draft content) never reaches the grid.
-- **Numeric formatting**: `Outcome.numericValue` is formatted with locale-aware thousands
-  separators (`Intl.NumberFormat(locale)`) in the block wrapper, not hardcoded — "219.077" in the
-  design mock is simply how the "." grouping separator renders for `es`/`pt`.
-- **Filter dropdown and stagger animation reused** from InitiativesExplorer (per explicit
-  instruction to reuse the existing filter dropdown): `components/ui/select.tsx` styled the same
-  way, and the same `useCardStagger` hook for the "cards stagger in when the filter changes"
-  treatment.
+- **Decoupled from [Outcome](#outcome) entirely, confirmed explicitly over keeping it as the
+  source** — the original design's cards were individual Outcome documents (numeric value + rich
+  text, colored by an indirect Focus Area lookup); the new mock's 4 cards ("11" / "Interventions",
+  "13" / "Actors involved"...) are portfolio-wide tallies with no single Focus Area to derive a
+  color from, and don't match the Outcome model at all. Cards are now curated directly on the
+  block instead, the same free-text-value approach as `StatCard`/[FocusAreaResult](#focusarearesult)
+  elsewhere in this codebase (an editor types "42.760" or "220,000" exactly as it should display —
+  explaining the mock's inconsistent "." vs "," thousands separators between cards, which a single
+  `Intl.NumberFormat` call could never produce). The `Outcome` document type itself is unchanged
+  and still exists for `Intervention.outcomes` — just no longer read by this block, and currently
+  not rendered anywhere in the frontend.
+- **Filter dropdown, legend, and per-focus-area derivation all removed** — confirmed explicitly
+  ("No filters now"). `components/common/OutcomesSection.tsx` is now a plain presentational
+  component (no `"use client"`, no hooks) — the filter was the only reason it needed client state.
+- **Existing published content has no `cards` value yet** (the field didn't exist before this
+  redesign) — GROQ returns `null`, not `[]`, for an unset array, which crashed `Array.map` at
+  build time until wrapped in `coalesce(cards[]{...}, [])`. An already-published page using this
+  block renders with zero cards until an editor fills the new field in Studio.
 
 ### SignalsOfChange
 
@@ -746,9 +742,13 @@ that's active (`hidden`/`validation` keyed off the sibling `content` field).
   `Outcome` (`id, slug, label`) nested under a page-builder block. Not the same document type as this
   one; modeled as a separate `OutcomeTag` object pending your confirmation. Also not the same as the
   actually-built [OutcomesSection](#outcomessection) block below, which renders *this* document.
-- **No `color` field** (2026-10-14, briefly added then reverted the same day) — [OutcomesSection](#outcomessection)'s
-  stat cards are colored by the outcome's (indirect) Focus Area instead, confirmed explicitly: **not**
-  an independently-settable field on Outcome.
+- **No `color` field** (2026-10-14, briefly added then reverted the same day) — the original
+  [OutcomesSection](#outcomessection)'s stat cards were colored by the outcome's (indirect) Focus
+  Area instead, confirmed explicitly: **not** an independently-settable field on Outcome.
+- **No longer read by [OutcomesSection](#outcomessection) as of 2026-10-28** — that block's cards
+  are now curated directly on the block (see its notes). This document type is otherwise
+  unchanged, still referenced by `Intervention.outcomes`, but currently has no reader anywhere in
+  the frontend.
 
 ### Intent
 
