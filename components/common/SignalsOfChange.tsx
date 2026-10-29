@@ -187,7 +187,7 @@ export function SignalsOfChange({
   return (
     <section className="my-20 grid w-full border-y md:grid-cols-[5fr_4fr]">
       <div className="flex flex-col border-r">
-        <div className="flex flex-1 flex-col gap-10 py-12 pl-[calc(50vw-568px)] pr-11 justify-center">
+        <div className="flex flex-1 flex-col gap-18 py-12 pl-[calc(50vw-568px)] pr-11 justify-center">
           {chronologies.map((chronology) => (
             <ChronologyRow
               key={chronology._key}

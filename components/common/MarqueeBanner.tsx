@@ -28,7 +28,7 @@ function MarqueeCopy({ text }: { text: string }) {
       {Array.from({ length: REPEAT }, (_, i) => (
         <span
           key={i}
-          className="flex shrink-0 items-center gap-8 whitespace-nowrap pr-8 lg:text-[32px] text-[24px] font-semibold uppercase tracking-tight"
+          className="flex shrink-0 items-center gap-8 whitespace-nowrap pr-8 lg:text-[32px] text-[24px] font-semibold tracking-tight"
         >
           {text}
         </span>

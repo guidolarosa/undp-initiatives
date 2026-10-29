@@ -19,7 +19,7 @@ const LinkBlock = ({ link }: { link: LinkProps }) => {
   return (
     <Link
       href={link.url}
-      className="rounded-2xl lg:h-75 flex flex-col flex-1 lg:aspect-square lg:max-w-75 w-full pt-4"
+      className="rounded-2xl lg:h-75 flex flex-col flex-1 lg:aspect-square lg:max-w-75 w-full pt-4 hover:rotate-6 transition-transform duration-300"
       style={{ backgroundColor: link.color }}
     >
       <div className="px-6 lg:py-4 py-2 border-t mt-auto flex justify-between items-center font-medium">

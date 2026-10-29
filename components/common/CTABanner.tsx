@@ -40,7 +40,7 @@ export function CTABanner({
             )}
             <Link
               href={cta.url}
-              className="rounded-full h-15 w-fit px-8 flex items-center text-xl"
+              className="rounded-full h-15 w-fit px-8 flex items-center text-xl hover:rotate-12 transition-transform duration-300"
               style={{ backgroundColor: cta.color }}
             >
               {cta.label}
