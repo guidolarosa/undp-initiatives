@@ -28,7 +28,7 @@ export interface FocusAreaBreakdownArea {
 /** UI chrome strings — see lib/dictionaries/*.json: focusAreasBreakdown. */
 export interface FocusAreasBreakdownDict {
   focusAreasLabel: string;
-  interventionsLabel: string;
+  initiativesLabel: string;
   /** Contains the literal placeholder "{focusArea}", replaced with the selected area's name. */
   initiativesForLabel: string;
   fundedLabel: string;

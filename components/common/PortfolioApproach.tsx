@@ -34,7 +34,7 @@ const PortfolioApproachCard = ({
       style={{ backgroundColor: portfolioApproachCard.backgroundColor }}
     >
       <div className="flex flex-col justify-center h-full">
-        <h3 className="text-[18px] leading-7">{portfolioApproachCard.title}</h3>
+        <h3 className="text-[24px] font-bold leading-7">{portfolioApproachCard.title}</h3>
         {portfolioApproachCard.content && (
           <p className="mt-4 whitespace-pre-line text-foreground/80 text-xl italic">
             {portfolioApproachCard.content}

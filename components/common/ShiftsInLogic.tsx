@@ -45,7 +45,7 @@ const ShiftRow = ({
           "mx-16 grid min-h-34 grid-cols-[1fr_1.3fr_2.2fr]",
         )}
       >
-        <div className="flex items-center border-r px-8 py-10 text-[18px] leading-8">
+        <div className="flex items-center border-r px-8 py-10 text-[18px] font-bold leading-8">
           {row.label}
         </div>
         <div className="flex items-center justify-center border-r px-8 py-10">

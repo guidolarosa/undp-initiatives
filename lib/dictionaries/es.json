@@ -14,7 +14,7 @@
   "initiativesExplorer": {
     "typeLabel": "Iniciativa",
     "focusAreasLabel": "Áreas de enfoque",
-    "interventionsLabel": "Intervenciones",
+    "initiativesLabel": "Iniciativas",
     "allFocusAreas": "Todas las áreas de enfoque",
     "visualizeBy": "Visualizar por",
     "backToList": "Volver a todas las iniciativas",
@@ -28,7 +28,7 @@
   },
   "focusAreasBreakdown": {
     "focusAreasLabel": "Áreas de enfoque",
-    "interventionsLabel": "Intervenciones",
+    "initiativesLabel": "Iniciativas",
     "initiativesForLabel": "Iniciativas para {focusArea}",
     "fundedLabel": "Financiado",
     "lookingForPartnersLabel": "Buscando socios",

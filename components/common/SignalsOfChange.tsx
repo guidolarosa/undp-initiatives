@@ -98,13 +98,22 @@ function MilestoneDot({
   );
 }
 
-function TimelineTick({ label, fraction }: { label: string; fraction: number }) {
+function TimelineTick({
+  label,
+  fraction,
+  showDot = true,
+}: {
+  label: string;
+  fraction: number;
+  /** The "now" tick skips its own dot — the track's arrowhead marks that end instead. */
+  showDot?: boolean;
+}) {
   return (
     <div
       className="absolute flex -translate-x-1/2 flex-col items-center"
       style={{ left: `${fraction * 100}%`, top: TRACK_TOP }}
     >
-      <span className="size-1.5 -translate-y-1/2 rounded-full bg-foreground" />
+      {showDot && <span className="size-1.5 -translate-y-1/2 rounded-full bg-foreground" />}
       <span className="mt-1 h-3.5 border-l border-dashed border-foreground/50" />
       <span className="mt-1 whitespace-nowrap text-sm">{label}</span>
     </div>
@@ -144,12 +153,23 @@ function ChronologyRow({
           className="absolute inset-x-0 bg-foreground"
           style={{ top: TRACK_TOP, height: 1 }}
         />
+        {/* Arrowhead caps the "now" end of the track, replacing that tick's dot. */}
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+          className="absolute -translate-y-1/2"
+          style={{ left: "100%", top: TRACK_TOP }}
+        >
+          <path d="M 0 0 L 10 5 L 0 10 Z" className="fill-foreground" />
+        </svg>
 
         <TimelineTick label={String(startDate.getUTCFullYear())} fraction={0} />
         {yearTicks.map((tick) => (
           <TimelineTick key={tick.label} label={tick.label} fraction={tick.fraction} />
         ))}
-        <TimelineTick label={nowLabel} fraction={1} />
+        <TimelineTick label={nowLabel} fraction={1} showDot={false} />
 
         {chronology.milestones.map((milestone) => (
           <MilestoneDot

@@ -16,7 +16,7 @@ export interface InitiativesGraphProps {
   selectedFocusAreaId?: string | null;
   onSelectFocusArea?: (id: string) => void;
   focusAreasLabel: string;
-  interventionsLabel: string;
+  initiativesLabel: string;
 }
 
 // --- Geometry: a square viewBox, independent of the container's actual
@@ -33,6 +33,10 @@ const DOT_RADIUS = 6;
 const DOT_HIT_RADIUS = 15;
 const ARC_GAP_DEG = 9;
 const ZOOM_SCALE = 2.1;
+// How far "spun back" the graph starts on mount, before easing to its
+// resting rotation (0, or the pre-selected arc's position) — the one-time
+// entrance animation.
+const ROTATION_ENTRANCE_OFFSET = -120;
 const LABEL_GAP = 6;
 // A bottom-half label's path is traced in reverse (see labelArcPath) so its
 // text reads upright — but that flip also puts the text on the *inner* side
@@ -95,13 +99,29 @@ function topArcPath(r: number, spanDeg: number) {
   return arcPath(r, -90 - spanDeg / 2, -90 + spanDeg / 2);
 }
 
+// A small angular offset applied to both bezier control points (same
+// direction) so a ribbon reads as a gentle organic curve rather than a
+// straight line — without this, a ribbon whose two ends share the same
+// angle (the common "dot to its own primary Focus Area" case) is
+// mathematically straight, since both control points would sit on that
+// same radius too.
+const RIBBON_BOW_DEG = 6;
+
 /** A smooth curved "ribbon" from a point near the dashed ring out to a point on the outer arc. */
 function ribbonPath(fromR: number, fromDeg: number, toR: number, toDeg: number) {
   const start = polar(fromR, fromDeg);
   const end = polar(toR, toDeg);
-  const c1 = polar(fromR + (toR - fromR) * 0.35, fromDeg);
-  const c2 = polar(toR - (toR - fromR) * 0.25, toDeg);
+  const c1 = polar(fromR + (toR - fromR) * 0.35, fromDeg + RIBBON_BOW_DEG);
+  const c2 = polar(toR - (toR - fromR) * 0.25, toDeg + RIBBON_BOW_DEG);
   return `M ${start.x} ${start.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end.x} ${end.y}`;
+}
+
+/** Shortest angular path from `from` to `to`, as a delta in (-180, 180]. */
+function shortestDelta(from: number, to: number) {
+  const diff = (to - from) % 360;
+  if (diff > 180) return diff - 360;
+  if (diff < -180) return diff + 360;
+  return diff;
 }
 
 interface PositionedFocusArea extends ExplorerFocusArea {
@@ -125,16 +145,32 @@ export function InitiativesGraph({
   selectedFocusAreaId = null,
   onSelectFocusArea,
   focusAreasLabel,
-  interventionsLabel,
+  initiativesLabel,
 }: InitiativesGraphProps) {
   const dotsInteractive = Boolean(onSelect);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const groupRef = useRef<SVGGElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
 
+  // Degrees added to every Focus Area's base angle. Spins in from
+  // ROTATION_ENTRANCE_OFFSET to 0 once on mount; in arc-click mode
+  // (onSelectFocusArea provided) it's re-targeted on every selection change
+  // so the selected arc's midpoint lands at due north. Recomputing each
+  // arc's actual angle (rather than a CSS transform on the whole graph) is
+  // what keeps every label's upright-text logic correct at any rotation,
+  // mid-animation included.
+  const [rotationOffset, setRotationOffset] = useState(ROTATION_ENTRANCE_OFFSET);
+  const rotationRef = useRef(ROTATION_ENTRANCE_OFFSET);
+  const rotationTweenRef = useRef<gsap.core.Tween | null>(null);
+  const hasAnimatedInRef = useRef(false);
+
   const arcSpan = (360 - ARC_GAP_DEG * focusAreas.length) / Math.max(focusAreas.length, 1);
-  const positionedFocusAreas: PositionedFocusArea[] = focusAreas.map((focusArea, index) => {
-    const startDeg = -90 + index * (arcSpan + ARC_GAP_DEG);
+  const baseFocusAreas = focusAreas.map((focusArea, index) => {
+    const baseStartDeg = -90 + index * (arcSpan + ARC_GAP_DEG);
+    return { ...focusArea, baseStartDeg, baseMidDeg: baseStartDeg + arcSpan / 2 };
+  });
+  const positionedFocusAreas: PositionedFocusArea[] = baseFocusAreas.map((focusArea) => {
+    const startDeg = focusArea.baseStartDeg + rotationOffset;
     const endDeg = startDeg + arcSpan;
     return { ...focusArea, startDeg, endDeg, midDeg: (startDeg + endDeg) / 2 };
   });
@@ -187,6 +223,37 @@ export function InitiativesGraph({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, focusAreas, initiatives]);
 
+  useLayoutEffect(() => {
+    const selected =
+      onSelectFocusArea && selectedFocusAreaId
+        ? baseFocusAreas.find((fa) => fa._id === selectedFocusAreaId)
+        : undefined;
+    const rawTarget = selected ? -90 - selected.baseMidDeg : 0;
+    const current = rotationRef.current;
+    const target = current + shortestDelta(current, rawTarget);
+
+    const proxy = { value: current };
+    rotationTweenRef.current?.kill();
+    rotationTweenRef.current = gsap.to(proxy, {
+      value: target,
+      duration: hasAnimatedInRef.current ? 0.7 : 1.1,
+      ease: hasAnimatedInRef.current ? "power2.inOut" : "power2.out",
+      onUpdate: () => {
+        rotationRef.current = proxy.value;
+        setRotationOffset(proxy.value);
+      },
+    });
+    hasAnimatedInRef.current = true;
+
+    return () => {
+      rotationTweenRef.current?.kill();
+    };
+    // baseFocusAreas is rebuilt every render from focusAreas — keying on
+    // selectedFocusAreaId (plus the data it's derived from) is what actually
+    // matters here, same reasoning as the zoom effect above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFocusAreaId, focusAreas]);
+
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-full w-full overflow-visible">
       <g ref={groupRef}>
@@ -220,7 +287,7 @@ export function InitiativesGraph({
         />
         <text className="fill-muted-foreground text-[10px]">
           <textPath href="#interventions-legend-arc" startOffset="50%" textAnchor="middle">
-            {interventionsLabel}
+            {initiativesLabel}
           </textPath>
         </text>
 

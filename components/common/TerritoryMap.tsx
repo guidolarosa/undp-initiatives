@@ -75,6 +75,29 @@ export function TerritoryMap({ points }: { points: TerritoryMapPoint[] }) {
         }),
       );
 
+      // The "positron" style has no land fill — land is just the bare
+      // background color showing through, so the islands had no visible
+      // edge against the grey water. A line layer traced along the same
+      // water polygons gives the coastline a visible border instead.
+      instance.on("load", () => {
+        if (cancelled) return;
+        instance.addLayer({
+          id: "water-outline",
+          type: "line",
+          source: "openmaptiles",
+          "source-layer": "water",
+          filter: [
+            "all",
+            ["match", ["geometry-type"], ["MultiPolygon", "Polygon"], true, false],
+            ["!=", ["get", "brunnel"], "tunnel"],
+          ],
+          paint: {
+            "line-color": "rgba(0, 0, 0, 0.65)",
+            "line-width": 1.2,
+          },
+        });
+      });
+
       for (const point of points) {
         const el = document.createElement("button");
         el.type = "button";
@@ -123,7 +146,7 @@ export function TerritoryMap({ points }: { points: TerritoryMapPoint[] }) {
       ref={container}
       className="h-150 w-full"
       role="img"
-      aria-label="Map of São Tomé and Príncipe showing where interventions are located"
+      aria-label="Map of São Tomé and Príncipe showing where initiatives are located"
     />
   );
 }

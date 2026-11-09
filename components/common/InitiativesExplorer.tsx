@@ -109,7 +109,7 @@ export function InitiativesExplorer({
                 selectedId={selectedId}
                 onSelect={selectInitiative}
                 focusAreasLabel={dict.focusAreasLabel}
-                interventionsLabel={dict.interventionsLabel}
+                initiativesLabel={dict.initiativesLabel}
               />
             </div>
           </div>

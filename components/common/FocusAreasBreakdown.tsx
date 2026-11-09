@@ -174,7 +174,7 @@ export function FocusAreasBreakdown({
             selectedFocusAreaId={selectedId}
             onSelectFocusArea={setSelectedId}
             focusAreasLabel={dict.focusAreasLabel}
-            interventionsLabel={dict.interventionsLabel}
+            initiativesLabel={dict.initiativesLabel}
           />
         </div>
 

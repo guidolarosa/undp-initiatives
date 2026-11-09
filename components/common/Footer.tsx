@@ -40,8 +40,9 @@ const Footer = async () => {
               ))}
             </div>
           </div>
-          <div className="lg:col-span-2 border-y py-4 ">
+          <div className="lg:col-span-2 border-y py-4 flex flex-col gap-2">
             <h2 className="text-2xl font-bold">CONTACT US AT</h2>
+            <p>info@undp.org</p>
           </div>
         </div>
       </div>

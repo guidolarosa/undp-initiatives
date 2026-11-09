@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "tagline": "Intelligence Politique",
+    "emptyLinks": "Aucun lien de navigation configuré"
+  },
+  "languageSwitcher": {
+    "label": "Choisir la langue"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Cette page n'existe pas, ou n'a pas encore été publiée dans Sanity."
+  },
+  "fallbackNotice": "Cette page n'est pas encore disponible dans votre langue — affichage en anglais.",
+  "initiativesExplorer": {
+    "typeLabel": "Initiative",
+    "focusAreasLabel": "Domaines d'intervention",
+    "initiativesLabel": "Initiatives",
+    "allFocusAreas": "Tous les domaines d'intervention",
+    "visualizeBy": "Visualiser par",
+    "backToList": "Retour à toutes les initiatives",
+    "emptyFiltered": "Aucune initiative ne correspond à ce domaine d'intervention.",
+    "readMore": "Lire plus"
+  },
+  "signalsOfChange": {
+    "from": "De",
+    "to": "À",
+    "now": "Maintenant"
+  },
+  "focusAreasBreakdown": {
+    "focusAreasLabel": "Domaines d'intervention",
+    "initiativesLabel": "Initiatives",
+    "initiativesForLabel": "Initiatives pour {focusArea}",
+    "fundedLabel": "Financé",
+    "lookingForPartnersLabel": "À la recherche de partenaires",
+    "earlyResultsLabel": "Premiers résultats",
+    "gapLabel": "Lacune",
+    "potentialPartnershipLabel": "Partenariat potentiel",
+    "emptyInitiatives": "Pas encore d'initiatives pour ce domaine d'intervention."
+  }
+}

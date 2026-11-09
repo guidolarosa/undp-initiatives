@@ -18,7 +18,7 @@ export function NavLinks({
   const pathname = usePathname();
 
   return (
-    <ul className="flex items-center gap-4 text-sm ml-auto flex-1 justify-end">
+    <ul className="flex items-center gap-4 text-base ml-auto flex-1 justify-end">
       {links.length === 0 && (
         <li className="text-muted-foreground">{emptyLabel}</li>
       )}
