@@ -36,14 +36,14 @@ export function LowerLinks({ title, content, links }: LowerLinksProps) {
       <section className={"lg:pt-8"}>
         <div className="border-t lg:py-18 py-8">
           <div className="mx-auto max-w-280 flex flex-col gap-12">
-            <div className="flex gap-8">
+            <div className="flex flex-col gap-4 px-6 lg:flex-row lg:gap-8 lg:px-0">
               {title && (
-                <h2 className="text-[56px] font-semibold leading-18 tracking-[-0.02em] flex-1">
+                <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:flex-1 lg:text-[56px] lg:leading-18">
                   {title}
                 </h2>
               )}
               {content && (
-                <p className="mt-4 whitespace-pre-line text-foreground/80 text-[20px] flex-1">
+                <p className="whitespace-pre-line text-foreground/80 text-[20px] lg:mt-4 lg:flex-1">
                   {content}
                 </p>
               )}

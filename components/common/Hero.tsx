@@ -29,22 +29,23 @@ export function Hero({
         className={cn(
           "mx-auto grid lg:min-h-159 border-y",
           image && imagePosition === "left"
-            ? "md:grid-cols-[1fr_1.25fr]"
-            : "md:grid-cols-[1.25fr_1fr]",
+            ? "lg:grid-cols-[1fr_1.25fr]"
+            : "lg:grid-cols-[1.25fr_1fr]",
         )}
       >
         <div
           className={cn(
-            image && imagePosition === "left" ? "md:order-2" : "md:order-1",
+            image && imagePosition === "left" ? "lg:order-2" : "lg:order-1",
             "lg:border-t mt-auto lg:py-15 border-b lg:border-b-0",
             content && "flex flex-col justify-between h-full mt-8 py-0",
           )}
         >
           <h2
             className={cn(
+              "px-6 py-8 lg:px-0",
               imagePosition === "left"
-                ? "pl-11 pr-[calc(50vw-568px)]"
-                : "pl-[calc(50vw-568px)] pr-11 py-8",
+                ? "lg:py-0 lg:pl-11 lg:pr-[calc(50vw-568px)]"
+                : "lg:pl-[calc(50vw-568px)] lg:pr-11",
             )}
           >
             {title}
@@ -52,10 +53,10 @@ export function Hero({
           {content && (
             <p
               className={cn(
-                "whitespace-pre-line text-foreground/80 border-t py-8 pb-16 text-[20px]",
+                "whitespace-pre-line text-foreground/80 border-t px-6 py-8 pb-16 text-[20px] lg:px-0",
                 imagePosition === "left"
-                  ? "pl-11 pr-[calc(50vw-568px)]"
-                  : "pl-[calc(50vw-568px)] pr-11",
+                  ? "lg:pl-11 lg:pr-[calc(50vw-568px)]"
+                  : "lg:pl-[calc(50vw-568px)] lg:pr-11",
               )}
             >
               {content}
@@ -65,10 +66,10 @@ export function Hero({
         {image && (
           <div
             className={cn(
-              "relative h-89 lg:h-full lg:py-11 py-6",
+              "relative h-89 lg:h-full lg:py-11 py-6 px-6 lg:px-0",
               imagePosition === "left"
-                ? "md:order-1 lg:border-r pr-11 pl-[calc(50vw-568px)]"
-                : "lg:border-l lg:pl-11 lg:pr-[calc(50vw-568px)] md:order-2 px-4",
+                ? "lg:order-1 lg:border-r lg:pr-11 lg:pl-[calc(50vw-568px)]"
+                : "lg:border-l lg:pl-11 lg:pr-[calc(50vw-568px)] lg:order-2",
             )}
           >
             <Image

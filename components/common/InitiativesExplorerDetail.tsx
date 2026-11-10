@@ -45,7 +45,7 @@ export function InitiativeDetail({
         {backLabel}
       </button>
 
-      <h2 className="text-[40px] font-semibold leading-11 tracking-[-0.02em]">
+      <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] lg:text-[40px] lg:leading-11">
         {initiative.name}
       </h2>
 

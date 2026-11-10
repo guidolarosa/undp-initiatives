@@ -28,7 +28,7 @@ export function CTABanner({
       className="my-29.75"
     >
       <section className={"pt-8"}>
-        <div className="text-center border-t py-18">
+        <div className="text-center border-t py-18 px-3 lg:px-0">
           <div className="mx-auto max-w-221 flex flex-col gap-8 items-center">
             <h2>
               {title}

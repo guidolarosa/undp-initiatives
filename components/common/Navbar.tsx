@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { MobileNav } from "@/components/common/MobileNav";
 import { NavLinks } from "@/components/common/NavLinks";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
@@ -15,7 +16,7 @@ export async function Navbar({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <header className="border-b border-border bg-navbar">
-      <nav className="mx-auto flex max-w-296.25 items-end justify-between gap-3 lg:gap-6 px-6 pb-4">
+      <nav className="mx-auto flex max-w-296.25 items-end justify-between gap-3 lg:gap-6 px-3 pb-4">
         <div className="lg:h-22.5 lg:w-11.25 h-16 w-8 relative">
           <Image
             src="/img/undp_logo.png"
@@ -61,6 +62,12 @@ export async function Navbar({ locale }: { locale: Locale }) {
             label={dict.languageSwitcher.label}
           />
         </span>
+        <MobileNav
+          links={navLinks}
+          locale={locale}
+          emptyLabel={dict.nav.emptyLinks}
+          languageSwitcherLabel={dict.languageSwitcher.label}
+        />
       </nav>
     </header>
   );

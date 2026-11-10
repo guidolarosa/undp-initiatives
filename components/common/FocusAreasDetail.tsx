@@ -35,9 +35,9 @@ export interface FocusAreasDetailProps {
 type CardField = "insight" | "opportunity" | "actions";
 
 const CARD_META: { field: CardField; label: string; index: number; gridArea: string }[] = [
-  { field: "insight", label: "Insight", index: 1, gridArea: "col-start-1 row-start-1" },
-  { field: "opportunity", label: "Opportunity", index: 2, gridArea: "col-start-2 row-start-1" },
-  { field: "actions", label: "Actions", index: 3, gridArea: "col-start-1 row-start-2" },
+  { field: "insight", label: "Insight", index: 1, gridArea: "lg:col-start-1 lg:row-start-1" },
+  { field: "opportunity", label: "Opportunity", index: 2, gridArea: "lg:col-start-2 lg:row-start-1" },
+  { field: "actions", label: "Actions", index: 3, gridArea: "lg:col-start-1 lg:row-start-2" },
 ];
 
 /**
@@ -172,11 +172,11 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
   const modalValue = selected && modalField ? selected[modalField] : undefined;
 
   return (
-    <div className="my-29.75 border-y mb-30">
+    <div className="my-29.75 border-y mb-15">
       <section className="pt-8">
         <div className="border-t py-18">
-          <div className="mx-auto max-w-280 grid gap-12 md:grid-cols-2">
-            <h2 className="text-[56px] font-semibold leading-18 tracking-[-0.02em]">
+          <div className="mx-auto max-w-280 grid gap-12 px-6 lg:grid-cols-2">
+            <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-18">
               {title}
             </h2>
             {content && (
@@ -186,7 +186,7 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
             )}
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-280 items-start gap-10 md:grid-cols-2">
+          <div className="mx-auto mt-16 grid max-w-280 items-start gap-10 px-6 lg:grid-cols-2">
             {/* Focus area shape cluster */}
             <div
               ref={clusterRef}
@@ -242,7 +242,7 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
             </div>
 
             {/* Insight / Opportunity / Actions cards */}
-            <div className="grid grid-cols-2 grid-rows-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:grid-rows-2">
               {!selected && (
                 <p className="col-span-2 self-start text-sm text-muted-foreground">
                   Select a focus area to see its Insight, Opportunity, and Actions.
@@ -353,7 +353,7 @@ function FocusCard({
       <h3 className="border-b border-black/10 px-6 py-2 text-lg font-semibold">
         {index}. {label}
       </h3>
-      <div className="flex flex-1 flex-col px-6 pb-0">
+      <div className="flex flex-1 flex-col px-6 pb-3">
         <div ref={contentRef} className="line-clamp-[8] *:text-sm *:leading-4">
           <PortableText value={value} />
         </div>

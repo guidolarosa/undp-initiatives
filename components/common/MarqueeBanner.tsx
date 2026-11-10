@@ -60,19 +60,19 @@ export function MarqueeBanner({
 
   return (
     <div style={backgroundColor ? { backgroundColor } : undefined}>
-      <section className="mx-auto grid min-h-159 border-y md:grid-cols-[1.25fr_1fr]">
-        <div className="mt-8 flex h-full flex-col justify-between border-t py-0 md:order-1">
+      <section className="mx-auto grid min-h-159 border-y lg:grid-cols-[1.25fr_1fr]">
+        <div className="mt-8 flex h-full flex-col justify-between border-t py-0 lg:order-1">
           <h2 className="lg:py-8 pt-8 px-4 lg:px-0 lg:pl-[calc(50vw-568px)] lg:pr-11">
             {title}
           </h2>
           {content && (
-            <p className="whitespace-pre-line border-t py-8 pb-16 lg:pl-[calc(50vw-568px)] pr-11 lg:text-[20px] text-foreground/80 px-4">
+            <p className="whitespace-pre-line border-t py-8 pb-16 lg:pl-[calc(50vw-568px)] pr-4 lg:pr-11 lg:text-[20px] text-foreground/80 px-4">
               {content}
             </p>
           )}
         </div>
         {image && (
-          <div className="relative h-full border-l lg:py-11 lg:pl-11 pr-[calc(50vw-568px)] md:order-2 bg-stone-50 py-4">
+          <div className="relative h-full lg:border-l lg:py-11 lg:pl-11 px-4 lg:pr-[calc(50vw-568px)] lg:px-0 lg:order-2 bg-stone-50 py-4">
             <Image
               src={image.src}
               alt={image.alt}

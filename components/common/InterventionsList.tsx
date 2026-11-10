@@ -50,12 +50,12 @@ export function InterventionsList({
   interventions,
 }: InterventionsListProps) {
   return (
-    <section className="grid w-full border-y md:grid-cols-2 my-20">
-      <div className="flex flex-col gap-10 py-18 pl-[calc(50vw-568px)] pr-11">
+    <section className="grid w-full border-y lg:grid-cols-2 my-20">
+      <div className="flex flex-col gap-10 px-6 py-18 lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
         {eyebrow && (
           <p className="text-sm uppercase tracking-[0.08em]">{eyebrow}</p>
         )}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-7">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-7 sm:grid-cols-2">
           {interventions.map((intervention) => (
             <InterventionCard
               key={intervention._key}
@@ -66,15 +66,15 @@ export function InterventionsList({
       </div>
       <div
         style={backgroundColor ? { backgroundColor } : undefined}
-        className="flex flex-col border-l"
+        className="flex flex-col lg:border-l"
       >
-        <div className="mt-8 flex-1 border-y py-12 pl-11 pr-[calc(50vw-568px)]">
+        <div className="mt-8 flex-1 border-y px-6 py-12 lg:pl-11 lg:pr-[calc(50vw-568px)] lg:px-0">
           <h2>
             {title}
           </h2>
         </div>
         {content && (
-          <p className="whitespace-pre-line py-12 pl-11 pr-[calc(50vw-568px)] text-[20px] leading-9">
+          <p className="whitespace-pre-line px-6 py-12 text-[20px] leading-9 lg:pl-11 lg:pr-[calc(50vw-568px)] lg:px-0">
             {content}
           </p>
         )}

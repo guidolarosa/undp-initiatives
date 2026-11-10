@@ -110,7 +110,7 @@ export function FocusAreaBreakdownPanel({
           {area.initiatives.length === 0 ? (
             <p className="text-sm">{dict.emptyInitiatives}</p>
           ) : (
-            <div className="grid grid-cols-2 gap-3 px-4">
+            <div className="grid grid-cols-1 gap-3 px-4 sm:grid-cols-2">
               {area.initiatives.map((initiative) => (
                 <InitiativeMiniCard key={initiative._id} initiative={initiative} dict={dict} />
               ))}
@@ -123,7 +123,7 @@ export function FocusAreaBreakdownPanel({
             <h3 className="border-b border-black pb-3 px-4 text-lg font-semibold">
               {dict.earlyResultsLabel}
             </h3>
-            <div className="grid grid-cols-3 gap-3 px-4">
+            <div className="grid grid-cols-1 gap-3 px-4 sm:grid-cols-3">
               {area.earlyResults.map((result) => (
                 <ResultCard key={result._key} result={result} />
               ))}

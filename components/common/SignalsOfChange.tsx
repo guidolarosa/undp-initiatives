@@ -142,7 +142,7 @@ function ChronologyRow({
   const yearTicks = yearTicksBetween(startDate, now);
 
   return (
-    <div className="grid grid-cols-[1fr_2fr_1fr] items-start gap-10">
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1fr_2fr_1fr] lg:items-start lg:gap-10">
       <div className="text-sm">
         <p className="font-semibold">{fromLabel}</p>
         <p>{chronology.fromText}</p>
@@ -205,9 +205,9 @@ export function SignalsOfChange({
   const nowDate = new Date(now);
 
   return (
-    <section className="my-20 grid w-full border-y md:grid-cols-[5fr_4fr]">
-      <div className="flex flex-col border-r">
-        <div className="flex flex-1 flex-col gap-18 py-12 pl-[calc(50vw-568px)] pr-11 justify-center">
+    <section className="lg:my-20 my-4 grid w-full border-y lg:grid-cols-[5fr_4fr]">
+      <div className="flex flex-col lg:border-r">
+        <div className="flex flex-1 flex-col gap-18 px-6 py-12 justify-center lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
           {chronologies.map((chronology) => (
             <ChronologyRow
               key={chronology._key}
@@ -222,7 +222,7 @@ export function SignalsOfChange({
           ))}
         </div>
 
-        <div className="flex items-center gap-8 border-t py-4 pl-[calc(50vw-568px)] pr-11 text-sm">
+        <div className="flex flex-wrap items-center gap-8 border-t px-6 py-4 text-sm lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
           <span className="flex items-center gap-2">
             <span className="size-3 shrink-0 rounded-full border border-foreground" />
             {circleText}
@@ -240,13 +240,13 @@ export function SignalsOfChange({
         style={backgroundColor ? { backgroundColor } : undefined}
         className="flex flex-col"
       >
-        <div className="mt-8 flex flex-1 items-end border-y py-12 pl-11 pr-[calc(50vw-568px)]">
-          <h2 className="text-[56px] font-semibold leading-18 tracking-[-0.02em]">
+        <div className="mt-8 flex flex-1 items-end border-y px-6 py-12 lg:pl-11 lg:pr-[calc(50vw-568px)] lg:px-0">
+          <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-18">
             {title}
           </h2>
         </div>
         {content && (
-          <p className="whitespace-pre-line py-12 pl-11 pr-[calc(50vw-568px)] text-[18px] leading-8">
+          <p className="whitespace-pre-line px-6 py-12 text-[18px] leading-8 lg:pl-11 lg:pr-[calc(50vw-568px)] lg:px-0">
             {content}
           </p>
         )}

@@ -146,9 +146,9 @@ export function FocusAreasBreakdown({
 
   return (
     <section className="mx-auto border-t">
-      <div className="py-14">
-        <div className="mx-auto max-w-280 grid gap-12 md:grid-cols-2">
-          <h2 className="text-[40px] font-semibold leading-11 tracking-[-0.02em]">
+      <div className="px-6 py-14 lg:px-0">
+        <div className="mx-auto max-w-280 grid gap-12 lg:grid-cols-2">
+          <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] lg:text-[40px] lg:leading-11">
             {title}
           </h2>
           {description && (
@@ -158,13 +158,16 @@ export function FocusAreasBreakdown({
       </div>
       {breakdown && (
         <div className="border-y py-8">
-          <div className="mx-auto max-w-280">
+          <div className="mx-auto max-w-280 px-6 lg:px-0">
             <p className="text-foreground/80">{breakdown}</p>
           </div>
         </div>
       )}
-      <div className="grid items-start gap-10 py-14 md:grid-cols-2 max-w-280 mx-auto">
-        <div>
+      <div className="grid items-start gap-10 px-6 py-14 lg:grid-cols-2 lg:px-0 max-w-280 mx-auto">
+        {/* Graph hidden below lg — same reasoning as InitiativesExplorer's
+            graph column: a desktop-only presentation, panel goes full width
+            instead on mobile. */}
+        <div className="hidden lg:block">
           <h3 className="mb-8 text-2xl font-semibold leading-tight tracking-[-0.01em] max-w-100">
             {graphTitle}
           </h3>

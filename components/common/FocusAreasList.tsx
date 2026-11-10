@@ -19,7 +19,7 @@ export function FocusAreasList({ title, focusAreas }: FocusAreasListProps) {
             <h2>
               {title}
             </h2>
-            <div className="grid gap-6 lg:grid-cols-5 grid-cols-2">
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-5">
               {focusAreas.map((focusArea) => (
                 <div
                   key={focusArea._key}

@@ -36,19 +36,19 @@ const ShiftRow = ({
   return (
     <div
       style={row.color ? { backgroundColor: row.color } : undefined}
-      className="rounded-full outline-black outline-1"
+      className="rounded-3xl outline-black outline-1 lg:rounded-full"
     >
       {/* Inset from the pill's rounded ends so the rules never cross the curve.
           Only the outer edges of the whole stack get a horizontal rule. */}
       <div
         className={cn(
-          "mx-16 grid min-h-34 grid-cols-[1fr_1.3fr_2.2fr]",
+          "mx-4 grid min-h-34 grid-cols-1 lg:mx-16 lg:grid-cols-[1fr_1.3fr_2.2fr]",
         )}
       >
-        <div className="flex items-center border-r px-8 py-10 text-[18px] font-bold leading-8">
+        <div className="flex items-center border-b px-8 py-10 text-[18px] font-bold leading-8 lg:border-b-0 lg:border-r">
           {row.label}
         </div>
-        <div className="flex items-center justify-center border-r px-8 py-10">
+        <div className="flex items-center justify-center border-b px-8 py-10 lg:border-b-0 lg:border-r">
           {row.image && (
             <Image
               src={row.image.src}
@@ -85,14 +85,14 @@ export function ShiftsInLogic({
       style={backgroundColor ? { backgroundColor } : undefined}
       className="w-full border-y"
     >
-      <div className="grid border-b md:grid-cols-[1.5fr_1fr]">
-        <div className="py-16 pl-[calc(50vw-568px)] pr-11">
-          <h2 className="text-[56px] font-semibold leading-15 tracking-[-0.02em]">
+      <div className="grid border-b lg:grid-cols-[1.5fr_1fr]">
+        <div className="px-6 py-16 lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
+          <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-15">
             {title}
           </h2>
         </div>
         {content && (
-          <div className="py-16 pl-11 pr-[calc(50vw-568px)]">
+          <div className="px-6 py-16 lg:pl-11 lg:pr-[calc(50vw-568px)] lg:px-0">
             <p className="whitespace-pre-line text-[18px] leading-8">
               {content}
             </p>
@@ -101,12 +101,12 @@ export function ShiftsInLogic({
       </div>
 
       {leadIn && (
-        <div className="border-b py-8 pl-[calc(50vw-568px)] pr-[calc(50vw-568px)]">
+        <div className="border-b px-6 py-8 lg:px-0 lg:pl-[calc(50vw-568px)] lg:pr-[calc(50vw-568px)]">
           <p className="whitespace-pre-line text-[18px] leading-8">{leadIn}</p>
         </div>
       )}
 
-      <div className="flex flex-col py-20 pl-[calc(50vw-568px)] pr-[calc(50vw-568px)]">
+      <div className="flex flex-col gap-4 px-6 py-20 lg:gap-0 lg:px-0 lg:pl-[calc(50vw-568px)] lg:pr-[calc(50vw-568px)]">
         {rows.map((row, index) => (
           <ShiftRow
             key={row._key}

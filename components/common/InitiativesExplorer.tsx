@@ -80,14 +80,17 @@ export function InitiativesExplorer({
   const cardsGridRef = useCardStagger(focusAreaFilter);
 
   return (
-    <section className="mx-auto -mt-8 h-[calc(100vh-108px)] overflow-hidden">
-      <div className="flex items-start h-full">
-        {/* Graph — placeholder for now. Static: never scrolls, always fits
+    <section className="mx-auto lg:-mt-8 lg:h-[calc(100vh-108px)] lg:overflow-hidden">
+      <div className="flex flex-col items-start lg:h-full lg:flex-row">
+        {/* Graph — hidden below lg: the radial graph's two-column layout
+            (and the fixed-viewport-height scroll region it anchors) is a
+            desktop-only presentation; mobile gets the list full-width
+            instead, in normal page flow. Static: never scrolls, always fits
             exactly within the block's height (no aspect-ratio forcing it
             taller than the space left after the dropdown/tagline). */}
         <div
           style={graphBackgroundColor ? { backgroundColor: graphBackgroundColor } : undefined}
-          className="flex h-full w-6/12 flex-col overflow-hidden border-r"
+          className="hidden h-full w-6/12 flex-col overflow-hidden border-r lg:flex"
         >
           <div className="flex min-h-0 flex-1 flex-col gap-6 p-6">
             <Select defaultValue="interventions">
@@ -124,7 +127,7 @@ export function InitiativesExplorer({
         {/* Title / description / filter / list or detail */}
         <div
           ref={scrollRef}
-          className="h-full overflow-y-auto pr-[calc(50vw-568px)] pt-8 w-6/12 pl-10 pb-10"
+          className="w-full px-6 pt-8 pb-10 lg:h-full lg:w-6/12 lg:overflow-y-auto lg:pl-10 lg:pr-[calc(50vw-568px)]"
         >
           <div ref={contentRef} className="flex flex-col gap-6">
             {selected ? (
@@ -138,7 +141,7 @@ export function InitiativesExplorer({
               />
             ) : (
               <>
-                <h2 className="text-[40px] font-semibold leading-11 tracking-[-0.02em]">
+                <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] lg:text-[40px] lg:leading-11">
                   {title}
                 </h2>
                 {description && <p className="text-foreground/80">{description}</p>}
