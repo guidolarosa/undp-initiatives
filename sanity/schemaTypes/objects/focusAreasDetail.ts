@@ -31,6 +31,15 @@ export const focusAreasDetail = defineType({
         "Each referenced Focus Area should have its Insight/Opportunity/Actions fields filled in for this block to show content when selected.",
       validation: (rule) => rule.required().min(1),
     }),
+    defineField({
+      name: "modalBackgroundColor",
+      title: "Read-more modal body color",
+      type: "reference",
+      to: [{ type: "colorToken" }],
+      description:
+        'Background of the read-more modal\'s body (the modal\'s header strip keeps the selected Focus Area\'s own color). Set to "Off White".',
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "title" },

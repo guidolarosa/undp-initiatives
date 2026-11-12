@@ -206,7 +206,7 @@ export function SignalsOfChange({
 
   return (
     <section className="lg:my-20 my-4 grid w-full border-y lg:grid-cols-[5fr_4fr]">
-      <div className="flex flex-col lg:border-r">
+      <div className="order-2 flex flex-col lg:order-1 lg:border-r">
         <div className="flex flex-1 flex-col gap-18 px-6 py-12 justify-center lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
           {chronologies.map((chronology) => (
             <ChronologyRow
@@ -238,7 +238,7 @@ export function SignalsOfChange({
 
       <div
         style={backgroundColor ? { backgroundColor } : undefined}
-        className="flex flex-col"
+        className="order-1 flex flex-col lg:order-2"
       >
         <div className="mt-8 flex flex-1 items-end border-y px-6 py-12 lg:pl-11 lg:pr-[calc(50vw-568px)] lg:px-0">
           <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-18">

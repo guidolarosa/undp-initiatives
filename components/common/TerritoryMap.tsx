@@ -32,7 +32,13 @@ const BOUNDS: [[number, number], [number, number]] = [
   [7.6, 1.82],
 ];
 
-export function TerritoryMap({ points }: { points: TerritoryMapPoint[] }) {
+export function TerritoryMap({
+  points,
+  ariaLabel = "Map of São Tomé and Príncipe showing where initiatives are located",
+}: {
+  points: TerritoryMapPoint[];
+  ariaLabel?: string;
+}) {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,11 +62,16 @@ export function TerritoryMap({ points }: { points: TerritoryMapPoint[] }) {
       // instead (kept in sync by scripts/copy-maplibre-worker.mjs).
       setWorkerUrl(WORKER_URL);
 
+      // A single point (per-initiative map) centers and zooms in on it
+      // directly — fitting it to the same whole-country BOUNDS as the
+      // multi-point site-wide map would just show a tiny, barely-visible
+      // dot in the same wide view every time.
       const instance = new Map({
         container: node,
         style: STYLE_URL,
-        bounds: BOUNDS,
-        fitBoundsOptions: { padding: 32 },
+        ...(points.length === 1
+          ? { center: [points[0].lng, points[0].lat] as [number, number], zoom: 10 }
+          : { bounds: BOUNDS, fitBoundsOptions: { padding: 32 } }),
         // Locked: no panning, zooming, rotating. Also means the map can never
         // hijack page scroll as a visitor scrolls past the block.
         interactive: false,
@@ -77,25 +88,52 @@ export function TerritoryMap({ points }: { points: TerritoryMapPoint[] }) {
 
       // The "positron" style has no land fill — land is just the bare
       // background color showing through, so the islands had no visible
-      // edge against the grey water. A line layer traced along the same
-      // water polygons gives the coastline a visible border instead.
+      // edge against the grey water. A flat fill painted over the style's
+      // own water polygons, topped with a line layer along the same
+      // polygons, gives plain water with a visible coastline border.
       instance.on("load", () => {
         if (cancelled) return;
-        instance.addLayer({
-          id: "water-outline",
-          type: "line",
-          source: "openmaptiles",
-          "source-layer": "water",
-          filter: [
-            "all",
-            ["match", ["geometry-type"], ["MultiPolygon", "Polygon"], true, false],
-            ["!=", ["get", "brunnel"], "tunnel"],
-          ],
-          paint: {
-            "line-color": "rgba(0, 0, 0, 0.65)",
-            "line-width": 1.2,
+        // Insert below the style's label/symbol layers — addLayer defaults
+        // to the top of the stack, which painted our white fill directly
+        // over the "São Tomé"/"Príncipe" place labels.
+        const firstSymbolLayerId = instance
+          .getStyle()
+          ?.layers?.find((layer) => layer.type === "symbol")?.id;
+        instance.addLayer(
+          {
+            id: "water-fill",
+            type: "fill",
+            source: "openmaptiles",
+            "source-layer": "water",
+            filter: [
+              "all",
+              ["match", ["geometry-type"], ["MultiPolygon", "Polygon"], true, false],
+              ["!=", ["get", "brunnel"], "tunnel"],
+            ],
+            paint: {
+              "fill-color": "#f2ede9",
+            },
           },
-        });
+          firstSymbolLayerId,
+        );
+        instance.addLayer(
+          {
+            id: "water-outline",
+            type: "line",
+            source: "openmaptiles",
+            "source-layer": "water",
+            filter: [
+              "all",
+              ["match", ["geometry-type"], ["MultiPolygon", "Polygon"], true, false],
+              ["!=", ["get", "brunnel"], "tunnel"],
+            ],
+            paint: {
+              "line-color": "rgba(0, 0, 0, 0.65)",
+              "line-width": 1.2,
+            },
+          },
+          firstSymbolLayerId,
+        );
       });
 
       for (const point of points) {
@@ -144,9 +182,9 @@ export function TerritoryMap({ points }: { points: TerritoryMapPoint[] }) {
   return (
     <div
       ref={container}
-      className="h-150 w-full"
+      className="h-full w-full"
       role="img"
-      aria-label="Map of São Tomé and Príncipe showing where initiatives are located"
+      aria-label={ariaLabel}
     />
   );
 }

@@ -5,9 +5,11 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 
 import { ActivityEntry } from "@/components/common/InitiativesExplorerActivity";
+import { OutcomeCard } from "@/components/common/InitiativesExplorerOutcome";
 import { PortableText } from "@/components/common/PortableText";
 import { ActorTag, FocusAreaTag } from "@/components/common/InitiativesExplorerTags";
 import type { ExplorerActor, ExplorerInitiative } from "@/components/common/InitiativesExplorerTypes";
+import { TerritoryMap } from "@/components/common/TerritoryMap";
 
 const ACTIVITIES_PAGE_SIZE = 2;
 
@@ -15,6 +17,7 @@ export function InitiativeDetail({
   initiative,
   aboutTitle,
   activitiesTitle,
+  outcomesTitle,
   backLabel,
   readMoreLabel,
   onBack,
@@ -22,6 +25,7 @@ export function InitiativeDetail({
   initiative: ExplorerInitiative;
   aboutTitle: string;
   activitiesTitle: string;
+  outcomesTitle: string;
   backLabel: string;
   readMoreLabel: string;
   onBack: () => void;
@@ -78,10 +82,36 @@ export function InitiativeDetail({
         </div>
       )}
 
+      {initiative.localization && (
+        <div className="h-60 w-full overflow-hidden rounded-2xl">
+          <TerritoryMap
+            points={[
+              {
+                id: initiative._id,
+                name: initiative.name,
+                lat: initiative.localization.lat,
+                lng: initiative.localization.lng,
+              },
+            ]}
+          />
+        </div>
+      )}
+
       {initiative.about && initiative.about.length > 0 && (
         <div>
           <h3 className="border-b pb-2 text-lg font-semibold">{aboutTitle}</h3>
           <PortableText value={initiative.about} />
+        </div>
+      )}
+
+      {initiative.outcomes.length > 0 && (
+        <div>
+          <h3 className="border-b pb-2 text-lg font-semibold">{outcomesTitle}</h3>
+          <div className="mt-4 flex flex-col gap-3">
+            {initiative.outcomes.map((outcome) => (
+              <OutcomeCard key={outcome._id} outcome={outcome} />
+            ))}
+          </div>
         </div>
       )}
 

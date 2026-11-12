@@ -11,6 +11,7 @@ export function FocusAreasDetailBlock({ block }: { block: FocusAreasDetailSectio
       title={block.title}
       content={block.content}
       focusAreas={block.focusAreas}
+      modalBackgroundColor={block.modalBackgroundColor}
     />
   );
 }

@@ -40,7 +40,8 @@ export const intervention = defineType({
     defineField({
       name: "status",
       title: "Status",
-      description: "Shown as a badge on the Focus Areas Breakdown block's initiative cards.",
+      description:
+        "Shown as a badge on the Focus Areas Breakdown block's initiative cards. Also drives the Initiatives page graph: \"Funded\" dots render filled, \"Looking for partners\" dots render as an outline only (treated there as \"new initiative\").",
       type: "string",
       options: {
         list: [

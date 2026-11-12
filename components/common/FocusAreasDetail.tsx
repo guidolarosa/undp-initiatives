@@ -30,7 +30,11 @@ export interface FocusAreasDetailProps {
   title: string;
   content?: string;
   focusAreas: FocusAreaDetailItem[];
+  /** Read-more modal's body background — falls back to the app's Off White if unset. */
+  modalBackgroundColor?: string;
 }
+
+const DEFAULT_MODAL_BODY_COLOR = "#f2ede9";
 
 type CardField = "insight" | "opportunity" | "actions";
 
@@ -100,7 +104,12 @@ function shapeClassName(shape: (typeof SHAPE_LOOK)[number]["shape"]) {
   return shape === "circle" ? "rounded-full" : "rounded-2xl";
 }
 
-export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetailProps) {
+export function FocusAreasDetail({
+  title,
+  content,
+  focusAreas,
+  modalBackgroundColor,
+}: FocusAreasDetailProps) {
   // Nothing is selected until the user clicks one — the resting state is the
   // plain, undisturbed grid (matching the design), not a pre-selected item.
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -279,30 +288,37 @@ export function FocusAreasDetail({ title, content, focusAreas }: FocusAreasDetai
 
       {modalMeta && modalValue && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 px-6 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-white/40 px-6 backdrop-blur-sm"
           onClick={() => setModalField(null)}
         >
           <div
-            style={
-              selected?.backgroundColor
-                ? { backgroundColor: selected.backgroundColor }
-                : undefined
-            }
-            className="relative max-h-[80vh] w-full max-w-xl overflow-y-auto rounded-2xl p-8 shadow-xl"
+            className="relative flex max-h-[80vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl shadow-xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={() => setModalField(null)}
-              aria-label="Close"
-              className="absolute right-4 top-4 rounded-full p-1.5 hover:bg-black/10"
+            <div
+              style={
+                selected?.backgroundColor
+                  ? { backgroundColor: selected.backgroundColor }
+                  : undefined
+              }
+              className="relative shrink-0 p-8 pb-4"
             >
-              <X className="h-5 w-5" />
-            </button>
-            <h3 className="border-b border-black/10 pb-4 pr-8 text-lg font-semibold">
-              {modalMeta.index}. {modalMeta.label}
-            </h3>
-            <div className="mt-4 *:text-base">
+              <button
+                type="button"
+                onClick={() => setModalField(null)}
+                aria-label="Close"
+                className="absolute right-4 top-4 rounded-full p-1.5 hover:bg-black/10"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <h3 className="border-b border-black/10 pb-4 pr-8 text-lg font-semibold">
+                {modalMeta.index}. {modalMeta.label}
+              </h3>
+            </div>
+            <div
+              style={{ backgroundColor: modalBackgroundColor ?? DEFAULT_MODAL_BODY_COLOR }}
+              className="overflow-y-auto p-8 pt-4 *:text-base"
+            >
               <PortableText value={modalValue} />
             </div>
           </div>

@@ -51,6 +51,14 @@ const FOCUS_AREAS_LABEL_SPAN = 55;
 const INTERVENTIONS_LABEL_RADIUS = RING_RADIUS - 16;
 const INTERVENTIONS_LABEL_SPAN = 75;
 
+// "looking-for-partners" is repurposed here as the graph's "new
+// intervention" status — rendered as an outline-only dot instead of the
+// default solid fill. The FocusAreaBreakdownPanel's own funded/looking-for-
+// partners badge is unrelated and keeps its original labels.
+function isNewIntervention(initiative: ExplorerInitiative) {
+  return initiative.status === "looking-for-partners";
+}
+
 function toRad(deg: number) {
   return (deg * Math.PI) / 180;
 }
@@ -190,6 +198,10 @@ export function InitiativesGraph({
 
   const activeId = hoveredId ?? selectedId;
   const activePoint = activeId ? positionedById.get(activeId) : undefined;
+  // The whole graph (not just the selected dot) scales up by ZOOM_SCALE
+  // whenever something is selected — counter-scale the tag so it reads at a
+  // constant on-screen size instead of ballooning along with the zoom.
+  const tagScale = selectedId ? 1 / ZOOM_SCALE : 1;
 
   useLayoutEffect(() => {
     const el = groupRef.current;
@@ -405,14 +417,24 @@ export function InitiativesGraph({
                 cx={x}
                 cy={y}
                 r={DOT_RADIUS}
-                fill={initiative.primaryFocusArea?.color}
-                stroke={isSelected ? "white" : "none"}
-                strokeWidth={isSelected ? 2 : 0}
+                fill={isNewIntervention(initiative) ? "none" : initiative.primaryFocusArea?.color}
+                stroke={
+                  isSelected
+                    ? "white"
+                    : isNewIntervention(initiative)
+                      ? initiative.primaryFocusArea?.color
+                      : "none"
+                }
+                strokeWidth={isSelected || isNewIntervention(initiative) ? 2 : 0}
                 className="transition-[r] duration-150"
                 style={{ r: isActive ? DOT_RADIUS + 2 : DOT_RADIUS }}
               />
               {isActive && (
-                <g style={{ transform: `translate(${x}px, ${y - DOT_RADIUS - 10}px)` }}>
+                <g
+                  style={{
+                    transform: `translate(${x}px, ${y}px) scale(${tagScale}) translate(0px, ${-(DOT_RADIUS + 10)}px)`,
+                  }}
+                >
                   <rect
                     x={-Math.max(36, initiative.name.length * 3.3)}
                     y={-22}

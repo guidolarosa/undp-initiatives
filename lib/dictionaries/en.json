@@ -19,7 +19,9 @@
     "visualizeBy": "Visualize by",
     "backToList": "Back to all initiatives",
     "emptyFiltered": "No initiatives match this focus area.",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "implementedLabel": "Implemented",
+    "newInterventionLabel": "New initiative"
   },
   "signalsOfChange": {
     "from": "From",

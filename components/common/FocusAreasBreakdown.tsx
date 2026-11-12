@@ -71,6 +71,7 @@ export function FocusAreasBreakdown({
           focusAreas: [],
           secondaryActors: [],
           activities: [],
+          outcomes: [],
         })),
       ),
     [focusAreas],
@@ -164,10 +165,7 @@ export function FocusAreasBreakdown({
         </div>
       )}
       <div className="grid items-start gap-10 px-6 py-14 lg:grid-cols-2 lg:px-0 max-w-280 mx-auto">
-        {/* Graph hidden below lg — same reasoning as InitiativesExplorer's
-            graph column: a desktop-only presentation, panel goes full width
-            instead on mobile. */}
-        <div className="hidden lg:block">
+        <div className="h-80 lg:h-auto">
           <h3 className="mb-8 text-2xl font-semibold leading-tight tracking-[-0.01em] max-w-100">
             {graphTitle}
           </h3>

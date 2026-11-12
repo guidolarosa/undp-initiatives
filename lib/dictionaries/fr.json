@@ -19,7 +19,9 @@
     "visualizeBy": "Visualiser par",
     "backToList": "Retour à toutes les initiatives",
     "emptyFiltered": "Aucune initiative ne correspond à ce domaine d'intervention.",
-    "readMore": "Lire plus"
+    "readMore": "Lire plus",
+    "implementedLabel": "Mise en œuvre",
+    "newInterventionLabel": "Nouvelle initiative"
   },
   "signalsOfChange": {
     "from": "De",

@@ -19,7 +19,9 @@
     "visualizeBy": "Visualizar por",
     "backToList": "Voltar a todas as iniciativas",
     "emptyFiltered": "Nenhuma iniciativa corresponde a esta área de foco.",
-    "readMore": "Leia mais"
+    "readMore": "Leia mais",
+    "implementedLabel": "Implementada",
+    "newInterventionLabel": "Nova iniciativa"
   },
   "signalsOfChange": {
     "from": "De",

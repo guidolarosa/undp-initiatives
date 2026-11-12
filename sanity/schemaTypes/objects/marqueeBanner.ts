@@ -2,8 +2,10 @@ import { defineField, defineType } from "sanity";
 
 /**
  * Marquee Banner — Block variant (registered into PageData.sections).
- * A title/content panel beside an image, with a full-width marquee strip
- * (looping left-to-right) along the bottom, optionally linking somewhere.
+ * A title/content panel beside a decorative, non-interactive preview of the
+ * Initiatives graph (links to /initiatives as a whole), with a full-width
+ * marquee strip (looping left-to-right) along the bottom, optionally linking
+ * somewhere.
  */
 export const marqueeBanner = defineType({
   name: "marqueeBanner",
@@ -23,9 +25,11 @@ export const marqueeBanner = defineType({
     }),
     defineField({
       name: "image",
-      title: "Image",
+      title: "Image (unused)",
       type: "image",
       options: { hotspot: true },
+      description:
+        "No longer shown — the frontend now renders a decorative Initiatives graph preview in this spot instead, linking to the Initiatives page.",
     }),
     defineField({
       name: "marqueeText",

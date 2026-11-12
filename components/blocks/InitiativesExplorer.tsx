@@ -4,6 +4,7 @@ import {
   type ExplorerActor,
   type ExplorerImage,
   type ExplorerInitiative,
+  type ExplorerOutcome,
 } from "@/components/common/InitiativesExplorer";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
@@ -11,6 +12,7 @@ import { urlForImage } from "@/lib/sanity/image";
 import type {
   Initiative,
   InitiativeActor,
+  InitiativeOutcome,
   InitiativesExplorerSection,
   SanityImage,
 } from "@/lib/sanity/queries";
@@ -53,10 +55,21 @@ function resolveActivity(
   };
 }
 
+function resolveOutcome(outcome: InitiativeOutcome): ExplorerOutcome {
+  return {
+    _id: outcome._id,
+    content: outcome.content,
+    numericValue: outcome.numericValue,
+    text: outcome.text,
+    videoUrl: outcome.videoUrl,
+  };
+}
+
 function resolveInitiative(initiative: Initiative): ExplorerInitiative {
   return {
     _id: initiative._id,
     name: initiative.name,
+    status: initiative.status,
     mainPhoto: resolveImage(initiative.mainPhoto, DETAIL_IMAGE_WIDTH, initiative.name),
     primaryFocusArea: initiative.primaryFocusArea,
     // GROQ returns null (not []) when dereferencing an array-of-references
@@ -70,6 +83,8 @@ function resolveInitiative(initiative: Initiative): ExplorerInitiative {
     ),
     about: initiative.about,
     activities: (initiative.activities ?? []).map(resolveActivity),
+    outcomes: (initiative.outcomes ?? []).map(resolveOutcome),
+    localization: initiative.localization,
   };
 }
 
@@ -95,6 +110,7 @@ export function InitiativesExplorerBlock({
       graphBackgroundColor={block.graphBackgroundColor}
       aboutTitle={block.aboutTitle}
       activitiesTitle={block.activitiesTitle}
+      outcomesTitle={block.outcomesTitle}
       focusAreaOptions={block.focusAreaOptions}
       initiatives={block.initiatives.map(resolveInitiative)}
       dict={dict}

@@ -57,6 +57,15 @@ export const initiativesExplorer = defineType({
       initialValue: "Latest activities",
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "outcomesTitle",
+      title: '"Outcomes" heading',
+      type: "string",
+      description:
+        "Shared across every Intervention shown in this block's detail view. Only shown for Interventions that have Outcomes filled in. Translated per-locale, like any other block field — not per-Intervention.",
+      initialValue: "Outcomes",
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "title" },

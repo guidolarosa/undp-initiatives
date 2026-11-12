@@ -1,9 +1,20 @@
 import { MarqueeBanner } from "@/components/common/MarqueeBanner";
+import type { ExplorerInitiative } from "@/components/common/InitiativesExplorerTypes";
+import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
-import { urlForImage } from "@/lib/sanity/image";
-import type { MarqueeBannerSection } from "@/lib/sanity/queries";
+import type { MarqueeBannerInitiative, MarqueeBannerSection } from "@/lib/sanity/queries";
 
-const IMAGE_WIDTH = 1200;
+function resolveGraphInitiative(initiative: MarqueeBannerInitiative): ExplorerInitiative {
+  return {
+    _id: initiative._id,
+    name: initiative.name,
+    primaryFocusArea: initiative.primaryFocusArea,
+    focusAreas: [],
+    secondaryActors: [],
+    activities: [],
+    outcomes: [],
+  };
+}
 
 /**
  * Resolves the editor-authored `marqueeLinkUrl` into an actual href:
@@ -24,8 +35,9 @@ function resolveMarqueeLink(url: string | undefined, locale: Locale) {
 
 /**
  * Block wrapper: maps a Sanity `marqueeBanner` block onto the common
- * <MarqueeBanner> component, resolving the image reference to a CDN URL and
- * the marquee link to a locale-aware href.
+ * <MarqueeBanner> component, resolving the marquee link to a locale-aware
+ * href and supplying the data for its decorative, non-interactive
+ * Initiatives graph preview (which links to /initiatives as a whole).
  */
 export function MarqueeBannerBlock({
   block,
@@ -34,9 +46,8 @@ export function MarqueeBannerBlock({
   block: MarqueeBannerSection;
   locale: Locale;
 }) {
-  const { image } = block;
-  const aspectRatio = image?.dimensions?.aspectRatio ?? 1;
   const marqueeLink = resolveMarqueeLink(block.marqueeLinkUrl, locale);
+  const dict = getDictionary(locale).initiativesExplorer;
 
   return (
     <MarqueeBanner
@@ -46,17 +57,11 @@ export function MarqueeBannerBlock({
       marqueeText={block.marqueeText}
       marqueeHref={marqueeLink?.href}
       marqueeExternal={marqueeLink?.external}
-      image={
-        image?.asset
-          ? {
-              src: urlForImage(image).width(IMAGE_WIDTH).url(),
-              width: IMAGE_WIDTH,
-              height: Math.round(IMAGE_WIDTH / aspectRatio),
-              alt: block.title,
-              blurDataURL: image.lqip,
-            }
-          : undefined
-      }
+      locale={locale}
+      focusAreaOptions={block.focusAreaOptions}
+      initiatives={block.initiatives.map(resolveGraphInitiative)}
+      focusAreasLabel={dict.focusAreasLabel}
+      initiativesLabel={dict.initiativesLabel}
     />
   );
 }

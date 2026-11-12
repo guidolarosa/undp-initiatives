@@ -28,6 +28,8 @@ export type {
   ExplorerFocusArea,
   ExplorerImage,
   ExplorerInitiative,
+  ExplorerLocalization,
+  ExplorerOutcome,
 } from "@/components/common/InitiativesExplorerTypes";
 
 export interface InitiativesExplorerProps {
@@ -37,6 +39,7 @@ export interface InitiativesExplorerProps {
   graphBackgroundColor?: string;
   aboutTitle: string;
   activitiesTitle: string;
+  outcomesTitle: string;
   focusAreaOptions: ExplorerFocusArea[];
   initiatives: ExplorerInitiative[];
   dict: InitiativesExplorerDict;
@@ -51,6 +54,7 @@ export function InitiativesExplorer({
   graphBackgroundColor,
   aboutTitle,
   activitiesTitle,
+  outcomesTitle,
   focusAreaOptions,
   initiatives,
   dict,
@@ -82,15 +86,14 @@ export function InitiativesExplorer({
   return (
     <section className="mx-auto lg:-mt-8 lg:h-[calc(100vh-108px)] lg:overflow-hidden">
       <div className="flex flex-col items-start lg:h-full lg:flex-row">
-        {/* Graph — hidden below lg: the radial graph's two-column layout
-            (and the fixed-viewport-height scroll region it anchors) is a
-            desktop-only presentation; mobile gets the list full-width
-            instead, in normal page flow. Static: never scrolls, always fits
-            exactly within the block's height (no aspect-ratio forcing it
-            taller than the space left after the dropdown/tagline). */}
+        {/* Graph — small and static above the list on mobile (normal page
+            flow, fixed height); desktop pins it as a fixed-viewport-height
+            left column instead. Never scrolls, always fits exactly within
+            the block's height (no aspect-ratio forcing it taller than the
+            space left after the dropdown/tagline). */}
         <div
           style={graphBackgroundColor ? { backgroundColor: graphBackgroundColor } : undefined}
-          className="hidden h-full w-6/12 flex-col overflow-hidden border-r lg:flex"
+          className="flex h-80 w-full flex-col overflow-hidden lg:h-full lg:w-6/12 lg:border-r"
         >
           <div className="flex min-h-0 flex-1 flex-col gap-6 p-6">
             <Select defaultValue="interventions">
@@ -115,6 +118,16 @@ export function InitiativesExplorer({
                 initiativesLabel={dict.initiativesLabel}
               />
             </div>
+            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="size-2.5 rounded-full bg-foreground" />
+                {dict.implementedLabel}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="size-2.5 rounded-full border border-foreground" />
+                {dict.newInterventionLabel}
+              </span>
+            </div>
           </div>
           {graphTagline && (
             <div className="flex items-center gap-2 border-t px-6 py-3 text-sm text-muted-foreground bg-background justify-center">
@@ -135,6 +148,7 @@ export function InitiativesExplorer({
                 initiative={selected}
                 aboutTitle={aboutTitle}
                 activitiesTitle={activitiesTitle}
+                outcomesTitle={outcomesTitle}
                 backLabel={dict.backToList}
                 readMoreLabel={dict.readMore}
                 onBack={backToList}

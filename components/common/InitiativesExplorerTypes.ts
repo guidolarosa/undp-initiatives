@@ -28,9 +28,24 @@ export interface ExplorerActivity {
   category?: string;
 }
 
+export interface ExplorerOutcome {
+  _id: string;
+  content: "text" | "video";
+  numericValue?: number;
+  /** Rich text (Sanity `array of block`) — only set when content is "text". */
+  text?: PortableTextBlock[];
+  videoUrl?: string;
+}
+
+export interface ExplorerLocalization {
+  lat: number;
+  lng: number;
+}
+
 export interface ExplorerInitiative {
   _id: string;
   name: string;
+  status?: "funded" | "looking-for-partners";
   mainPhoto?: ExplorerImage;
   primaryFocusArea?: ExplorerFocusArea;
   focusAreas: ExplorerFocusArea[];
@@ -38,6 +53,8 @@ export interface ExplorerInitiative {
   secondaryActors: ExplorerActor[];
   about?: PortableTextBlock[];
   activities: ExplorerActivity[];
+  outcomes: ExplorerOutcome[];
+  localization?: ExplorerLocalization;
 }
 
 /** UI chrome strings — see lib/dictionaries/*.json: initiativesExplorer. */
@@ -50,4 +67,6 @@ export interface InitiativesExplorerDict {
   backToList: string;
   emptyFiltered: string;
   readMore: string;
+  implementedLabel: string;
+  newInterventionLabel: string;
 }

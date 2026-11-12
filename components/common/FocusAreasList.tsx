@@ -19,7 +19,7 @@ export function FocusAreasList({ title, focusAreas }: FocusAreasListProps) {
             <h2>
               {title}
             </h2>
-            <div className="grid gap-6 grid-cols-1 lg:grid-cols-5">
+            <div className="grid gap-3 grid-cols-2 lg:gap-6 lg:grid-cols-5">
               {focusAreas.map((focusArea) => (
                 <div
                   key={focusArea._key}
@@ -28,9 +28,9 @@ export function FocusAreasList({ title, focusAreas }: FocusAreasListProps) {
                       ? { backgroundColor: focusArea.backgroundColor }
                       : undefined
                   }
-                  className="bg-white px-8 py-10 rounded-lg odd:rounded-full aspect-square text-center flex items-center justify-center flex-col"
+                  className="bg-white px-4 py-5 rounded-lg odd:rounded-full aspect-square text-center flex items-center justify-center flex-col lg:px-8 lg:py-10"
                 >
-                  <h3 className="text-[18px] font-bold leading-7">{focusArea.name}</h3>
+                  <h3 className="text-sm font-bold leading-5 lg:text-[18px] lg:leading-7">{focusArea.name}</h3>
                   <p className="hidden lg:block text-sm leading-5">
                     {focusArea.description}
                   </p>

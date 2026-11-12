@@ -33,9 +33,7 @@ export function Territory({
           </p>
         )}
       </div>
-      {/* Map hidden below lg — a WebGL map canvas has no useful "reflow" at
-          mobile width, same treatment as the two InitiativesGraph instances. */}
-      <div className="hidden border-l lg:block">
+      <div className="h-80 lg:h-150 lg:border-l">
         <TerritoryMap points={points} />
       </div>
     </section>

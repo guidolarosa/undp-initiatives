@@ -68,6 +68,7 @@ export interface FocusAreasDetailSection {
   title: string;
   content?: string;
   focusAreas: FocusAreaDetail[];
+  modalBackgroundColor?: string;
 }
 
 export interface Link {
@@ -233,6 +234,16 @@ export interface MarqueeBannerSection {
    */
   marqueeLinkUrl?: string;
   backgroundColor?: string;
+  /** Every Focus Area, for the decorative graph preview — not curated on the block. */
+  focusAreaOptions: InitiativeFocusArea[];
+  /** Every Intervention in this locale, for the decorative graph preview — not curated on the block. */
+  initiatives: MarqueeBannerInitiative[];
+}
+
+export interface MarqueeBannerInitiative {
+  _id: string;
+  name: string;
+  primaryFocusArea?: InitiativeFocusArea;
 }
 
 export interface InitiativeFocusArea {
@@ -256,9 +267,24 @@ export interface InitiativeActivity {
   category?: string;
 }
 
+export interface InitiativeOutcome {
+  _id: string;
+  content: "text" | "video";
+  numericValue?: number;
+  /** Rich text (Sanity `array of block`) — only set when content is "text". */
+  text?: PortableTextBlock[];
+  videoUrl?: string;
+}
+
+export interface InitiativeLocalization {
+  lat: number;
+  lng: number;
+}
+
 export interface Initiative {
   _id: string;
   name: string;
+  status?: "funded" | "looking-for-partners";
   slug: string;
   mainPhoto?: SanityImage;
   primaryFocusArea?: InitiativeFocusArea;
@@ -270,6 +296,8 @@ export interface Initiative {
   about?: PortableTextBlock[];
   /** Newest first. */
   activities: InitiativeActivity[];
+  outcomes: InitiativeOutcome[];
+  localization?: InitiativeLocalization;
 }
 
 export interface InitiativesExplorerSection {
@@ -281,6 +309,7 @@ export interface InitiativesExplorerSection {
   graphBackgroundColor?: string;
   aboutTitle: string;
   activitiesTitle: string;
+  outcomesTitle: string;
   /** Every Focus Area, for the filter dropdown — not curated on the block. */
   focusAreaOptions: InitiativeFocusArea[];
   /** Every Intervention in this locale — not curated on the block. */
@@ -629,7 +658,8 @@ export async function getPageBySlug(
             "insight": @->insight,
             "opportunity": @->opportunity,
             "actions": @->actions
-          }
+          },
+          "modalBackgroundColor": modalBackgroundColor->value.hex
         },
         _type == "lowerLinks" => {
           title,
@@ -792,6 +822,26 @@ export async function getPageBySlug(
             ...,
             "lqip": asset->metadata.lqip,
             "dimensions": asset->metadata.dimensions
+          },
+          // Decorative preview of the Initiatives graph — same data as the
+          // Initiatives Explorer block, but only the fields the
+          // non-interactive graph actually needs to draw dots/arcs.
+          "focusAreaOptions": *[_type == "focusAreas"] | order(name asc) {
+            _id,
+            name,
+            "color": backgroundColor->value.hex
+          },
+          "initiatives": *[
+            _type == "intervention" &&
+            language == $locale
+          ] | order(name asc) {
+            _id,
+            name,
+            "primaryFocusArea": primaryFocusArea->{
+              _id,
+              name,
+              "color": backgroundColor->value.hex
+            }
           }
         },
         _type == "initiativesExplorer" => {
@@ -801,6 +851,7 @@ export async function getPageBySlug(
           "graphBackgroundColor": graphBackgroundColor->value.hex,
           aboutTitle,
           activitiesTitle,
+          outcomesTitle,
           // Not curated on the block — every Focus Area is a filter option,
           // and every Intervention in this locale is listed, same philosophy
           // as Territory's map points.
@@ -815,6 +866,7 @@ export async function getPageBySlug(
           ] | order(name asc) {
             _id,
             name,
+            status,
             "slug": slug.current,
             mainPhoto{
               ...,
@@ -860,7 +912,20 @@ export async function getPageBySlug(
                 "lqip": asset->metadata.lqip,
                 "dimensions": asset->metadata.dimensions
               }
-            } | order(date desc), [])
+            } | order(date desc), []),
+            "outcomes": coalesce(outcomes[]->{
+              _id,
+              content,
+              numericValue,
+              text,
+              videoUrl
+            }, []),
+            "localization": select(
+              defined(localization) => {
+                "lat": localization.lat,
+                "lng": localization.lng
+              }
+            )
           }
         },
         _type == "outcomesSection" => {

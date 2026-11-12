@@ -1,21 +1,25 @@
-import Image from "next/image";
 import Link from "next/link";
+
+import { InitiativesGraph } from "@/components/common/InitiativesGraph";
+import type {
+  ExplorerFocusArea,
+  ExplorerInitiative,
+} from "@/components/common/InitiativesExplorerTypes";
+import type { Locale } from "@/lib/i18n";
 
 export interface MarqueeBannerProps {
   title: string;
   content?: string;
-  image?: {
-    src: string;
-    width: number;
-    height: number;
-    alt: string;
-    blurDataURL?: string;
-  };
   marqueeText: string;
   /** Already resolved (locale-prefixed if internal) by the block wrapper. */
   marqueeHref?: string;
   marqueeExternal?: boolean;
   backgroundColor?: string;
+  locale: Locale;
+  focusAreaOptions: ExplorerFocusArea[];
+  initiatives: ExplorerInitiative[];
+  focusAreasLabel: string;
+  initiativesLabel: string;
 }
 
 // How many times the text repeats within a single copy of the track — high
@@ -40,11 +44,15 @@ function MarqueeCopy({ text }: { text: string }) {
 export function MarqueeBanner({
   title,
   content,
-  image,
   marqueeText,
   marqueeHref,
   marqueeExternal,
   backgroundColor,
+  locale,
+  focusAreaOptions,
+  initiatives,
+  focusAreasLabel,
+  initiativesLabel,
 }: MarqueeBannerProps) {
   // Decorative — screen readers get one clean link/label instead of the
   // marquee text repeated 12 times (2 copies x REPEAT).
@@ -71,19 +79,19 @@ export function MarqueeBanner({
             </p>
           )}
         </div>
-        {image && (
-          <div className="relative h-full lg:border-l lg:py-11 lg:pl-11 px-4 lg:pr-[calc(50vw-568px)] lg:px-0 lg:order-2 bg-stone-50 py-4">
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              placeholder={image.blurDataURL ? "blur" : undefined}
-              blurDataURL={image.blurDataURL}
-              className="h-full w-full rounded-2xl object-cover"
+        <Link
+          href={`/${locale}/initiatives`}
+          className="relative block h-full min-h-80 lg:border-l lg:py-11 lg:pl-11 px-4 lg:pr-[calc(50vw-568px)] lg:px-0 lg:order-2 bg-stone-50 py-4"
+        >
+          <div className="h-full w-full overflow-hidden rounded-2xl">
+            <InitiativesGraph
+              focusAreas={focusAreaOptions}
+              initiatives={initiatives}
+              focusAreasLabel={focusAreasLabel}
+              initiativesLabel={initiativesLabel}
             />
           </div>
-        )}
+        </Link>
       </section>
 
       <div className="overflow-hidden border-b lg:py-6 py-4">
