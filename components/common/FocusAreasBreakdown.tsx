@@ -63,6 +63,7 @@ export function FocusAreasBreakdown({
         area.initiatives.map((initiative) => ({
           _id: initiative._id,
           name: initiative.name,
+          status: initiative.status,
           primaryFocusArea: {
             _id: area._id,
             name: area.name,
@@ -148,7 +149,7 @@ export function FocusAreasBreakdown({
   return (
     <section className="mx-auto border-t">
       <div className="px-6 py-14 lg:px-0">
-        <div className="mx-auto max-w-280 grid gap-12 lg:grid-cols-2">
+        <div className="mx-auto max-w-280 grid gap-6 lg:grid-cols-2 lg:gap-12">
           <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] lg:text-[40px] lg:leading-11">
             {title}
           </h2>
@@ -164,8 +165,8 @@ export function FocusAreasBreakdown({
           </div>
         </div>
       )}
-      <div className="grid items-start gap-10 px-6 py-14 lg:grid-cols-2 lg:px-0 max-w-280 mx-auto">
-        <div className="h-80 lg:h-auto">
+      <div className="grid items-start gap-6 px-6 py-14 lg:grid-cols-2 lg:gap-10 lg:px-0 max-w-280 mx-auto">
+        <div className="h-80 overflow-hidden lg:h-auto lg:overflow-visible">
           <h3 className="mb-8 text-2xl font-semibold leading-tight tracking-[-0.01em] max-w-100">
             {graphTitle}
           </h3>

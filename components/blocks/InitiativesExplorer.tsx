@@ -111,6 +111,7 @@ export function InitiativesExplorerBlock({
       aboutTitle={block.aboutTitle}
       activitiesTitle={block.activitiesTitle}
       outcomesTitle={block.outcomesTitle}
+      locationTitle={block.locationTitle}
       focusAreaOptions={block.focusAreaOptions}
       initiatives={block.initiatives.map(resolveInitiative)}
       dict={dict}

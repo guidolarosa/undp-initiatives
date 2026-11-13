@@ -32,10 +32,10 @@ const LinkBlock = ({ link }: { link: LinkProps }) => {
 
 export function LowerLinks({ title, content, links }: LowerLinksProps) {
   return (
-    <div className="lg:my-29.75 my-16">
+    <div className="my-12 lg:my-29.75">
       <section className={"lg:pt-8"}>
         <div className="border-t lg:py-18 py-8">
-          <div className="mx-auto max-w-280 flex flex-col gap-12">
+          <div className="mx-auto max-w-280 flex flex-col gap-6 lg:gap-12">
             <div className="flex flex-col gap-4 px-6 lg:flex-row lg:gap-8 lg:px-0">
               {title && (
                 <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:flex-1 lg:text-[56px] lg:leading-18">

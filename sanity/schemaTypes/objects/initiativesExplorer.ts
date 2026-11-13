@@ -66,6 +66,15 @@ export const initiativesExplorer = defineType({
       initialValue: "Outcomes",
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "locationTitle",
+      title: '"Location" heading',
+      type: "string",
+      description:
+        "Shared across every Intervention shown in this block's detail view. Shown above the per-Intervention map, at the end of the detail view. Only shown for Interventions that have a Localization set. Translated per-locale, like any other block field — not per-Intervention.",
+      initialValue: "Location",
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "title" },

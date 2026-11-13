@@ -1,6 +1,5 @@
 {
   "nav": {
-    "tagline": "Policy Intelligence",
     "emptyLinks": "No navigation links set"
   },
   "languageSwitcher": {
@@ -16,12 +15,12 @@
     "focusAreasLabel": "Focus Areas",
     "initiativesLabel": "Initiatives",
     "allFocusAreas": "All focus areas",
-    "visualizeBy": "Visualize by",
     "backToList": "Back to all initiatives",
     "emptyFiltered": "No initiatives match this focus area.",
     "readMore": "Read more",
     "implementedLabel": "Implemented",
-    "newInterventionLabel": "New initiative"
+    "newInterventionLabel": "New initiative",
+    "lookingForPartnersLabel": "Looking for partners"
   },
   "signalsOfChange": {
     "from": "From",

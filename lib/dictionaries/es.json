@@ -1,6 +1,5 @@
 {
   "nav": {
-    "tagline": "Inteligencia de Políticas",
     "emptyLinks": "No se han configurado enlaces de navegación"
   },
   "languageSwitcher": {
@@ -16,12 +15,12 @@
     "focusAreasLabel": "Áreas de enfoque",
     "initiativesLabel": "Iniciativas",
     "allFocusAreas": "Todas las áreas de enfoque",
-    "visualizeBy": "Visualizar por",
     "backToList": "Volver a todas las iniciativas",
     "emptyFiltered": "Ninguna iniciativa coincide con esta área de enfoque.",
     "readMore": "Leer más",
     "implementedLabel": "Implementada",
-    "newInterventionLabel": "Nueva iniciativa"
+    "newInterventionLabel": "Nueva iniciativa",
+    "lookingForPartnersLabel": "Buscando socios"
   },
   "signalsOfChange": {
     "from": "De",

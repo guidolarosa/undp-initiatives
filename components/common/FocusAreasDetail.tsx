@@ -181,10 +181,10 @@ export function FocusAreasDetail({
   const modalValue = selected && modalField ? selected[modalField] : undefined;
 
   return (
-    <div className="my-29.75 border-y mb-15">
+    <div className="my-12 border-y lg:my-29.75 lg:mb-15">
       <section className="pt-8">
         <div className="border-t py-18">
-          <div className="mx-auto max-w-280 grid gap-12 px-6 lg:grid-cols-2">
+          <div className="mx-auto max-w-280 grid gap-6 px-6 lg:grid-cols-2 lg:gap-12">
             <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-18">
               {title}
             </h2>
@@ -195,7 +195,7 @@ export function FocusAreasDetail({
             )}
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-280 items-start gap-10 px-6 lg:grid-cols-2">
+          <div className="mx-auto mt-8 grid max-w-280 items-start gap-6 px-6 lg:mt-16 lg:grid-cols-2 lg:gap-10">
             {/* Focus area shape cluster */}
             <div
               ref={clusterRef}
@@ -311,7 +311,7 @@ export function FocusAreasDetail({
               >
                 <X className="h-5 w-5" />
               </button>
-              <h3 className="border-b border-black/10 pb-4 pr-8 text-lg font-semibold">
+              <h3 className="pb-4 pr-8 text-lg font-semibold">
                 {modalMeta.index}. {modalMeta.label}
               </h3>
             </div>

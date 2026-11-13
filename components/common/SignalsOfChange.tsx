@@ -142,13 +142,25 @@ function ChronologyRow({
   const yearTicks = yearTicksBetween(startDate, now);
 
   return (
-    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1fr_2fr_1fr] lg:items-start lg:gap-10">
-      <div className="text-sm">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-[1fr_2fr_1fr] lg:items-start lg:gap-10">
+      {/* Mobile: From/To sit side by side above the timeline (natural grid
+          auto-flow — each is one of the two mobile columns, the full-width
+          timeline wraps to its own row below them). Desktop: `lg:order-*`
+          restores the original From / timeline / To left-to-right row. */}
+      <div className="text-sm lg:order-1">
         <p className="font-semibold">{fromLabel}</p>
         <p>{chronology.fromText}</p>
       </div>
 
-      <div className="relative" style={{ height: ROW_HEIGHT }}>
+      <div className="text-sm lg:order-3">
+        <p className="font-semibold">{toLabel}</p>
+        <p>{chronology.toText}</p>
+      </div>
+
+      <div
+        className="relative col-span-2 lg:order-2 lg:col-span-1"
+        style={{ height: ROW_HEIGHT }}
+      >
         <div
           className="absolute inset-x-0 bg-foreground"
           style={{ top: TRACK_TOP, height: 1 }}
@@ -180,11 +192,6 @@ function ChronologyRow({
           />
         ))}
       </div>
-
-      <div className="text-sm">
-        <p className="font-semibold">{toLabel}</p>
-        <p>{chronology.toText}</p>
-      </div>
     </div>
   );
 }
@@ -205,9 +212,9 @@ export function SignalsOfChange({
   const nowDate = new Date(now);
 
   return (
-    <section className="lg:my-20 my-4 grid w-full border-y lg:grid-cols-[5fr_4fr]">
+    <section className="my-8 lg:my-20 grid w-full border-y lg:grid-cols-[5fr_4fr]">
       <div className="order-2 flex flex-col lg:order-1 lg:border-r">
-        <div className="flex flex-1 flex-col gap-18 px-6 py-12 justify-center lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
+        <div className="flex flex-1 flex-col gap-8 px-6 py-12 justify-center lg:gap-18 lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
           {chronologies.map((chronology) => (
             <ChronologyRow
               key={chronology._key}
@@ -222,7 +229,7 @@ export function SignalsOfChange({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-8 border-t px-6 py-4 text-sm lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
+        <div className="hidden flex-wrap items-center gap-8 border-t px-6 py-4 text-sm lg:flex lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
           <span className="flex items-center gap-2">
             <span className="size-3 shrink-0 rounded-full border border-foreground" />
             {circleText}

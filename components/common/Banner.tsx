@@ -8,7 +8,7 @@ export function Banner({ title, content, backgroundColor }: BannerProps) {
   return (
     <div
       style={backgroundColor ? { backgroundColor } : undefined}
-      className="my-29.75 border-y"
+      className="my-12 border-y lg:my-29.75"
     >
       <section className={"pt-8"}>
         <div className="border-t">

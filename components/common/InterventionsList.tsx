@@ -50,8 +50,8 @@ export function InterventionsList({
   interventions,
 }: InterventionsListProps) {
   return (
-    <section className="grid w-full border-y lg:grid-cols-2 my-20">
-      <div className="flex flex-col gap-10 px-6 py-18 lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
+    <section className="grid w-full border-y my-8 lg:my-20 lg:grid-cols-2">
+      <div className="flex flex-col gap-6 px-6 py-18 lg:gap-10 lg:pl-[calc(50vw-568px)] lg:pr-11 lg:px-0">
         {eyebrow && (
           <p className="text-sm uppercase tracking-[0.08em]">{eyebrow}</p>
         )}

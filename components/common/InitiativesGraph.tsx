@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 import type { ExplorerFocusArea, ExplorerInitiative } from "@/components/common/InitiativesExplorerTypes";
@@ -171,6 +171,13 @@ export function InitiativesGraph({
   const rotationRef = useRef(ROTATION_ENTRANCE_OFFSET);
   const rotationTweenRef = useRef<gsap.core.Tween | null>(null);
   const hasAnimatedInRef = useRef(false);
+  // The entrance animation otherwise plays unconditionally on mount — on a
+  // mobile page where this graph sits well below the fold, it finishes
+  // playing off-screen and a visitor scrolling down never sees any
+  // movement. Gate the *first* run on the graph actually entering the
+  // viewport instead; later re-targeting (arc selection changes) isn't
+  // gated, since by then the graph is already visible.
+  const [hasEnteredViewport, setHasEnteredViewport] = useState(false);
 
   const arcSpan = (360 - ARC_GAP_DEG * focusAreas.length) / Math.max(focusAreas.length, 1);
   const baseFocusAreas = focusAreas.map((focusArea, index) => {
@@ -235,7 +242,25 @@ export function InitiativesGraph({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, focusAreas, initiatives]);
 
+  useEffect(() => {
+    const el = groupRef.current;
+    if (!el || hasEnteredViewport) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasEnteredViewport(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasEnteredViewport]);
+
   useLayoutEffect(() => {
+    if (!hasAnimatedInRef.current && !hasEnteredViewport) return;
+
     const selected =
       onSelectFocusArea && selectedFocusAreaId
         ? baseFocusAreas.find((fa) => fa._id === selectedFocusAreaId)
@@ -264,7 +289,7 @@ export function InitiativesGraph({
     // selectedFocusAreaId (plus the data it's derived from) is what actually
     // matters here, same reasoning as the zoom effect above.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFocusAreaId, focusAreas]);
+  }, [selectedFocusAreaId, focusAreas, hasEnteredViewport]);
 
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-full w-full overflow-visible">

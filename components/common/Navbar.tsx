@@ -5,17 +5,18 @@ import { MobileNav } from "@/components/common/MobileNav";
 import { NavLinks } from "@/components/common/NavLinks";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
-import { getGlobalNav, getGlobalSiteName } from "@/lib/sanity/queries";
+import { getGlobalNav, getGlobalSiteName, getGlobalTagline } from "@/lib/sanity/queries";
 import Image from "next/image";
 
 export async function Navbar({ locale }: { locale: Locale }) {
-  const [navLinks, siteName] = await Promise.all([
+  const [navLinks, siteName, tagline] = await Promise.all([
     getGlobalNav(locale),
     getGlobalSiteName(locale),
+    getGlobalTagline(locale),
   ]);
   const dict = getDictionary(locale);
   return (
-    <header className="border-b border-border bg-navbar">
+    <header className="sticky top-0 z-40 border-b border-border bg-navbar">
       <nav className="mx-auto flex max-w-296.25 items-end justify-between gap-3 lg:gap-6 px-3 pb-4">
         <div className="lg:h-22.5 lg:w-11.25 h-16 w-8 relative">
           <Image
@@ -42,9 +43,11 @@ export async function Navbar({ locale }: { locale: Locale }) {
               >
                 {siteName}
               </Link>
-              <p className="text-sm text-muted-foreground hidden lg:block">
-                {dict.nav.tagline}
-              </p>
+              {tagline && (
+                <p className="text-sm text-muted-foreground hidden lg:block">
+                  {tagline}
+                </p>
+              )}
             </div>
           </div>
           <div className="hidden lg:block ml-auto">

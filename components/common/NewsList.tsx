@@ -96,7 +96,7 @@ export function NewsList({ title, content, news, cta }: NewsListProps) {
     <div className="lg:my-29.75 my-0">
       <section className={"pt-8"}>
         <div className="border-t py-18">
-          <div className="mx-auto max-w-280 flex flex-col gap-12 px-6">
+          <div className="mx-auto max-w-280 flex flex-col gap-6 px-6 lg:gap-12">
             <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
               <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:flex-1 lg:text-[56px] lg:leading-18">
                 {title}
@@ -107,7 +107,19 @@ export function NewsList({ title, content, news, cta }: NewsListProps) {
                 </p>
               )}
             </div>
-            <div className="grid grid-cols-1 overflow-hidden rounded-3xl border lg:grid-cols-3">
+            <div
+              className={cn(
+                "grid grid-cols-1 overflow-hidden rounded-3xl border",
+                // Caps at the real item count instead of always reserving 3
+                // columns — with only 1-2 items, a fixed lg:grid-cols-3
+                // would leave a visibly empty column in the bordered box.
+                news.length >= COLUMNS
+                  ? "lg:grid-cols-3"
+                  : news.length === 2
+                    ? "lg:grid-cols-2"
+                    : "lg:grid-cols-1",
+              )}
+            >
               {news.map((item, index) => (
                 <NewsCard key={item._key} item={item} index={index} />
               ))}

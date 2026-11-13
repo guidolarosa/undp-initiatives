@@ -35,7 +35,7 @@ export function Stats({ title, content, backgroundColor, cards }: StatsProps) {
   return (
     <div style={backgroundColor ? { backgroundColor } : undefined} className="mt-20">
       <section className="border-y py-18">
-        <div className="mx-auto max-w-280 flex flex-col gap-16 px-6">
+        <div className="mx-auto max-w-280 flex flex-col gap-8 px-6 lg:gap-16">
           <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
             <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:flex-1 lg:text-[56px] lg:leading-18">
               {title}

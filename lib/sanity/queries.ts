@@ -130,6 +130,8 @@ export interface ExperiencesSection {
 
 export interface NewsItem {
   _key: string;
+  /** The referenced News document's own id — used to dedupe accidental repeat references. */
+  _id: string;
   title: string;
   date: string;
   category?: string;
@@ -310,6 +312,7 @@ export interface InitiativesExplorerSection {
   aboutTitle: string;
   activitiesTitle: string;
   outcomesTitle: string;
+  locationTitle: string;
   /** Every Focus Area, for the filter dropdown — not curated on the block. */
   focusAreaOptions: InitiativeFocusArea[];
   /** Every Intervention in this locale — not curated on the block. */
@@ -452,6 +455,21 @@ export async function getGlobalSiteName(
         siteName[language == $locale][0].value,
         siteName[language == $fallback][0].value,
         siteName[0].value
+      )
+    }.value`,
+    { locale, fallback: defaultLocale },
+  );
+}
+
+export async function getGlobalTagline(
+  locale: Locale = defaultLocale,
+): Promise<string | null> {
+  return sanityFetch<string>(
+    `*[_type == "global"][0]{
+      "value": coalesce(
+        tagline[language == $locale][0].value,
+        tagline[language == $fallback][0].value,
+        tagline[0].value
       )
     }.value`,
     { locale, fallback: defaultLocale },
@@ -724,6 +742,7 @@ export async function getPageBySlug(
           // to the list in Studio.
           "news": news[]{
             _key,
+            "_id": @->_id,
             "title": @->title,
             "date": @->date,
             "category": coalesce(
@@ -852,6 +871,7 @@ export async function getPageBySlug(
           aboutTitle,
           activitiesTitle,
           outcomesTitle,
+          locationTitle,
           // Not curated on the block — every Focus Area is a filter option,
           // and every Intervention in this locale is listed, same philosophy
           // as Territory's map points.

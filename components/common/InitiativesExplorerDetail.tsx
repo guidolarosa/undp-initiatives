@@ -18,6 +18,7 @@ export function InitiativeDetail({
   aboutTitle,
   activitiesTitle,
   outcomesTitle,
+  locationTitle,
   backLabel,
   readMoreLabel,
   onBack,
@@ -26,6 +27,7 @@ export function InitiativeDetail({
   aboutTitle: string;
   activitiesTitle: string;
   outcomesTitle: string;
+  locationTitle: string;
   backLabel: string;
   readMoreLabel: string;
   onBack: () => void;
@@ -53,21 +55,23 @@ export function InitiativeDetail({
         {initiative.name}
       </h2>
 
-      {actors.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {actors.map((actor, i) => (
-            <ActorTag key={i} actor={actor} />
-          ))}
-        </div>
-      )}
+      <div className="flex flex-col gap-2">
+        {actors.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {actors.map((actor, i) => (
+              <ActorTag key={i} actor={actor} />
+            ))}
+          </div>
+        )}
 
-      {initiative.focusAreas.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {initiative.focusAreas.map((focusArea) => (
-            <FocusAreaTag key={focusArea._id} focusArea={focusArea} />
-          ))}
-        </div>
-      )}
+        {initiative.focusAreas.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {initiative.focusAreas.map((focusArea) => (
+              <FocusAreaTag key={focusArea._id} focusArea={focusArea} />
+            ))}
+          </div>
+        )}
+      </div>
 
       {initiative.mainPhoto && (
         <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
@@ -78,21 +82,6 @@ export function InitiativeDetail({
             placeholder={initiative.mainPhoto.blurDataURL ? "blur" : undefined}
             blurDataURL={initiative.mainPhoto.blurDataURL}
             className="object-cover"
-          />
-        </div>
-      )}
-
-      {initiative.localization && (
-        <div className="h-60 w-full overflow-hidden rounded-2xl">
-          <TerritoryMap
-            points={[
-              {
-                id: initiative._id,
-                name: initiative.name,
-                lat: initiative.localization.lat,
-                lng: initiative.localization.lng,
-              },
-            ]}
           />
         </div>
       )}
@@ -136,6 +125,24 @@ export function InitiativeDetail({
               {readMoreLabel}
             </button>
           )}
+        </div>
+      )}
+
+      {initiative.localization && (
+        <div>
+          <h3 className="border-b pb-2 text-lg font-semibold">{locationTitle}</h3>
+          <div className="mt-4 h-60 w-full overflow-hidden rounded-2xl">
+            <TerritoryMap
+              points={[
+                {
+                  id: initiative._id,
+                  name: initiative.name,
+                  lat: initiative.localization.lat,
+                  lng: initiative.localization.lng,
+                },
+              ]}
+            />
+          </div>
         </div>
       )}
     </div>

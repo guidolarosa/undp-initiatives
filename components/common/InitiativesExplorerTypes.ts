@@ -63,10 +63,10 @@ export interface InitiativesExplorerDict {
   focusAreasLabel: string;
   initiativesLabel: string;
   allFocusAreas: string;
-  visualizeBy: string;
   backToList: string;
   emptyFiltered: string;
   readMore: string;
   implementedLabel: string;
   newInterventionLabel: string;
+  lookingForPartnersLabel: string;
 }

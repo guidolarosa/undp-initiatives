@@ -25,7 +25,7 @@ export function CTABanner({
   return (
     <div
       style={backgroundColor ? { backgroundColor } : undefined}
-      className="my-29.75"
+      className="my-12 lg:my-29.75"
     >
       <section className={"pt-8"}>
         <div className="text-center border-t py-18 px-3 lg:px-0">

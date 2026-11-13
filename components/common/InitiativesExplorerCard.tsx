@@ -8,10 +8,12 @@ import type { ExplorerInitiative } from "@/components/common/InitiativesExplorer
 export function InitiativeCard({
   initiative,
   typeLabel,
+  lookingForPartnersLabel,
   onSelect,
 }: {
   initiative: ExplorerInitiative;
   typeLabel: string;
+  lookingForPartnersLabel: string;
   onSelect: () => void;
 }) {
   return (
@@ -34,7 +36,7 @@ export function InitiativeCard({
       </div>
       <div className="flex flex-col gap-2 p-4">
         <span className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          {typeLabel}
+          {initiative.status === "looking-for-partners" ? lookingForPartnersLabel : typeLabel}
         </span>
         <h3 className="text-[18px] font-semibold leading-6">{initiative.name}</h3>
         <div className="mt-1 flex flex-col items-start gap-2">

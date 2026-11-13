@@ -40,6 +40,7 @@ export interface InitiativesExplorerProps {
   aboutTitle: string;
   activitiesTitle: string;
   outcomesTitle: string;
+  locationTitle: string;
   focusAreaOptions: ExplorerFocusArea[];
   initiatives: ExplorerInitiative[];
   dict: InitiativesExplorerDict;
@@ -55,6 +56,7 @@ export function InitiativesExplorer({
   aboutTitle,
   activitiesTitle,
   outcomesTitle,
+  locationTitle,
   focusAreaOptions,
   initiatives,
   dict,
@@ -87,54 +89,56 @@ export function InitiativesExplorer({
     <section className="mx-auto lg:-mt-8 lg:h-[calc(100vh-108px)] lg:overflow-hidden">
       <div className="flex flex-col items-start lg:h-full lg:flex-row">
         {/* Graph — small and static above the list on mobile (normal page
-            flow, fixed height); desktop pins it as a fixed-viewport-height
-            left column instead. Never scrolls, always fits exactly within
-            the block's height (no aspect-ratio forcing it taller than the
-            space left after the dropdown/tagline). */}
+            flow, fixed height), collapsing away entirely once a detail view
+            opens to free up space; desktop pins it as a fixed-viewport-height
+            left column instead, regardless of selection. Never scrolls,
+            always fits exactly within the block's height (no aspect-ratio
+            forcing it taller than the space left after the tagline).
+            The two wrapper divs are `lg:contents` — mobile-only collapse
+            scaffolding that disappears from the box model at `lg`, so the
+            actual graph box participates directly in the parent flex row
+            exactly as it does today on desktop. */}
         <div
-          style={graphBackgroundColor ? { backgroundColor: graphBackgroundColor } : undefined}
-          className="flex h-80 w-full flex-col overflow-hidden lg:h-full lg:w-6/12 lg:border-r"
+          className={cn(
+            "grid w-full transition-[grid-template-rows] duration-500 ease-in-out lg:contents",
+            selected ? "grid-rows-[0fr]" : "grid-rows-[1fr]",
+          )}
         >
-          <div className="flex min-h-0 flex-1 flex-col gap-6 p-6">
-            <Select defaultValue="interventions">
-              <SelectTrigger className="w-fit rounded-full border border-black bg-transparent px-4 py-2 text-sm">
-                {/* Base UI's SelectValue only resolves a label via an `items`
-                    prop on Select (not by reading rendered SelectItem
-                    children) — without it, it falls back to the raw value
-                    string. The function-children form sidesteps that. */}
-                <SelectValue>{() => dict.visualizeBy}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="interventions">{dict.visualizeBy}</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="min-h-0 w-full flex-1">
-              <InitiativesGraph
-                focusAreas={focusAreaOptions}
-                initiatives={initiatives}
-                selectedId={selectedId}
-                onSelect={selectInitiative}
-                focusAreasLabel={dict.focusAreasLabel}
-                initiativesLabel={dict.initiativesLabel}
-              />
-            </div>
-            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-foreground" />
-                {dict.implementedLabel}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full border border-foreground" />
-                {dict.newInterventionLabel}
-              </span>
+          <div className="overflow-hidden lg:contents">
+            <div
+              style={graphBackgroundColor ? { backgroundColor: graphBackgroundColor } : undefined}
+              className="flex h-112 w-full flex-col overflow-hidden lg:h-full lg:w-6/12 lg:border-r"
+            >
+              <div className="flex min-h-0 flex-1 flex-col gap-6 p-6">
+                <div className="min-h-0 w-full flex-1">
+                  <InitiativesGraph
+                    focusAreas={focusAreaOptions}
+                    initiatives={initiatives}
+                    selectedId={selectedId}
+                    onSelect={selectInitiative}
+                    focusAreasLabel={dict.focusAreasLabel}
+                    initiativesLabel={dict.initiativesLabel}
+                  />
+                </div>
+                <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-2.5 rounded-full bg-foreground" />
+                    {dict.implementedLabel}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-2.5 rounded-full border border-foreground" />
+                    {dict.newInterventionLabel}
+                  </span>
+                </div>
+              </div>
+              {graphTagline && (
+                <div className="flex items-center gap-2 border-t px-6 py-3 text-sm text-muted-foreground bg-background justify-center">
+                  <Link2 className="size-4 shrink-0" />
+                  {graphTagline}
+                </div>
+              )}
             </div>
           </div>
-          {graphTagline && (
-            <div className="flex items-center gap-2 border-t px-6 py-3 text-sm text-muted-foreground bg-background justify-center">
-              <Link2 className="size-4 shrink-0" />
-              {graphTagline}
-            </div>
-          )}
         </div>
 
         {/* Title / description / filter / list or detail */}
@@ -149,6 +153,7 @@ export function InitiativesExplorer({
                 aboutTitle={aboutTitle}
                 activitiesTitle={activitiesTitle}
                 outcomesTitle={outcomesTitle}
+                locationTitle={locationTitle}
                 backLabel={dict.backToList}
                 readMoreLabel={dict.readMore}
                 onBack={backToList}
@@ -202,6 +207,7 @@ export function InitiativesExplorer({
                         key={initiative._id}
                         initiative={initiative}
                         typeLabel={dict.typeLabel}
+                        lookingForPartnersLabel={dict.lookingForPartnersLabel}
                         onSelect={() => selectInitiative(initiative._id)}
                       />
                     ))}

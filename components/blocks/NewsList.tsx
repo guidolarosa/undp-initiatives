@@ -9,6 +9,13 @@ const IMAGE_WIDTH = 600;
  * component, resolving each News item's image reference to a CDN URL.
  */
 export function NewsListBlock({ block }: { block: NewsListSection }) {
+  // Defends against an editor accidentally referencing the same News
+  // document more than once in Studio — without this, the same card would
+  // visually repeat several times instead of showing distinct items.
+  const uniqueNews = block.news.filter(
+    (item, index) => block.news.findIndex((other) => other._id === item._id) === index,
+  );
+
   return (
     <NewsList
       title={block.title}
@@ -18,7 +25,7 @@ export function NewsListBlock({ block }: { block: NewsListSection }) {
         url: block.cta.url,
         color: block.cta.color,
       }}
-      news={block.news.map((item) => {
+      news={uniqueNews.map((item) => {
         const { image } = item;
         const aspectRatio = image?.dimensions?.aspectRatio ?? 4 / 3;
         return {

@@ -16,6 +16,13 @@ export const global = defineType({
         "The name of the site as it appears in the browser tab and navigation. One entry per language.",
     }),
     defineField({
+      name: "tagline",
+      title: "Tagline",
+      type: "internationalizedArrayString",
+      description:
+        'Shown below the site name in the navbar (e.g. "Policy Intelligence"). One entry per language — leave a language empty to show nothing for it.',
+    }),
+    defineField({
       name: "theme",
       title: "Theme",
       type: "reference",

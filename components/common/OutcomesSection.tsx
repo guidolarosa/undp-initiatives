@@ -34,7 +34,7 @@ export function OutcomesSection({ title, content, cards }: OutcomesSectionProps)
           {title}
         </h2>
       </div>
-      <div className="mx-auto flex max-w-280 flex-wrap items-end gap-10 px-6 py-8">
+      <div className="mx-auto flex max-w-280 flex-wrap items-end gap-6 px-6 py-8 lg:gap-10">
         <div className="min-w-0 flex-1">
           {content && <p className="whitespace-pre-line text-foreground/80">{content}</p>}
         </div>

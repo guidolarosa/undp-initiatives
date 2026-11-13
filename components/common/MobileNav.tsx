@@ -42,9 +42,9 @@ export function MobileNav({
             vertical
             onLinkClick={() => setOpen(false)}
           />
-          <div className="flex items-center gap-4 border-t border-border pt-6">
-            <span className="text-2xl leading-none">🇸🇹</span>
+          <div className="flex items-center justify-between gap-4 border-t border-border pt-6">
             <LanguageSwitcher locale={locale} label={languageSwitcherLabel} />
+            <span className="text-2xl leading-none">🇸🇹</span>
           </div>
         </div>
       )}
