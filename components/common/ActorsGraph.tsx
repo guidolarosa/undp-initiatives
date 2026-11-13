@@ -27,7 +27,11 @@ const RING_RADIUS = 150;
 const HUB_OUTER_RADIUS = 62;
 const HUB_INNER_RADIUS = 38;
 const NODE_SIZE = 20;
-const LABEL_GAP = 16;
+// A square rotated 45° has a tip-to-tip diagonal of size*sqrt(2), so at the
+// same NODE_SIZE a diamond reads visibly larger than the circle/pentagon —
+// shrunk 15% to match them.
+const DIAMOND_NODE_SIZE = NODE_SIZE * 0.85;
+const LABEL_GAP = 10;
 const LABEL_WIDTH = 108;
 const LABEL_HEIGHT = 48;
 const DEFAULT_NODE_COLOR = "#9DC3E6";
@@ -87,10 +91,10 @@ function NodeShape({
   if (shape === "diamond") {
     return (
       <rect
-        x={-NODE_SIZE / 2}
-        y={-NODE_SIZE / 2}
-        width={NODE_SIZE}
-        height={NODE_SIZE}
+        x={-DIAMOND_NODE_SIZE / 2}
+        y={-DIAMOND_NODE_SIZE / 2}
+        width={DIAMOND_NODE_SIZE}
+        height={DIAMOND_NODE_SIZE}
         fill={color}
         stroke={stroke}
         strokeWidth={1}
@@ -139,7 +143,7 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
 
   return (
     <section className="my-8 grid w-full border-y lg:my-20 lg:grid-cols-2">
-      <div className="flex items-center justify-center border-b px-6 py-12 lg:border-b-0 lg:border-r">
+      <div className="flex flex-col items-center justify-center gap-8 border-b px-6 py-12 lg:border-b-0 lg:border-r">
         <svg
           viewBox={`0 0 ${SIZE} ${SIZE}`}
           className="h-full w-full max-w-125 overflow-visible"
@@ -157,17 +161,15 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
             className="text-foreground/40"
           />
           <circle cx={CENTER} cy={CENTER} r={HUB_OUTER_RADIUS} fill="none" stroke="currentColor" strokeWidth={1} className="text-foreground/40" />
+          {/* Fallback backdrop in case the logo image fails to load or has
+              transparent padding — same site logo mark used in the navbar. */}
           <circle cx={CENTER} cy={CENTER} r={HUB_INNER_RADIUS} className="fill-foreground" />
-          {/* A plain diamond glyph, not the site's own /logo.svg — that
-              asset bakes in its own dark circular backdrop and a raster
-              pattern, not a clean shape to recolor/reuse standalone here. */}
-          <rect
-            x={CENTER - HUB_INNER_RADIUS * 0.3}
-            y={CENTER - HUB_INNER_RADIUS * 0.3}
-            width={HUB_INNER_RADIUS * 0.6}
-            height={HUB_INNER_RADIUS * 0.6}
-            className="fill-background"
-            transform={`rotate(45 ${CENTER} ${CENTER})`}
+          <image
+            href="/logo.svg"
+            x={CENTER - HUB_INNER_RADIUS}
+            y={CENTER - HUB_INNER_RADIUS}
+            width={HUB_INNER_RADIUS * 2}
+            height={HUB_INNER_RADIUS * 2}
           />
 
           {positioned.map(({ actor, point, labelPoint, shape, color, align, verticalAlign }) => (
@@ -193,9 +195,23 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
                 width={LABEL_WIDTH}
                 height={LABEL_HEIGHT}
               >
+                {/* foreignObject content box-flows from its own top by
+                    default — a short (1-line) label at a "top" node left a
+                    visible gap down to the node, since the text sat at the
+                    top of the box instead of hugging the node at the
+                    bottom. Flex + justify-content anchors it to whichever
+                    edge is actually next to the node. */}
                 <div
-                  className="text-[9px] leading-tight text-foreground"
-                  style={{ textAlign: align }}
+                  className="flex h-full flex-col text-[9px] leading-tight text-foreground"
+                  style={{
+                    textAlign: align,
+                    justifyContent:
+                      verticalAlign === "top"
+                        ? "flex-end"
+                        : verticalAlign === "bottom"
+                          ? "flex-start"
+                          : "center",
+                  }}
                 >
                   {actor.name}
                 </div>
@@ -203,6 +219,24 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
             </g>
           ))}
         </svg>
+
+        {/* A floating pill below the graph, not a full-width row attached
+            to the block's own bottom edge — matches the Figma reference,
+            where the legend reads as its own small element under the
+            diagram rather than a continuation of the section. */}
+        {legend.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-6 rounded-full border px-6 py-3 text-sm">
+            {legend.map((type) => (
+              <span key={type.slug} className="flex items-center gap-2">
+                <span
+                  className="size-3 shrink-0 rounded-full"
+                  style={{ backgroundColor: type.color }}
+                />
+                {type.label}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div
@@ -216,20 +250,6 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
           <p className="whitespace-pre-line text-[18px] leading-8">{content}</p>
         )}
       </div>
-
-      {legend.length > 0 && (
-        <div className="col-span-full flex flex-wrap items-center justify-center gap-6 border-t px-6 py-4 text-sm">
-          {legend.map((type) => (
-            <span key={type.slug} className="flex items-center gap-2">
-              <span
-                className="size-3 shrink-0 rounded-full"
-                style={{ backgroundColor: type.color }}
-              />
-              {type.label}
-            </span>
-          ))}
-        </div>
-      )}
     </section>
   );
 }
