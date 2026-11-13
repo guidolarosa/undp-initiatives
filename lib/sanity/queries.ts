@@ -398,6 +398,28 @@ export interface PlaceholderSection {
   body?: string;
 }
 
+export interface ActorsGraphActorType {
+  slug: string;
+  label: string;
+  color?: string;
+}
+
+export interface ActorsGraphActorRef {
+  _id: string;
+  name: string;
+  /** First entry of the Actor's own `type` array, if any. */
+  type?: ActorsGraphActorType;
+}
+
+export interface ActorsGraphSection {
+  _key: string;
+  _type: "actorsGraph";
+  title: string;
+  content?: string;
+  backgroundColor?: string;
+  actors: ActorsGraphActorRef[];
+}
+
 export type PageSection =
   | HeroSection
   | BannerSection
@@ -417,6 +439,7 @@ export type PageSection =
   | OutcomesSectionSection
   | SignalsOfChangeSection
   | FocusAreasBreakdownSection
+  | ActorsGraphSection
   | PlaceholderSection;
 
 export interface PageData {
@@ -1015,6 +1038,24 @@ export async function getPageBySlug(
             }, []),
             gap,
             potentialPartnership
+          }
+        },
+        _type == "actorsGraph" => {
+          title,
+          content,
+          "backgroundColor": backgroundColor->value.hex,
+          "actors": actors[]->{
+            _id,
+            name,
+            "type": type[0]->{
+              "slug": slug.current,
+              "label": coalesce(
+                label[language == $locale][0].value,
+                label[language == $fallback][0].value,
+                label[0].value
+              ),
+              "color": color->value.hex
+            }
           }
         },
         _type == "blockPlaceholder" => {

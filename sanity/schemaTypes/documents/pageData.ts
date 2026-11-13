@@ -63,6 +63,7 @@ export const pageData = defineType({
         { type: "outcomesSection" },
         { type: "signalsOfChange" },
         { type: "focusAreasBreakdown" },
+        { type: "actorsGraph" },
       ],
     }),
   ],

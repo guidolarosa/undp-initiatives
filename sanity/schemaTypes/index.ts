@@ -41,6 +41,7 @@ import { chronology } from "./objects/chronology";
 import { milestone } from "./objects/milestone";
 import { focusAreasBreakdown } from "./objects/focusAreasBreakdown";
 import { focusAreaResult } from "./objects/focusAreaResult";
+import { actorsGraph } from "./objects/actorsGraph";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   global,
@@ -76,6 +77,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   outcomesSection,
   signalsOfChange,
   focusAreasBreakdown,
+  actorsGraph,
   // Modules
   shiftInLogicRow,
   portfolioApproachCard,
