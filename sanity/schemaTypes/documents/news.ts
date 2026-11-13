@@ -34,10 +34,10 @@ export const news = defineType({
     }),
     defineField({
       name: "image",
-      title: "Image",
+      title: "Image (unused)",
       type: "image",
       options: { hotspot: true },
-      validation: (rule) => rule.required(),
+      description: "No longer shown — News cards render as plain text, no image.",
     }),
     defineField({
       name: "url",

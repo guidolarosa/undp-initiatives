@@ -137,7 +137,6 @@ export interface NewsItem {
   category?: string;
   url: string;
   backgroundColor?: string;
-  image?: SanityImage;
 }
 
 export interface NewsListSection {
@@ -774,12 +773,7 @@ export async function getPageBySlug(
               @->category->label[0].value
             ),
             "url": @->url,
-            "backgroundColor": @->backgroundColor->value.hex,
-            "image": @->image{
-              ...,
-              "lqip": asset->metadata.lqip,
-              "dimensions": asset->metadata.dimensions
-            }
+            "backgroundColor": @->backgroundColor->value.hex
           } | order(date desc),
           cta{
             "label": coalesce(

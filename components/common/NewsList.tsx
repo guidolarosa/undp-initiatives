@@ -1,8 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-
-import { cn } from "@/lib/utils";
 
 export interface NewsItemProps {
   _key: string;
@@ -11,13 +8,6 @@ export interface NewsItemProps {
   category?: string;
   url: string;
   backgroundColor?: string;
-  image?: {
-    src: string;
-    width: number;
-    height: number;
-    alt: string;
-    blurDataURL?: string;
-  };
 }
 
 export interface CtaProps {
@@ -33,8 +23,6 @@ export interface NewsListProps {
   cta: CtaProps;
 }
 
-const COLUMNS = 3;
-
 function formatDate(iso: string) {
   const date = new Date(iso);
   const dd = String(date.getUTCDate()).padStart(2, "0");
@@ -43,50 +31,29 @@ function formatDate(iso: string) {
   return `${dd}-${mm}-${yy}`;
 }
 
-const NewsCard = ({ item, index }: { item: NewsItemProps; index: number }) => {
+// No image — a plain, fixed-size card regardless of how many items the CMS
+// has (never stretches to fill a part-empty row), individually bordered so
+// cards sit with a gap between them instead of sharing one outer box.
+const NewsCard = ({ item }: { item: NewsItemProps }) => {
   return (
     <div
-      style={
-        item.backgroundColor ? { backgroundColor: item.backgroundColor } : undefined
-      }
-      className={cn(
-        "flex flex-col gap-4 p-6",
-        // Below lg the grid is a single column — every card but the first
-        // just gets a plain top divider. At lg the real grid dividers take
-        // over: a left border on every column but the first, a top border
-        // on every row but the first (Tailwind's divide-x/y utilities don't
-        // place these correctly on a multi-row CSS grid).
-        index > 0 && "border-t lg:border-t-0",
-        index % COLUMNS !== 0 && "lg:border-l",
-        index >= COLUMNS && "lg:border-t",
-      )}
+      style={item.backgroundColor ? { backgroundColor: item.backgroundColor } : undefined}
+      className="flex flex-col overflow-hidden rounded-2xl border"
     >
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-sm">{formatDate(item.date)}</span>
+      <div className="flex items-center justify-between gap-4 border-b px-6 py-3 text-sm">
         {item.category && (
-          <span className="rounded-full border px-3 py-1 text-sm">
-            {item.category}
-          </span>
+          <span className="uppercase">{item.category}</span>
         )}
+        <span>{formatDate(item.date)}</span>
       </div>
-      {item.image && (
-        <div className="relative aspect-4/3">
-          <Image
-            src={item.image.src}
-            alt={item.image.alt}
-            fill
-            placeholder={item.image.blurDataURL ? "blur" : undefined}
-            blurDataURL={item.image.blurDataURL}
-            className="rounded-2xl object-cover"
-          />
-        </div>
-      )}
-      <h3 className="text-lg leading-7">{item.title}</h3>
-      {/* "Read more" is fixed UI copy (no per-item label field on News) —
-          hardcoded, not localized. Localize here if that's needed later. */}
-      <Link href={item.url} className="underline w-fit">
-        Read more
-      </Link>
+      <div className="flex flex-1 flex-col gap-4 p-6">
+        <h3 className="text-lg font-semibold leading-7">{item.title}</h3>
+        {/* "Read more" is fixed UI copy (no per-item label field on News) —
+            hardcoded, not localized. Localize here if that's needed later. */}
+        <Link href={item.url} className="mt-auto underline w-fit">
+          Read more
+        </Link>
+      </div>
     </div>
   );
 };
@@ -107,21 +74,12 @@ export function NewsList({ title, content, news, cta }: NewsListProps) {
                 </p>
               )}
             </div>
-            <div
-              className={cn(
-                "grid grid-cols-1 overflow-hidden rounded-3xl border",
-                // Caps at the real item count instead of always reserving 3
-                // columns — with only 1-2 items, a fixed lg:grid-cols-3
-                // would leave a visibly empty column in the bordered box.
-                news.length >= COLUMNS
-                  ? "lg:grid-cols-3"
-                  : news.length === 2
-                    ? "lg:grid-cols-2"
-                    : "lg:grid-cols-1",
-              )}
-            >
-              {news.map((item, index) => (
-                <NewsCard key={item._key} item={item} index={index} />
+            {/* Fixed-size cards, gap between them (not a shared outer
+                border) — stays 1/3-width on desktop no matter how many
+                items the CMS has, rather than stretching to fill the row. */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {news.map((item) => (
+                <NewsCard key={item._key} item={item} />
               ))}
             </div>
             <Link

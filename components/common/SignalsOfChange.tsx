@@ -1,3 +1,7 @@
+function lowercaseFirst(text: string): string {
+  return text ? text.charAt(0).toLowerCase() + text.slice(1) : text;
+}
+
 export interface SignalsMilestone {
   _key: string;
   /** ISO date string (YYYY-MM-DD). */
@@ -142,25 +146,26 @@ function ChronologyRow({
   const yearTicks = yearTicksBetween(startDate, now);
 
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-[1fr_2fr_1fr] lg:items-start lg:gap-10">
-      {/* Mobile: From/To sit side by side above the timeline (natural grid
-          auto-flow — each is one of the two mobile columns, the full-width
-          timeline wraps to its own row below them). Desktop: `lg:order-*`
-          restores the original From / timeline / To left-to-right row. */}
-      <div className="text-sm lg:order-1">
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1fr_2fr_1fr] lg:items-start lg:gap-10">
+      {/* Mobile: From + To flow as one sentence, "From"/"to" bolded inline
+          — not two separate labeled blocks. Desktop keeps the original
+          three-column row (From block / timeline / To block): the two
+          `hidden lg:block` blocks below supply that, and — since this
+          mobile paragraph is `lg:hidden` — the grid's 3 columns are filled
+          by their natural DOM order with no `order-*` needed. */}
+      <p className="text-sm lg:hidden">
+        <span className="font-semibold">{fromLabel}</span>{" "}
+        {lowercaseFirst(chronology.fromText)}{" "}
+        <span className="font-semibold">{toLabel.toLowerCase()}</span>{" "}
+        {lowercaseFirst(chronology.toText)}
+      </p>
+
+      <div className="hidden text-sm lg:block">
         <p className="font-semibold">{fromLabel}</p>
         <p>{chronology.fromText}</p>
       </div>
 
-      <div className="text-sm lg:order-3">
-        <p className="font-semibold">{toLabel}</p>
-        <p>{chronology.toText}</p>
-      </div>
-
-      <div
-        className="relative col-span-2 lg:order-2 lg:col-span-1"
-        style={{ height: ROW_HEIGHT }}
-      >
+      <div className="relative" style={{ height: ROW_HEIGHT }}>
         <div
           className="absolute inset-x-0 bg-foreground"
           style={{ top: TRACK_TOP, height: 1 }}
@@ -191,6 +196,11 @@ function ChronologyRow({
             fraction={clamp01((new Date(milestone.date).getTime() - startMs) / span)}
           />
         ))}
+      </div>
+
+      <div className="hidden text-sm lg:block">
+        <p className="font-semibold">{toLabel}</p>
+        <p>{chronology.toText}</p>
       </div>
     </div>
   );
