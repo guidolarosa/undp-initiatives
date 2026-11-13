@@ -163,7 +163,6 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
           <circle cx={CENTER} cy={CENTER} r={HUB_OUTER_RADIUS} fill="none" stroke="currentColor" strokeWidth={1} className="text-foreground/40" />
           {/* Fallback backdrop in case the logo image fails to load or has
               transparent padding — same site logo mark used in the navbar. */}
-          <circle cx={CENTER} cy={CENTER} r={HUB_INNER_RADIUS} className="fill-foreground" />
           <image
             href="/logo.svg"
             x={CENTER - HUB_INNER_RADIUS}
@@ -239,15 +238,29 @@ export function ActorsGraph({ title, content, backgroundColor, actors }: ActorsG
         )}
       </div>
 
+      {/* Figma shows two horizontal rules inside this column — one right
+          under the title, one above the content — with the title pinned to
+          the top of its own bordered box rather than the whole column just
+          centering title+content together. The title box stretches to the
+          column's full height (default CSS Grid stretch, matching the
+          graph column's height) only at `lg`; below that there's no
+          side-by-side sibling to stretch to, so it naturally hugs its own
+          content instead — intentional, forcing the same tall empty gap
+          on a narrow mobile screen would look broken, not matched to the
+          reference. */}
       <div
         style={backgroundColor ? { backgroundColor } : undefined}
-        className="flex flex-col justify-center gap-6 px-6 py-12 lg:px-11"
+        className="flex flex-col"
       >
-        <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-18">
-          {title}
-        </h2>
+        <div className="flex flex-col justify-start border-y px-6 py-12 lg:flex-1 lg:px-11">
+          <h2 className="text-[32px] font-semibold leading-tight tracking-[-0.02em] lg:text-[56px] lg:leading-18">
+            {title}
+          </h2>
+        </div>
         {content && (
-          <p className="whitespace-pre-line text-[18px] leading-8">{content}</p>
+          <p className="whitespace-pre-line px-6 py-12 text-[18px] leading-8 lg:px-11">
+            {content}
+          </p>
         )}
       </div>
     </section>
